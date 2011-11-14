@@ -1,6 +1,9 @@
 #ifndef ROOT_PLOT__HPP__
 #define ROOT_PLOT__HPP__
 
+// Classes for plotting
+
+
 #include <vector>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>

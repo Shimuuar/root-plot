@@ -19,9 +19,11 @@ void Plot::clear() {
 
 void Plot::draw() {
     canvas->Clear();
+    // FIXME!
 }
 
 void Plot::redraw() {
+    // FIXME!
 }
 
 

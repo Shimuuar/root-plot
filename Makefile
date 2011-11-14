@@ -18,7 +18,7 @@ CXXFLAGS = -g -O2 -Wall -Wextra `${ROOTCFG} --cflags`
 CFLAGS   = -g -O2 -Wall -Wextra -std=c99
 LDFLAGS  = `${ROOTCFG} --libs` -lGui
 PREFIX   = ${HOME}/opt
-HEADERS  = object.hpp
+HEADERS  = object.hpp reader.hpp parser.hpp
 #BiplotMainFrame.hpp  hist.hpp  parser.hpp  plotobj.hpp  ptr.hpp
 
 ################################################################
@@ -35,7 +35,7 @@ all : rt-plot
 %.o : %.c 
 	${C} ${CFLAGS} -c $< -o $@
 
-rt-plot : main.o object.o
+rt-plot : main.o object.o reader.o
 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
 
 # rt-echo : rt-echo.o
