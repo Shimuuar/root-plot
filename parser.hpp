@@ -21,6 +21,7 @@ struct Keyword {
 // Whitespace token
 struct WhiteSpace {};
 
+
 // Token of the language
 typedef boost::variant< int
                       , double
@@ -29,6 +30,7 @@ typedef boost::variant< int
                       , WhiteSpace
                       >
         Token;
+
 
 // After lexing line is just a sequence of tokens
 typedef std::deque<Token> LexedLine;
