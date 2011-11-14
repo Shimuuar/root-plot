@@ -48,15 +48,16 @@ LineReader::Result LineReader::getLine(std::string& str) {
         return Eof;
     if( n == -1 ) {
         // Early return and no data yet
-        if( n == EAGAIN      ||
-            n == EWOULDBLOCK ||
-            n == EINTR )
+        if( errno == EAGAIN      ||
+            errno == EWOULDBLOCK ||
+            errno == EINTR )
             return NoData;
         // Genuine error
         throw "FIXME";
     }
 
     // Try to find line again
+    nBytes += n;
     if( findLine( str ) )
         return OK;
     else
