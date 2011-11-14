@@ -3,9 +3,11 @@
 
 # Check for ROOTSYS 
 ifeq ($(ROOTSYS),)
-  ROOTCFG = root-config
+  ROOTCFG  = root-config
+  ROOTCINT = rootcint
 else
-  ROOTCFG = ${ROOTSYS}/bin/root-config
+  ROOTCFG  = ${ROOTSYS}/bin/root-config
+  ROOTCINT = ${ROOTSYS}/bin/rootcint
 endif 
 
 
@@ -19,20 +21,22 @@ CFLAGS   = -g -O2 -Wall -Wextra -std=c99
 LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp
-#BiplotMainFrame.hpp  hist.hpp  parser.hpp  plotobj.hpp  ptr.hpp
+OBJS     = \
+	main.o object.o reader.o  parser.o parser.lex.o RtPlot.o RtPlot-cint.o
+
 
 ################################################################
 all : rt-plot
 
 
-rt-plot : main.o object.o reader.o parser.o parser.lex.o
+rt-plot : main.o object.o reader.o parser.o parser.lex.o RtPlot.o RtPlot-cint.o
 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
 
 
 # Add CINT classes.
-#BiplotMainFrame-cint.cpp: BiplotMainFrame.hpp
-#	rm -f rt-biplot-cint.*#
-#	${ROOTSYS}/bin/rootcint $@ -c BiplotMainFrame.hpp
+%-cint.cpp: %.hpp
+	rm -f $@
+	${ROOTCINT} $@ -c $<
 
 %.o : %.cpp $(HEADERS)
 	${CXX} -c ${CXXFLAGS} $< -o $@
