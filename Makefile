@@ -25,6 +25,10 @@ HEADERS  = object.hpp reader.hpp parser.hpp
 all : rt-plot
 
 
+rt-plot : main.o object.o reader.o parser.o parser.lex.o
+	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
+
+
 # Add CINT classes.
 #BiplotMainFrame-cint.cpp: BiplotMainFrame.hpp
 #	rm -f rt-biplot-cint.*#
@@ -34,9 +38,9 @@ all : rt-plot
 	${CXX} -c ${CXXFLAGS} $< -o $@
 %.o : %.c 
 	${C} ${CFLAGS} -c $< -o $@
+%.lex.cpp : %.lex
+	flex -o $@ $<
 
-rt-plot : main.o object.o reader.o
-	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
 
 # rt-echo : rt-echo.o
 # 	${C} ${CFLAGS} -o $@ $+
