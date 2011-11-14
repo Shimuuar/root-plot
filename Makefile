@@ -3,10 +3,11 @@
 
 # Check for ROOTSYS 
 ifeq ($(ROOTSYS),)
-  $(warning "ROOTSYS undefined trying /usr")
-  ROOTSYS=/usr
+  ROOTCFG = root-config
+else
+  ROOTCFG = ${ROOTSYS}/bin/root-config
 endif 
-ROOTCFG = ${ROOTSYS}/bin/root-config
+
 
 INSTALLDIR=${HOME}/opt/bin
 ################################################################
@@ -44,8 +45,8 @@ rt-plot : main.o object.o
 # rt-biplot: rt-biplot.o BiplotMainFrame.o BiplotMainFrame-cint.o hist.o plotobj.o parser.o
 # 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
 
-# clean:
-# 	rm -rf *.o rt-biplot *-cint.cpp *-cint.h rt-echo rt-unix-wrapper
+clean:
+	rm -rf *.o rt-biplot *-cint.cpp *-cint.h rt-plot
 # install: all 
 # 	mkdir -p ${INSTALLDIR}
 # 	install rt-biplot ${INSTALLDIR}
