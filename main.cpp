@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 
     // Watch for stdin
     TFileHandler fh( STDIN_FILENO , TFileHandler::kRead );
-    TQObject::Connect(&fh, "Notified()", "BiplotMainFrame", &app, "readMoreData()");
+    TQObject::Connect(&fh, "Notified()", "RtPlot", &app, "readMoreData()");
     
     app.Run();
     return 0;

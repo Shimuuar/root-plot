@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include "RtPlot.hpp"
 //#include "reader.hpp"
 
@@ -18,5 +19,12 @@ RtPlot::~RtPlot()
 }
 
 void RtPlot::readMoreData() {
+    std::cout << "<<Reading>>\n";
+    
+    std::string str;
+    bool ok = reader.getLine( str );
+    if( ok ) {
+        std::cout << "Got <" << str << std::endl;
+    }
 }
 
