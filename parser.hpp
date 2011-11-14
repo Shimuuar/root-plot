@@ -1,6 +1,6 @@
 
-#ifndef ROOT_PARSER__HPP__
-#define ROOT_PARSER__HPP__
+#ifndef RT_ROOT_PARSER__HPP__
+#define RT_ROOT_PARSER__HPP__
 
 #include <string>
 #include <deque>
@@ -54,4 +54,4 @@ inline std::ostream& operator << (std::ostream& out, const WhiteSpace&) {
     return out << "{WhiteSpace}";
 }
 
-#endif /* ROOT_PARSER__HPP__ */
+#endif /* RT_ROOT_PARSER__HPP__ */

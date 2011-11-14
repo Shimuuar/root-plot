@@ -1,17 +1,16 @@
 
-#include <TApplication.h>
+#include "RtPlot.hpp"
+
 #include <TSysEvtHandler.h>
 
 int main(int argc, char** argv)
 {
     // ROOT initialization
-    int   dummy_argc = 1;
-    char* dummy_argv[] = {"rt-biplot"};
-    TApplication app("View biplot", &dummy_argc, dummy_argv);
+    RtPlot app;
 
     // Watch for stdin
     TFileHandler fh( STDIN_FILENO , TFileHandler::kRead );
-
+    TQObject::Connect(&fh, "Notified()", "BiplotMainFrame", &app, "readMoreData()");
     
     app.Run();
     return 0;

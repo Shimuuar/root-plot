@@ -1,5 +1,5 @@
-#ifndef ROOT_PLOT__HPP__
-#define ROOT_PLOT__HPP__
+#ifndef RT_ROOT_PLOT__HPP__
+#define RT_ROOT_PLOT__HPP__
 
 // Classes for plotting
 
@@ -144,4 +144,4 @@ private:
     int        width;
 };
 
-#endif /* ROOT_PLOT__HPP__ */
+#endif /* RT_ROOT_PLOT__HPP__ */

@@ -1,8 +1,12 @@
-#ifndef ROOT_RTPLOT__HPP__
-#define ROOT_RTPLOT__HPP__
+#ifndef RrT_ROOT_RTPLOT__HPP__
+#define RT_ROOT_RTPLOT__HPP__
+
+#include "reader.hpp"
 
 #include <TApplication.h>
 #include <RQ_OBJECT.h>
+
+
 
 // Main application for rt-plot
 class RtPlot : public TApplication {
@@ -10,7 +14,15 @@ class RtPlot : public TApplication {
 public:
     RtPlot();
     virtual ~RtPlot();
+
+    // Read more data from standard input
+    void readMoreData();
 private:
+    LineReader reader;
+
+public:
+    // CINT stuff
+    ClassDef(RtPlot,1);
 };
 
-#endif /* ROOT_RTPLOT__HPP__ */
+#endif /* RT_ROOT_RTPLOT__HPP__ */

@@ -45,7 +45,7 @@ LineReader::Result LineReader::getLine(std::string& str) {
 
     // End of file.  
     if( n == 0  )
-        return EOF;
+        return Eof;
     if( n == -1 ) {
         // Early return and no data yet
         if( n == EAGAIN      ||

@@ -35,7 +35,7 @@ rt-plot : main.o object.o reader.o parser.o parser.lex.o RtPlot.o RtPlot-cint.o
 
 # Add CINT classes.
 %-cint.cpp: %.hpp
-	rm -f $@
+	rm -f $@ `echo $@ | sed s/cpp$$/h/`
 	${ROOTCINT} $@ -c $<
 
 %.o : %.cpp $(HEADERS)

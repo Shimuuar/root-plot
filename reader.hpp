@@ -1,5 +1,5 @@
-#ifndef ROOT_READER__HPP__
-#define ROOT_READER__HPP__
+#ifndef RT_ROOT_READER__HPP__
+#define RT_ROOT_READER__HPP__
 
 #include <vector>
 #include <string>
@@ -12,7 +12,7 @@ public:
     enum Result {
         OK     = 0,             // Line read succesfully
         NoData,                 // Not enough data
-        EOF                     // EOF reached
+        Eof                     // EOF reached
     };
     
     // Create line reader which reads from fd. FD is set into
@@ -34,4 +34,4 @@ private:
 };
 
 
-#endif /* ROOT_READER__HPP__ */
+#endif /* RT_ROOT_READER__HPP__ */
