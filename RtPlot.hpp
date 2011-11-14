@@ -4,6 +4,7 @@
 #include "reader.hpp"
 
 #include <TApplication.h>
+#include <TSysEvtHandler.h>
 #include <RQ_OBJECT.h>
 
 
@@ -18,8 +19,8 @@ public:
     // Read more data from standard input
     void readMoreData();
 private:
-    LineReader reader;
-
+    LineReader    reader;       // Reader for stdin
+    TFileHandler* fh;           // Notify when there is data to read
 public:
     // CINT stuff
     ClassDef(RtPlot,1);

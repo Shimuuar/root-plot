@@ -1,5 +1,7 @@
 
 #include <iostream>
+
+
 #include "RtPlot.hpp"
 //#include "reader.hpp"
 
@@ -10,19 +12,25 @@ static int         dummy_argc   = 1;
 
 RtPlot::RtPlot() :
     TApplication( "rt-plot", &dummy_argc, const_cast<char**>( dummy_argv ) ),
-    reader(STDIN_FILENO)
+    reader(STDIN_FILENO),
+    fh( new TFileHandler(STDIN_FILENO , TFileHandler::kRead) )
 {
+    fh->Add();
+    TQObject::Connect(fh, "Notified()", "RtPlot", this, "readMoreData()");
 }
 
 RtPlot::~RtPlot()
 {
+    delete fh;
 }
 
 void RtPlot::readMoreData() {
-    if( reader.eof() )
-        return;
     std::cout << "<<Reading>>\n";
-    
+    if( reader.eof() ) {
+        delete fh;
+        fh = 0;
+    }
+   
     std::string str;
     if( reader.getLine( str ) == LineReader::OK ) {
         std::cout << "Got <" << str << "> n=" << str.size() << std::endl;
