@@ -23,6 +23,8 @@ public:
     // and content of string doesn't change.
     Result getLine(std::string& str);
 
+    // Check for EOF
+    bool eof() const { return done; }
 private:
     // Try to find line in the buffer. If line fould it's placed into
     // std::string
@@ -31,6 +33,7 @@ private:
     int               fd;       // File descriptor
     std::vector<char> buf;      // Data buffer
     size_t            nBytes;   // Number of bytes in buffer
+    bool              done;     // Are we at EOF
 };
 
 

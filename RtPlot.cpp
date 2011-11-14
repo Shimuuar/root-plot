@@ -19,12 +19,13 @@ RtPlot::~RtPlot()
 }
 
 void RtPlot::readMoreData() {
+    if( reader.eof() )
+        return;
     std::cout << "<<Reading>>\n";
     
     std::string str;
-    bool ok = reader.getLine( str );
-    if( ok ) {
-        std::cout << "Got <" << str << std::endl;
+    if( reader.getLine( str ) == LineReader::OK ) {
+        std::cout << "Got <" << str << "> n=" << str.size() << std::endl;
     }
 }
 

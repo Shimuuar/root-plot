@@ -10,7 +10,8 @@
 LineReader::LineReader(int fd_) :
     fd(fd_),
     buf(4096),
-    nBytes(0)
+    nBytes(0),
+    done(false)
 {
     fcntl(fd, F_SETFL, O_NONBLOCK);
 }
@@ -44,8 +45,10 @@ LineReader::Result LineReader::getLine(std::string& str) {
     ssize_t n = read(fd, &buf[0]+nBytes, buf.size() - nBytes);
 
     // End of file.  
-    if( n == 0  )
+    if( n == 0  ) {
+        done = true;
         return Eof;
+    }
     if( n == -1 ) {
         // Early return and no data yet
         if( errno == EAGAIN      ||
