@@ -16,7 +16,7 @@ C        = gcc
 CXX      = g++
 CXXFLAGS = -g -O2 -Wall -Wextra `${ROOTCFG} --cflags`
 CFLAGS   = -g -O2 -Wall -Wextra -std=c99
-LDFLAGS  = `${ROOTCFG} --libs` -lGui
+LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp
 #BiplotMainFrame.hpp  hist.hpp  parser.hpp  plotobj.hpp  ptr.hpp

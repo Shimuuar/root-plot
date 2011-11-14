@@ -17,14 +17,9 @@ struct Keyword {
         word(str)
     {}
 };
-std::ostream& operator << (std::ostream& out, const Keyword& k) {
-    return out << "{Keyword} " << k.word;
-}
 
+// Whitespace token
 struct WhiteSpace {};
-std::ostream& operator << (std::ostream& out, const WhiteSpace& k) {
-    return out << "{WhiteSpace}";
-}
 
 // Token of the language
 typedef boost::variant< int
@@ -46,4 +41,15 @@ bool lexLine(const std::string& str, LexedLine& res);
 class Parser {
     
 };
+
+
+// ================================================================
+// HELPERS
+inline std::ostream& operator << (std::ostream& out, const Keyword& k) {
+    return out << "{Keyword} " << k.word;
+}
+inline std::ostream& operator << (std::ostream& out, const WhiteSpace&) {
+    return out << "{WhiteSpace}";
+}
+
 #endif /* ROOT_PARSER__HPP__ */
