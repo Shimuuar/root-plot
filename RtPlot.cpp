@@ -1,6 +1,7 @@
 
 #include <iostream>
 
+#include "RtMainFrame.hpp"
 
 #include "RtPlot.hpp"
 //#include "reader.hpp"
@@ -18,6 +19,9 @@ RtPlot::RtPlot() :
     // Set up notification
     fh->Add();
     TQObject::Connect(fh, "Notified()", "RtPlot", this, "readMoreData()");
+    // Create window
+    // FIXME: should work even without X
+    RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
 }
 
 RtPlot::~RtPlot()
