@@ -12,14 +12,26 @@ Parser::Parser() :
 
 void Parser::feedLine(Plot* plot, const std::string& str) {
     switch( state ) {
-    Command:
+    case Command:
         procCommand(plot,str);
         break;
-    Graph:
+    case Graph:
         procGraph(plot, str);
         break;
     }
 }
+
+// ================================================================ //
+// Language #define
+
+bool keyword(const std::string& kwd, LexedLine& row) {
+    if( row.size() == 0 )
+        return false;
+    Keyword* str = boost::get<Keyword>( &row.front() );
+    return  str != 0
+        && *str == kwd
+        && (row.size() == 1 || boost::get<WhiteSpace>( &row[1] ) != 0 );
+};
 
 void Parser::procCommand(Plot* plot, const std::string& str ) {
     LexedLine row;

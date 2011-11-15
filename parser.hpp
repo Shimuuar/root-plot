@@ -67,6 +67,13 @@ private:
 
 // ================================================================
 // HELPERS
+// Equality tests 
+inline bool operator == (const Keyword& a,  const Keyword&  b) { return a == b; }
+inline bool operator != (const Keyword& a,  const Keyword&  b) { return a != b; }
+inline bool operator == (const WhiteSpace&, const WhiteSpace&) { return true;   }
+inline bool operator != (const WhiteSpace&, const WhiteSpace&) { return false;  }
+
+
 inline std::ostream& operator << (std::ostream& out, const Keyword& k) {
     return out << "{Keyword} " << k.word;
 }
