@@ -27,7 +27,8 @@ RtMainFrame::RtMainFrame(const TGWindow* p) :
     //                  "BiplotMainFrame", this, "savePDF_button()" );
     hframe->AddFrame( buttonPDF
                     , new TGLayoutHints(kLHintsCenterX,5,5,3,4));
-
+    AddFrame(hframe,new TGLayoutHints(kLHintsCenterX,2,2,2,2));
+    
 	// Sets window name and shows the main frame
 	SetWindowName("RT-Biplot");
 	MapSubwindows();
