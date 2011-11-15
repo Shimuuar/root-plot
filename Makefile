@@ -22,14 +22,15 @@ LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp
 OBJS     = \
-	main.o object.o reader.o  parser.o parser.lex.o RtPlot.o RtPlot-cint.o
+	main.o object.o reader.o \
+	parser.o parser.l.o      \
+	RtPlot.o RtPlot-cint.o
 
 
 ################################################################
 all : rt-plot
 
-
-rt-plot : main.o object.o reader.o parser.o parser.lex.o RtPlot.o RtPlot-cint.o
+rt-plot : ${OBJS}
 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
 
 
@@ -42,16 +43,8 @@ rt-plot : main.o object.o reader.o parser.o parser.lex.o RtPlot.o RtPlot-cint.o
 	${CXX} -c ${CXXFLAGS} $< -o $@
 %.o : %.c 
 	${C} ${CFLAGS} -c $< -o $@
-%.lex.cpp : %.lex
+%.l.cpp : %.l
 	flex -o $@ $<
-
-
-# rt-echo : rt-echo.o
-# 	${C} ${CFLAGS} -o $@ $+
-# rt-unix-wrapper : rt-unix-wrapper.o
-# 	${C} ${CFLAGS} -o $@ $+
-# rt-biplot: rt-biplot.o BiplotMainFrame.o BiplotMainFrame-cint.o hist.o plotobj.o parser.o
-# 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
 
 clean:
 	rm -rf *.o rt-biplot *-cint.cpp *-cint.h rt-plot
