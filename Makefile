@@ -39,7 +39,7 @@ rt-plot : ${OBJS}
 # Add CINT classes.
 %-cint.h %-cint.cpp: %.hpp
 	rm -f $@ `echo $@ | sed s/cpp$$/h/`
-	${ROOTCINT} $@ -c $<
+	${ROOTCINT} $@ -c "$<-"
 
 %.o : %.cpp $(HEADERS)
 	${CXX} -c ${CXXFLAGS} $< -o $@

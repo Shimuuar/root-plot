@@ -37,3 +37,6 @@ RtMainFrame::RtMainFrame(const TGWindow* p) :
 
 RtMainFrame::~RtMainFrame() {
 }
+
+// ROOT
+void RtMainFrame::Streamer(TBuffer&) {}
