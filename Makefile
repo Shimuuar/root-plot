@@ -22,9 +22,10 @@ LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp
 OBJS     = \
-	main.o object.o reader.o \
-	parser.o parser.l.o      \
-	RtPlot.o RtPlot-cint.o
+	main.o object.o reader.o                \
+	parser.o parser.l.o                     \
+	RtPlot.o      RtPlot-cint.o             \
+	RtMainFrame.o RtMainFrame-cint.o
 
 
 ################################################################
@@ -35,7 +36,7 @@ rt-plot : ${OBJS}
 
 
 # Add CINT classes.
-%-cint.cpp: %.hpp
+%-cint.h %-cint.cpp: %.hpp
 	rm -f $@ `echo $@ | sed s/cpp$$/h/`
 	${ROOTCINT} $@ -c $<
 
