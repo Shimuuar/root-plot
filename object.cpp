@@ -8,22 +8,61 @@
 #include <TCanvas.h>
 
 
+static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
+    if( ! r1.is_initialized() )
+        return r2;
+    if( ! r2.is_initialized() )
+        return r1;
+    return Range( std::min(r1->low, r2->low) ,
+                  std::max(r1->hi,  r2->hi ) );
+}
 
 // ================================================================ //
 // ==== Plot
 
 void Plot::clear() {
-    canvas->Clear();
-    objStack.resize(0);
+    m_objStack.resize(0);
 }
 
-void Plot::draw() {
-    canvas->Clear();
+void Plot::draw(TCanvas* cnv) {
+    // canvas->Clear();
     // FIXME!
 }
 
-void Plot::redraw() {
-    // FIXME!
+void Plot::pushObject(PlotObject* plot) {
+    m_objStack.push_back( boost::shared_ptr<PlotObject>(plot) );
+}
+
+void Plot::setLineColor(Plot::Color color) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setLineColor(color);
+}
+
+void Plot::setLineWidth(int width) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setLineWidth(width);
+}
+
+RangeM Plot::xRange() const {
+    if( m_xRange.is_initialized() )
+        return m_xRange;
+
+    RangeM rng;
+    for(Stack::const_iterator i = m_objStack.begin(); i != m_objStack.end(); ++i ) {
+        rng = joinRange(rng, (*i)->xRange());
+    }
+    return rng;
+}
+
+RangeM Plot::yRange() const {
+    if( m_yRange.is_initialized() )
+        return m_yRange;
+
+    RangeM rng;
+    for(Stack::const_iterator i = m_objStack.begin(); i != m_objStack.end(); ++i ) {
+        rng = joinRange(rng, (*i)->yRange());
+    }
+    return rng;
 }
 
 

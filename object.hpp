@@ -55,22 +55,34 @@ public:
         Vertical,
         Horizontal
     };
+ 
+    // Draw everything
+    void draw(TCanvas* cnv);
+
+    // ======================================== //
+    // Object manipulations
 
     // Clear plot and delete entire object stack
     void clear();
     
-    // Draw everything
-    void draw();
-    // Redraw. Just makes canvas update
-    void redraw();
+    // Push object on the top of stack;
+    void pushObject(PlotObject* plot);
+    // Set line color for top object. Noop if stack is empty
+    void setLineColor(Plot::Color);
+    // Set line width for top object. Noop if stack is empty
+    void setLineWidth(int width);
+    
+    // X range for plot
+    RangeM xRange() const;
+    // Y range for plot
+    RangeM yRange() const;
 
-    // TCanvas* getCanvas() { return cnv; }
 private:
-    TCanvas*                                     canvas;
-    std::vector< boost::shared_ptr<PlotObject> > objStack; // Stack of objects
-    boost::optional<Range>                       xRange;   // X range
-    boost::optional<Range>                       yRange;   // Y range
-    boost::shared_ptr<TLegend>                   legend;   // Legend of the plot
+    typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
+    Stack                      m_objStack; // Stack of objects
+    boost::optional<Range>     m_xRange;   // X range
+    boost::optional<Range>     m_yRange;   // Y range
+    boost::shared_ptr<TLegend> m_legend;   // Legend of the plot
 };
 
 // Object which

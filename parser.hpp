@@ -8,6 +8,7 @@
 
 #include <boost/variant.hpp>
 
+class Plot;
 
 // Keyword in the language
 struct Keyword {
@@ -41,7 +42,10 @@ bool lexLine(const std::string& str, LexedLine& res);
 
 // Line parser
 class Parser {
-    
+public:
+    // Feed line to the parser
+    void feedLine(Plot* plot, const std::string& str);
+private:
 };
 
 

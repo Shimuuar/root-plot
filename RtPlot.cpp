@@ -49,12 +49,7 @@ void RtPlot::readMoreData() {
    
     std::string str;
     if( reader->getLine( str ) == LineReader::OK ) {
-        // LexedLine line;
-        // if( !lexLine( ) ) {
-        //     std::cerr << 
-        //     return;
-        // }
-        // std::cout << "Got <" << str << "> n=" << str.size() << std::endl;
+        parser->feedLine( plot, str );
     }
 }
 
