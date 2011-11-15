@@ -15,6 +15,7 @@ RtPlot::RtPlot() :
     reader(STDIN_FILENO),
     fh( new TFileHandler(STDIN_FILENO , TFileHandler::kRead) )
 {
+    // Set up notification
     fh->Add();
     TQObject::Connect(fh, "Notified()", "RtPlot", this, "readMoreData()");
 }
@@ -25,7 +26,7 @@ RtPlot::~RtPlot()
 }
 
 void RtPlot::readMoreData() {
-    std::cout << "<<Reading>>\n";
+    // No more data from stdin
     if( reader.eof() ) {
         delete fh;
         fh = 0;
