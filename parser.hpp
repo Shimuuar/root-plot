@@ -4,6 +4,7 @@
 
 #include <string>
 #include <deque>
+#include <vector>
 #include <iostream>
 
 #include <boost/variant.hpp>
@@ -43,9 +44,24 @@ bool lexLine(const std::string& str, LexedLine& res);
 // Line parser
 class Parser {
 public:
+    // Construct parser
+    Parser();
+
     // Feed line to the parser
     void feedLine(Plot* plot, const std::string& str);
 private:
+    enum State {
+        Command,
+        Graph
+    };
+
+    void procCommand(Plot* plot, const std::string& str );
+    void procGraph(  Plot* plot, const std::string& str );
+    
+    State state;
+    
+    // For graph
+    std::vector<double> xs,ys;
 };
 
 
