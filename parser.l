@@ -5,6 +5,7 @@
     
 #define YY_DECL int lexLineWorker(LexedLine& res)
 %}
+%option nounput
 
 ident    [a-zA-Z][a-zA-Z0-9]*
 int      [-+]?[0-9]+
