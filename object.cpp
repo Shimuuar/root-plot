@@ -6,6 +6,8 @@
 #include <TH1.h>
 #include <TGraph.h>
 #include <TCanvas.h>
+#include <TROOT.h>
+
 
 
 static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
@@ -20,17 +22,30 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
 // ================================================================ //
 // ==== Plot
 
+Plot::Plot(TCanvas* cnv) :
+    m_canvas(cnv)
+{}
+
 void Plot::clear() {
     m_objStack.resize(0);
+    // Delete extra canvases. They could appear when one creates slice
+    TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
+    for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
+        if( cnv != m_canvas )
+            delete cnv;
+    }
+    m_canvas->Clear();
 }
 
-void Plot::draw(TCanvas* cnv) {
-    // canvas->Clear();
-    // FIXME!
-}
+// void Plot::draw() {
+//     m_canvas->Update();
+//     // canvas->Clear();
+//     // FIXME!
+// }
 
 void Plot::pushObject(PlotObject* plot) {
     m_objStack.push_back( boost::shared_ptr<PlotObject>(plot) );
+    plot->plotOn(this);
 }
 
 void Plot::setLineColor(Plot::Color color) {

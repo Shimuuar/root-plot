@@ -20,7 +20,6 @@ RtPlot::RtPlot() :
     TApplication( "rt-plot", &dummy_argc, const_cast<char**>( dummy_argv ) ),
     reader(    new LineReader(STDIN_FILENO) ),
     parser(    new Parser ),
-    plot(      new Plot   ),
     fdWatcher( new TFileHandler(STDIN_FILENO , TFileHandler::kRead) )
 {
     // Set up notification
@@ -29,7 +28,8 @@ RtPlot::RtPlot() :
                       "RtPlot", this, "readMoreData()");
     // Create window
     // FIXME: should work even without X
-    RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
+    // RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
+    // plot = new Plot( bp->getCanvas() );
 }
 
 RtPlot::~RtPlot()
@@ -46,9 +46,11 @@ void RtPlot::readMoreData() {
         delete fdWatcher;
         fdWatcher = 0;
     }
-   
-    std::string str;
+
+   std::string str;
     if( reader->getLine( str ) == LineReader::OK ) {
+        std::cout << "================\n";
+        std::cout << "> '" << str << "'\n";
         parser->feedLine( plot, str );
     }
 }

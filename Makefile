@@ -24,7 +24,7 @@ HEADERS  = object.hpp reader.hpp parser.hpp \
 	   RtMainFrame.hpp RtPlot.hpp
 OBJS     = \
 	main.o object.o reader.o                \
-	parser.o parser.l.o                     \
+	parser.o parser.l.o parser.y.o          \
 	RtPlot.o      RtPlot-cint.o             \
 	RtMainFrame.o RtMainFrame-cint.o
 
@@ -45,11 +45,13 @@ rt-plot : ${OBJS}
 	${CXX} -c ${CXXFLAGS} $< -o $@
 %.o : %.c 
 	${C} ${CFLAGS} -c $< -o $@
-%.l.cpp : %.l
-	flex -o $@ $<
+parser.l.cpp : parser.l parser.y.cpp
+	flex --outfile=$@ --header=parser.l.hpp $<
+parser.y.cpp : parser.y
+	bison --defines=parser.tab.h parser.y -o parser.y.cpp
 
 clean:
-	rm -rf *.o rt-biplot *-cint.cpp *-cint.h rt-plot
+	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h rt-plot 
 # install: all 
 # 	mkdir -p ${INSTALLDIR}
 # 	install rt-biplot ${INSTALLDIR}

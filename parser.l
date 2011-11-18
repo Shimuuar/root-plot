@@ -1,11 +1,13 @@
 
 %{
 #include "parser.hpp"
+#include "parser.tab.h"
+
 #include <boost/lexical_cast.hpp>
-    
-#define YY_DECL int lexLineWorker(LexedLine& res)
 %}
-%option nounput
+
+%option nounput noyywrap never-interactive
+%option bison-bridge
 
 ident    [a-zA-Z][a-zA-Z0-9]*
 int      [-+]?[0-9]+
@@ -14,26 +16,29 @@ strlit   \"[^\"]*\"
 
 %%%
 
-{ident}     res.push_back( Keyword( yytext ) );
-{int}       res.push_back( boost::lexical_cast<int>( yytext ) );
-{ws}        res.push_back( WhiteSpace() );
-{strlit}    {
-                std::string s = yytext+1;
-                res.push_back( s.substr(0, s.size() - 1) );
-            }
+ /* Keywords */
+clear       { return KW_CLEAR; }
+plot        { return KW_PLOT;  }
+add         { return KW_ADD;   }
+set         { return KW_SET;   }
+
+ /* Literals */
+{int}       { *yylval = boost::lexical_cast<int>( yytext ); return TOK_INT; }
+{ws}        { return TOK_WS; }
+{strlit}    { *yylval = std::string( yytext+1, strlen(yytext+1) - 1 ); return TOK_STR; }
 
 %%%
 
-bool lexLine(const std::string& str, LexedLine& res) {
-    try {
-        res.clear();
-        // Set up flex
-        yy_scan_string( str.c_str() );
-        lexLineWorker( res );
-        yy_delete_buffer( YY_CURRENT_BUFFER );
-    } catch( ... ) {
-        res.clear();
-        return false;
-    }
-    return true;
-}
+/* bool lexLine(const std::string& str, LexedLine& res) { */
+/*     try { */
+/*         res.clear(); */
+/*         // Set up flex */
+/*         yy_scan_string( str.c_str() ); */
+/*         lexLineWorker( res ); */
+/*         yy_delete_buffer( YY_CURRENT_BUFFER ); */
+/*     } catch( ... ) { */
+/*         res.clear(); */
+/*         return false; */
+/*     } */
+/*     return true; */
+/* } */

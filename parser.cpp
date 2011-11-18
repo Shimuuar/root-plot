@@ -10,7 +10,11 @@ Parser::Parser() :
 }
 
 
+void parseLine(const std::string& str);
 void Parser::feedLine(Plot* plot, const std::string& str) {
+    parseLine(str);
+    return ;
+    
     switch( state ) {
     case Command:
         procCommand(plot,str);
@@ -34,11 +38,11 @@ bool keyword(const std::string& kwd, LexedLine& row) {
 };
 
 void Parser::procCommand(Plot* plot, const std::string& str ) {
-    LexedLine row;
-    if( !lexLine(str, row) ) {
-        std::cerr << "rt-plot: Bad line '" << str << "'\n";
-        return;
-    }
+    // LexedLine row;
+    // if( !lexLine(str, row) ) {
+    //     std::cerr << "rt-plot: Bad line '" << str << "'\n";
+    //     return;
+    // }
     // Line successfully lexed
     
 }

@@ -32,7 +32,7 @@ typedef boost::variant< int
                       , WhiteSpace
                       >
         Token;
-
+#define YYSTYPE Token
 
 // After lexing line is just a sequence of tokens
 typedef std::deque<Token> LexedLine;

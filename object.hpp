@@ -55,9 +55,13 @@ public:
         Vertical,
         Horizontal
     };
- 
+
+    // Construct plot object which will draw on the canvas. Plot
+    // object doesn't own canvas.
+    Plot(TCanvas* cnv);
+    
     // Draw everything
-    void draw(TCanvas* cnv);
+    // void draw(TCanvas* cnv);
 
     // ======================================== //
     // Object manipulations
@@ -79,6 +83,8 @@ public:
 
 private:
     typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
+
+    TCanvas*                   m_canvas;   // Canvas to draw on
     Stack                      m_objStack; // Stack of objects
     boost::optional<Range>     m_xRange;   // X range
     boost::optional<Range>     m_yRange;   // Y range
