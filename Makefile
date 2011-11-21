@@ -20,7 +20,7 @@ CXXFLAGS = -g -O2 -Wall -Wextra `${ROOTCFG} --cflags`
 CFLAGS   = -g -O2 -Wall -Wextra -std=c99
 LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 PREFIX   = ${HOME}/opt
-HEADERS  = object.hpp reader.hpp parser.hpp \
+HEADERS  = object.hpp reader.hpp parser.hpp closure.hpp \
 	   RtMainFrame.hpp RtPlot.hpp
 OBJS     = \
 	main.o object.o reader.o                \
@@ -60,3 +60,4 @@ clean:
 # #	install rt-tree   ${INSTALLDIR}
 # 	install rt-echo         ${INSTALLDIR}
 # 	install rt-unix-wrapper ${INSTALLDIR}
+

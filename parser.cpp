@@ -4,23 +4,32 @@
 int yyparse();
 
 #include <ctype.h>
+#include <boost/noncopyable.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
 
+#include "closure.hpp"
+
+
+
+
+// ================================================================ //
+ 
 void parseLine(const std::string& str) {
     YY_BUFFER_STATE state;
     state = yy_scan_string( str.c_str() );
 
-    if( yyparse( ) ) {
-        std::cout << "BAD\n";
-    } else {
-        std::cout << "OK\n";
-    }
+    // if( yyparse( ) ) {
+    //     std::cout << "BAD\n";
+    // } else {
+    //     std::cout << "OK\n";
+    // }
     yy_delete_buffer( state );
 }
 
-int yyerror(char const* str) {
-    return 0;
-}
+// int yyerror(char const* str) {
+//     return 0;
+// }
 
 // ================================================================ //
 Parser::Parser() :
@@ -37,6 +46,7 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
     case Command:
         procCommand(plot,str);
         break;
+        
     case Graph:
         procGraph(plot, str);
         break;

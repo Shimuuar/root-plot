@@ -1,16 +1,18 @@
 
 %{
 
-//    typedef void* yyscan_t;
 #include "parser.hpp"
 #include "parser.l.hpp"
 
+#include "object.hpp"
+#include "closure.hpp"
 // #define YY_DECL int lexLineWorker(LexedLine& res)
-int yyerror(const char* str);
+    void yyerror(const ClosureStack<Plot>&, const char*);
 
 %}
 
 %define api.pure
+%parse-param {ClosureStack<Plot>& delay}
 
  // Root rule
 %start input
@@ -50,3 +52,7 @@ eol  : /* empty */
      ;
 
 %%
+
+void yyerror(const ClosureStack<Plot>&, const char*) {
+    return ;
+}
