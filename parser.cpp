@@ -1,7 +1,7 @@
 
 #include "parser.hpp"
 #include "parser.l.hpp"
-int yyparse();
+// int yyparse();
 
 #include <ctype.h>
 #include <boost/noncopyable.hpp>
@@ -11,45 +11,51 @@ int yyparse();
 #include "closure.hpp"
 
 
+// Accumulator for lines
+class LineAccum {
+public:
+    virtual ~LineAccum() {}
 
+    // Return true if accumulator is ready and performed action
+    virtual bool flush(Plot* plot) = 0;
+    // Feed line to accumulator
+    virtual void feedLine(const std::string& str) = 0;
+};
+
+class AccGraph : public LineAccum {
+public:
+    virtual ~AccGraph() {}
+
+    virtual bool flush(Plot*);
+    virtual void feedLine(const std::string& str);
+private:
+    std::vector<double> xs, ys;
+};
+
+bool AccGraph::flush(Plot* plot) {
+    return true;
+}
+
+void AccGraph::feedLine(const std::string& str) {
+    
+}
 
 // ================================================================ //
  
-void parseLine(const std::string& str) {
-    YY_BUFFER_STATE state;
-    state = yy_scan_string( str.c_str() );
-
-    // if( yyparse( ) ) {
-    //     std::cout << "BAD\n";
-    // } else {
-    //     std::cout << "OK\n";
-    // }
-    yy_delete_buffer( state );
-}
-
-// int yyerror(char const* str) {
-//     return 0;
-// }
 
 // ================================================================ //
-Parser::Parser() :
-    state(Command)
+Parser::Parser() 
 {
 }
 
 
 void Parser::feedLine(Plot* plot, const std::string& str) {
-    parseLine(str);
-    return ;
-    
-    switch( state ) {
-    case Command:
-        procCommand(plot,str);
-        break;
+    if( accum ) {
         
-    case Graph:
-        procGraph(plot, str);
-        break;
+    } else {
+        YY_BUFFER_STATE state;
+        state = yy_scan_string( str.c_str() );
+        yy_delete_buffer( state );        
     }
 }
 

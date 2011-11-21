@@ -6,8 +6,8 @@
 
 #include "object.hpp"
 #include "closure.hpp"
-// #define YY_DECL int lexLineWorker(LexedLine& res)
-    void yyerror(const ClosureStack<Plot>&, const char*);
+
+void yyerror(const ClosureStack<Plot>&, const char*);
 
 %}
 

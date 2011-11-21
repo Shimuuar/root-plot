@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 
 class Plot;
 
@@ -29,6 +30,8 @@ typedef boost::variant< int
 #define YYSTYPE Token
 
 
+class LineAccum;
+
 // Line parser
 class Parser {
 public:
@@ -45,11 +48,8 @@ private:
 
     void procCommand(Plot* plot, const std::string& str );
     void procGraph(  Plot* plot, const std::string& str );
-    
-    State state;
-    
-    // For graph
-    std::vector<double> xs,ys;
+
+    boost::shared_ptr<LineAccum> accum;
 };
 
 
