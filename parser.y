@@ -12,7 +12,7 @@
 %}
 
 %define api.pure
-%parse-param {ClosureStack<Plot>& delay}
+%parse-param {ClosureStack<Plot>& clos}
 
  // Root rule
 %start input
@@ -36,7 +36,7 @@ input : TOK_WS line
       | line
 
 line : ;
-     | KW_CLEAR eol          { std::cout << "CLEAR!\n"; }
+     | KW_CLEAR eol          { clos.append( delay<Plot>(&Plot::clear) ); }
      | KW_SET  TOK_WS set
      /* Plot commands */
      | KW_ADD  TOK_WS plot

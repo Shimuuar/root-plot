@@ -47,7 +47,7 @@ public:
     {}
     virtual ~Closure0P() {}
     virtual void force(type* p) {
-        (p.*f)();
+        (p->*f)();
     }
 private:
     func f;
@@ -63,7 +63,7 @@ public:
     {}
     virtual ~Closure1P() {}
     virtual void force(type* p) {
-        (p.*f)(x1);
+        (p->*f)(x1);
     }
 private:
     T1   x1;
@@ -79,7 +79,7 @@ public:
     {}
     virtual ~Closure2P() {}
     virtual void force(Plot* p) {
-        (p.*f)(x1,x2);
+        (p->*f)(x1,x2);
     }
 private:
     T1 x1;
