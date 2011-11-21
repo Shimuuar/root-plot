@@ -70,7 +70,7 @@ public:
     void clear();
     
     // Push object on the top of stack;
-    void pushObject(PlotObject* plot);
+    void pushObject(boost::shared_ptr<PlotObject> plot);
     // Set line color for top object. Noop if stack is empty
     void setLineColor(Plot::Color);
     // Set line width for top object. Noop if stack is empty

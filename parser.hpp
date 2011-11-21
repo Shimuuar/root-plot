@@ -3,7 +3,6 @@
 #define RT_ROOT_PARSER__HPP__
 
 #include <string>
-#include <deque>
 #include <vector>
 #include <iostream>
 
@@ -20,26 +19,15 @@ struct Keyword {
     {}
 };
 
-// Whitespace token
-struct WhiteSpace {};
-
-
 // Token of the language
 typedef boost::variant< int
                       , double
                       , std::string
                       , Keyword
-                      , WhiteSpace
                       >
         Token;
 #define YYSTYPE Token
 
-// After lexing line is just a sequence of tokens
-typedef std::deque<Token> LexedLine;
-
-
-// Lex line into accumulator
-bool lexLine(const std::string& str, LexedLine& res);
 
 // Line parser
 class Parser {
@@ -70,15 +58,9 @@ private:
 // Equality tests 
 inline bool operator == (const Keyword& a,  const Keyword&  b) { return a == b; }
 inline bool operator != (const Keyword& a,  const Keyword&  b) { return a != b; }
-inline bool operator == (const WhiteSpace&, const WhiteSpace&) { return true;   }
-inline bool operator != (const WhiteSpace&, const WhiteSpace&) { return false;  }
-
 
 inline std::ostream& operator << (std::ostream& out, const Keyword& k) {
     return out << "{Keyword} " << k.word;
-}
-inline std::ostream& operator << (std::ostream& out, const WhiteSpace&) {
-    return out << "{WhiteSpace}";
 }
 
 #endif /* RT_ROOT_PARSER__HPP__ */

@@ -6,13 +6,14 @@
 #include "parser.l.hpp"
 
 // #define YY_DECL int lexLineWorker(LexedLine& res)
-static int yyerror(const char* str);
+int yyerror(const char* str);
 
 %}
 
 %define api.pure
 
-%start line
+ // Root rule
+%start input
 
  // Literals
 %token TOK_WS
@@ -26,15 +27,22 @@ static int yyerror(const char* str);
 %token KW_ADD
 %token KW_PLOT
 
+ // ================================================================
 %%
+
+input : TOK_WS line
+      | line
 
 line : ;
      | KW_CLEAR eol          { std::cout << "CLEAR!\n"; }
+     | KW_SET  TOK_WS set
+     /* Plot commands */
      | KW_ADD  TOK_WS plot
      | KW_PLOT TOK_WS plot
      ;
 
 plot : eol
+set  : eol
 
 // End of line
 eol  : /* empty */
@@ -42,35 +50,3 @@ eol  : /* empty */
      ;
 
 %%
-
-       // int yyparse(void *param);
-void parseLine(const std::string& str) {
-    YY_BUFFER_STATE state;
-    state = yy_scan_string( str.c_str() );
-
-    // if ( yylex_init( &p ) ) {   // couldn't initialize
-    //     return;
-    // }
-
-    // state = yy_scan_string(str->c_str(), p);
-
-    if( yyparse( ) ) {
-        std::cout << "BAD\n";
-    } else {
-        std::cout << "OK\n";
-    }
-    yy_delete_buffer( state );
-    // if ( yyparse(&p) ) {    // error parsing
-    //     return NULL;
-    // }
-
-    // yy_delete_buffer(state, p.scanner);
-    // yylex_destroy( p );
-
-    return;
-    
-}
-
-static int yyerror(const char* str) {
-    return 0;
-}

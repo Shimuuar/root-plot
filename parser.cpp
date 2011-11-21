@@ -1,16 +1,34 @@
 
 #include "parser.hpp"
+#include "parser.l.hpp"
+int yyparse();
 
 #include <ctype.h>
 #include <boost/lexical_cast.hpp>
 
+void parseLine(const std::string& str) {
+    YY_BUFFER_STATE state;
+    state = yy_scan_string( str.c_str() );
+
+    if( yyparse( ) ) {
+        std::cout << "BAD\n";
+    } else {
+        std::cout << "OK\n";
+    }
+    yy_delete_buffer( state );
+}
+
+int yyerror(char const* str) {
+    return 0;
+}
+
+// ================================================================ //
 Parser::Parser() :
     state(Command)
 {
 }
 
 
-void parseLine(const std::string& str);
 void Parser::feedLine(Plot* plot, const std::string& str) {
     parseLine(str);
     return ;
@@ -27,15 +45,6 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
 
 // ================================================================ //
 // Language #define
-
-bool keyword(const std::string& kwd, LexedLine& row) {
-    if( row.size() == 0 )
-        return false;
-    Keyword* str = boost::get<Keyword>( &row.front() );
-    return  str != 0
-        && *str == kwd
-        && (row.size() == 1 || boost::get<WhiteSpace>( &row[1] ) != 0 );
-};
 
 void Parser::procCommand(Plot* plot, const std::string& str ) {
     // LexedLine row;

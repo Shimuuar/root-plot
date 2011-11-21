@@ -43,8 +43,8 @@ void Plot::clear() {
 //     // FIXME!
 // }
 
-void Plot::pushObject(PlotObject* plot) {
-    m_objStack.push_back( boost::shared_ptr<PlotObject>(plot) );
+void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
+    m_objStack.push_back( plot );
     plot->plotOn(this);
 }
 
