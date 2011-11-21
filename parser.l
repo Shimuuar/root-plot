@@ -21,6 +21,9 @@ clear       { return KW_CLEAR; }
 plot        { return KW_PLOT;  }
 add         { return KW_ADD;   }
 set         { return KW_SET;   }
+line        { return KW_LINE;  }
+width       { return KW_WIDTH; }
+color       { return KW_COLOR; }
 
  /* Literals */
 {int}       { *yylval = boost::lexical_cast<int>( yytext ); return TOK_INT; }

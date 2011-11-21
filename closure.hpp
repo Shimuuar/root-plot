@@ -18,25 +18,6 @@ public:
     virtual void force(type*) = 0;
 };
 
-// Stack of closures
-template<typename type>
-class ClosureStack : public Closure<type> {
-public:
-    virtual ~ClosureStack() {}
-
-    void append( typename Closure<type>::ptr x ) {
-        closures.push_back( x );
-    }
-    virtual void force(type* p) {
-        for(size_t i = 0; i < closures.size(); i++ ) {
-            closures[i]->force();
-        }
-    }
-private:
-    std::vector< typename Closure<type>::ptr > closures;
-};
-
-
 template<typename type>
 class Closure0P : public Closure<type> {
 public:
@@ -66,8 +47,8 @@ public:
         (p->*f)(x1);
     }
 private:
-    T1   x1;
     func f;
+    T1   x1;
 };
 
 template<typename type, typename T1, typename T2>
@@ -82,9 +63,9 @@ public:
         (p->*f)(x1,x2);
     }
 private:
+    func f;
     T1 x1;
     T2 x2;
-    func f;
 };
  
 
@@ -107,5 +88,33 @@ delay( typename Closure2P<type,T1,T2>::func f, const T2& a ) {
     return boost::shared_ptr< Closure<type> >( new Closure2P<type,T1,T2>(f, a) );
 }
 
+
+// Stack of closures
+template<typename type>
+class ClosureStack : public Closure<type> {
+public:
+    virtual ~ClosureStack() {}
+
+    void append( typename Closure<type>::ptr x ) {
+        closures.push_back( x );
+    }
+
+    // Delay evaluation
+    void delay( typename Closure0P<type>::func f) {
+        append( ::delay<type>(f) );
+    }
+    template<typename T1>
+    void delay( typename Closure1P<type,T1>::func f, const T1& x) {
+        append( ::delay<type,T1>(f,x) );
+    }
+    
+    virtual void force(type* p) {
+        for(size_t i = 0; i < closures.size(); i++ ) {
+            closures[i]->force();
+        }
+    }
+private:
+    std::vector< typename Closure<type>::ptr > closures;
+};
 
 #endif /* RT_PLOT_CLOSURE__HPP__ */

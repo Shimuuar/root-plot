@@ -24,8 +24,13 @@
 
  // Keywords
 %token KW_CLEAR
+ // SET
 %token KW_SET
+%token KW_LINE
+%token KW_COLOR
+%token KW_WIDTH
 
+ // PLOT
 %token KW_ADD
 %token KW_PLOT
 
@@ -36,7 +41,7 @@ input : TOK_WS line
       | line
 
 line : ;
-     | KW_CLEAR eol          { clos.append( delay<Plot>(&Plot::clear) ); }
+     | KW_CLEAR eol          { clos.delay( &Plot::clear ); }
      | KW_SET  TOK_WS set
      /* Plot commands */
      | KW_ADD  TOK_WS plot
@@ -44,7 +49,12 @@ line : ;
      ;
 
 plot : eol
-set  : eol
+set  : KW_LINE TOK_WS setLine
+
+setLine : KW_WIDTH TOK_WS TOK_INT eol
+        { clos.delay(&Plot::setLineWidth, boost::get<int>($3)); }
+        | KW_COLOR TOK_WS TOK_INT eol
+        { clos.delay(&Plot::setLineColor, static_cast<Plot::Color>( boost::get<int>($3)) ); }
 
 // End of line
 eol  : /* empty */
