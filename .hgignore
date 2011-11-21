@@ -1,3 +1,6 @@
 .*\.o$
 ^rt-plot$
 -cint\.h$
+\.l\.(cpp|hpp)$
+\.y\.(cpp|hpp)$
+\.tab\.h$

@@ -49,6 +49,9 @@ parser.l.cpp : parser.l parser.y.cpp
 	flex --outfile=$@ --header=parser.l.hpp $<
 parser.y.cpp : parser.y
 	bison --defines=parser.tab.h parser.y -o parser.y.cpp
+# Extra deps
+parser.o : parser.l.cpp
+
 
 clean:
 	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h rt-plot 
