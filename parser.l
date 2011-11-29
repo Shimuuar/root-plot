@@ -31,17 +31,3 @@ color       { return KW_COLOR; }
 {strlit}    { *yylval = std::string( yytext+1, strlen(yytext+1) - 1 ); return TOK_STR; }
 
 %%%
-
-/* bool lexLine(const std::string& str, LexedLine& res) { */
-/*     try { */
-/*         res.clear(); */
-/*         // Set up flex */
-/*         yy_scan_string( str.c_str() ); */
-/*         lexLineWorker( res ); */
-/*         yy_delete_buffer( YY_CURRENT_BUFFER ); */
-/*     } catch( ... ) { */
-/*         res.clear(); */
-/*         return false; */
-/*     } */
-/*     return true; */
-/* } */
