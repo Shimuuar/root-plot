@@ -39,27 +39,31 @@ void yyerror(Closure&, const char*);
  // ================================================================
 %%
 
-input : TOK_WS line
-      | line
+input
+  : TOK_WS line
+  | line
 
-line : /* empty */
-     | KW_CLEAR eol           { clos = bind(&Plot::clear, _1 ); }
-     | KW_SET  TOK_WS set
-     /* Plot commands */
-     | KW_ADD  TOK_WS plot
-     | KW_PLOT TOK_WS plot
-     ;
+line
+  : /* empty */
+  | KW_CLEAR eol           { clos = bind(&Plot::clear, _1 ); }
+  | KW_SET   TOK_WS set
+  /* Plot commands */
+  | KW_ADD   TOK_WS plot
+  | KW_PLOT  TOK_WS plot
+  ;
 
 plot : eol
 set  : KW_LINE TOK_WS setLine
 
-setLine : KW_WIDTH TOK_WS TOK_INT eol { clos = bind( &Plot::setLineWidth, _1, boost::get<int>($3) ); }
-        | KW_COLOR TOK_WS TOK_INT eol { clos = bind( &Plot::setLineColor, _1, static_cast<Plot::Color>( boost::get<int>($3)) ); }
+setLine
+  : KW_WIDTH TOK_WS TOK_INT eol { clos = bind( &Plot::setLineWidth, _1, boost::get<int>($3) ); }
+  | KW_COLOR TOK_WS TOK_INT eol { clos = bind( &Plot::setLineColor, _1, static_cast<Plot::Color>( boost::get<int>($3)) ); }
 
 // End of line
-eol  : /* empty */
-     | TOK_WS
-     ;
+eol
+  : /* empty */
+  | TOK_WS
+  ;
 
 %%
 

@@ -7,18 +7,19 @@
 #include <iostream>
 
 #include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 
 class Plot;
-
-
+class Parser;
 
 // Token of the language
-typedef boost::variant< int
-                      , double
-                      , std::string
-                      > Token;
+typedef boost::variant<int, double, std::string> Token;
 #define YYSTYPE Token
+
+// Closure for the parser. 
+typedef boost::function<void(Plot*,Parser*)> Closure;
+
 
 // Line parser
 class Parser {
@@ -41,16 +42,6 @@ private:
     
     // For graph
     std::vector<double> xs,ys;
-};
-
-
-typedef boost::function<void(Plot*,Parser*)> Closure;
-
-// Poor man's closures for delaying action.
-class ParserAction {
-public:
-    virtual ~ParserAction() {}
-    virtual void perform(Plot* plot, Parser* parser) = 0;
 };
 
 #endif /* RT_ROOT_PARSER__HPP__ */
