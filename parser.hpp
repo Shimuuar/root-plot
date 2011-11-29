@@ -7,27 +7,18 @@
 #include <iostream>
 
 #include <boost/variant.hpp>
+#include <boost/function.hpp>
 
 class Plot;
 
-// Keyword in the language
-struct Keyword {
-    std::string word;
 
-    Keyword(const std::string& str) :
-        word(str)
-    {}
-};
 
 // Token of the language
 typedef boost::variant< int
                       , double
                       , std::string
-                      , Keyword
-                      >
-        Token;
+                      > Token;
 #define YYSTYPE Token
-
 
 // Line parser
 class Parser {
@@ -53,14 +44,13 @@ private:
 };
 
 
-// ================================================================
-// HELPERS
-// Equality tests 
-inline bool operator == (const Keyword& a,  const Keyword&  b) { return a == b; }
-inline bool operator != (const Keyword& a,  const Keyword&  b) { return a != b; }
+typedef boost::function<void(Plot*,Parser*)> Closure;
 
-inline std::ostream& operator << (std::ostream& out, const Keyword& k) {
-    return out << "{Keyword} " << k.word;
-}
+// Poor man's closures for delaying action.
+class ParserAction {
+public:
+    virtual ~ParserAction() {}
+    virtual void perform(Plot* plot, Parser* parser) = 0;
+};
 
 #endif /* RT_ROOT_PARSER__HPP__ */
