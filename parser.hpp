@@ -7,7 +7,6 @@
 
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/function.hpp>
 
 
 
@@ -20,9 +19,16 @@ typedef boost::variant<int, double, std::string> Token;
 // Define token type for bison
 #define YYSTYPE Token
 
-// Closure for the parser. To be performed actions are stored as
-// closures.
-typedef boost::function<void(Plot*,Parser*)> Closure;
+struct ParseParam {
+    ParseParam(Parser* par, Plot* p) :
+        parser(par), plot(p), clearPlot(false)
+    {}
+    
+    Parser* parser;
+    Plot*   plot;
+    bool    clearPlot;
+};
+int yyparse(ParseParam);
 
 
 // Line parser
