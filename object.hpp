@@ -112,11 +112,11 @@ public:
 
 
 
-
+// Wrapper around ROOT histograms
 class PlotHist : public PlotObject {
     // Create graph out of ROOT graph. Will take outnership of the
     // copy.
-    PlotHist(TGraph* graph);
+    PlotHist(TH1* h);
 
     virtual void   plotOn(Plot* cxt);
     virtual RangeM xRange() const;
@@ -127,11 +127,12 @@ private:
     boost::scoped_ptr<TH1> hist;
 };
 
+// Wrapper around ROOT graphs
 class PlotGraph : public PlotObject {
 public:
     // Create graph out of ROOT graph. Will take outnership of the
     // copy.
-    PlotGraph(TGraph* graph);
+    PlotGraph(TGraph* g);
 
     virtual void   plotOn(Plot* cxt);
     virtual RangeM xRange() const;

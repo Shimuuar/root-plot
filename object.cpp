@@ -85,6 +85,10 @@ RangeM Plot::yRange() const {
 // ================================================================ //
 // ==== Histogram
 
+PlotHist::PlotHist(TH1* h) :
+    hist(h)
+{}
+
 void PlotHist::plotOn(Plot*) {
     hist->Draw( "SAME" );
 }
@@ -111,6 +115,10 @@ RangeM PlotHist::yRange() const {
 
 // ================================================================ //
 // ==== Graph
+
+PlotGraph::PlotGraph(TGraph* g) :
+    graph(g)
+{}
 
 void PlotGraph::plotOn(Plot*) {
     graph->Draw( "SAME" );
