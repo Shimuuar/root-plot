@@ -18,8 +18,12 @@ strlit   \"[^\"]*\"
 
  /* Keywords */
 clear       { return KW_CLEAR; }
+
 plot        { return KW_PLOT;  }
 add         { return KW_ADD;   }
+hist        { return KW_HIST;  }
+graph       { return KW_GRAPH; }
+
 set         { return KW_SET;   }
 line        { return KW_LINE;  }
 width       { return KW_WIDTH; }

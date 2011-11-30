@@ -28,8 +28,8 @@ RtPlot::RtPlot() :
                       "RtPlot", this, "readMoreData()");
     // Create window
     // FIXME: should work even without X
-    // RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
-    // plot = new Plot( bp->getCanvas() );
+    RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
+    plot = new Plot( bp->getCanvas() );
 }
 
 RtPlot::~RtPlot()
