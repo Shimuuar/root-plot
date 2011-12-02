@@ -3,9 +3,12 @@
 
 #include "parser.hpp"
 #include "parser.l.hpp"
-
 #include "object.hpp"
 
+#include <boost/make_shared.hpp>
+
+
+    
 void yyerror(ParseParam, const char* err) {
     std::cerr << "rt-plot: " << err << std::endl;
 }
@@ -22,6 +25,7 @@ void yyerror(ParseParam, const char* err) {
 %token TOK_WS
 %token TOK_STR
 %token TOK_INT
+%token TOK_DOUBLE
 %token TOK_DASH
 
  // Keywords
@@ -37,7 +41,8 @@ void yyerror(ParseParam, const char* err) {
 %token KW_PLOT
 %token KW_HIST
 %token KW_GRAPH
-
+%token KW_VLINE
+%token KW_HLINE
 
  // ================================================================
 %%
@@ -58,7 +63,15 @@ line // Top level statement
 plot // Plotting command
   : KW_GRAPH TOK_WS plot_graph
   | KW_HIST  TOK_WS plot_hist
-
+  | KW_VLINE TOK_WS TOK_DOUBLE eol
+    { par.plot->pushObject(
+            boost::make_shared<PlotLine>( Plot::Vertical, boost::get<double>($3) ) );
+    }
+  | KW_HLINE TOK_WS TOK_DOUBLE eol
+    { par.plot->pushObject(
+            boost::make_shared<PlotLine>( Plot::Horizontal, boost::get<double>($3) ) );
+    }
+  
 plot_graph // Plot graph
   : TOK_DASH eol
     { par.parser->accumulate<AccumGraph>(); }

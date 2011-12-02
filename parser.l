@@ -23,6 +23,8 @@ plot        { return KW_PLOT;  }
 add         { return KW_ADD;   }
 hist        { return KW_HIST;  }
 graph       { return KW_GRAPH; }
+vline       { return KW_VLINE; }
+hline       { return KW_HLINE; }
 
 set         { return KW_SET;   }
 line        { return KW_LINE;  }

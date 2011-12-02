@@ -148,7 +148,12 @@ private:
 class PlotLine : public PlotObject {
 public:
     // Create vertical line at position x
-    PlotLine(Plot::Line orientation, double x);
+    PlotLine(Plot::Line orientation_, double x_) :
+        orientation(orientation_),
+        x(x_),
+        color(Plot::BLACK),
+        width(1)
+    {}
 
     virtual ~PlotLine() {}
     virtual void   plotOn(Plot* cxt);
