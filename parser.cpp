@@ -4,6 +4,7 @@
 
 #include <ctype.h>
 #include <vector>
+#include <fstream>
 #include <boost/noncopyable.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
@@ -24,7 +25,24 @@ public:
     // Feed line to accumulator. If line is parsed sucesfully returns
     // true
     virtual bool feedLine(const std::string& str) = 0;
+    // Reads from data from file line by list name and flushes result
+    // into plot if succeeds.
+    bool readFromFile(const std::string& fname, Plot* plot);
 };
+
+bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
+    // Open file
+    std::ifstream in( fname.c_str() );
+    if( !in.good() )
+        return false;
+    // Read line-by line
+    std::string str;
+    while( !std::getline(in, str).eof() ) {
+        if( ! feedLine( str ) )
+            return false;
+    }
+    return flush( plot );
+}
 
 // Accumulator for graphs
 class AccumGraph : public LineAccum {
