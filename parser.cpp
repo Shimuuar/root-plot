@@ -67,8 +67,8 @@ Parser::Parser()
 void Parser::feedLine(Plot* plot, const std::string& str) {
     if( accum ) {
         // Did we hit end of data marker?
-        bool endOfData = str.size() > 3
-                      && str[0] == '>' && str[1] == '>' && str[2] == '>';
+        bool endOfData = str.size() >= 3
+                      && str[0] == '<' && str[1] == '<' && str[2] == '<';
         for(size_t i = 3; endOfData && i < str.size(); i++ )
             endOfData = endOfData && isspace( str[i] );
 
