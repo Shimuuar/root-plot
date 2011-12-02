@@ -60,8 +60,9 @@ public:
     // object doesn't own canvas.
     Plot(TCanvas* cnv);
     
-    // Draw everything
-    // void draw(TCanvas* cnv);
+    // Draw everything. This is slow call since it first remove
+    // everything from canvas and then redraws every element in stack
+    void draw();
 
     // ======================================== //
     // Object manipulations
@@ -82,6 +83,9 @@ public:
     RangeM yRange() const;
 
 private:
+    // Remove everything from canvas
+    void clearCanvas();
+    
     typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
     TCanvas*                   m_canvas;   // Canvas to draw on

@@ -24,10 +24,12 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
 
 Plot::Plot(TCanvas* cnv) :
     m_canvas(cnv)
-{}
+{
+    m_canvas->cd();
+}
 
-void Plot::clear() {
-    m_objStack.resize(0);
+// Remove everything from canvas
+void Plot::clearCanvas() {
     // Delete extra canvases. They could appear when one creates slice
     TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
     for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
@@ -35,13 +37,21 @@ void Plot::clear() {
             delete cnv;
     }
     m_canvas->Clear();
+    m_canvas->cd();
 }
 
-// void Plot::draw() {
-//     m_canvas->Update();
-//     // canvas->Clear();
-//     // FIXME!
-// }
+void Plot::clear() {
+    m_objStack.resize(0);
+    clearCanvas();
+}
+
+void Plot::draw() {
+    clearCanvas();
+    for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o ) {
+        (*o)->plotOn( this );
+    }
+    m_canvas->Update();
+}
 
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
@@ -121,7 +131,8 @@ PlotGraph::PlotGraph(TGraph* g) :
 {}
 
 void PlotGraph::plotOn(Plot*) {
-    graph->Draw( "SAME" );
+    // FIXME! AL should be added only if graph is first one in stack
+    graph->Draw( "AL SAME" );
 }
 
 void PlotGraph::setLineWidth(int width) {
