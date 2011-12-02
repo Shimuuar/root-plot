@@ -19,9 +19,12 @@ typedef boost::variant<int, double, std::string> Token;
 // Define token type for bison
 #define YYSTYPE Token
 
+// Parameters for bison parser
 struct ParseParam {
     ParseParam(Parser* par, Plot* p) :
-        parser(par), plot(p), clearPlot(false)
+        parser(par),
+        plot(p),
+        clearPlot(false)
     {}
     
     Parser* parser;
