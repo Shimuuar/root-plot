@@ -33,5 +33,6 @@ color       { return KW_COLOR; }
 {int}       { *yylval = boost::lexical_cast<int>( yytext ); return TOK_INT; }
 {ws}        { return TOK_WS; }
 {strlit}    { *yylval = std::string( yytext+1, strlen(yytext+1) - 1 ); return TOK_STR; }
+-           { return TOK_DASH; }
 
 %%%

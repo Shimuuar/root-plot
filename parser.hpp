@@ -3,6 +3,7 @@
 #define RT_ROOT_PARSER__HPP__
 
 #include <string>
+#include <vector>
 #include <iostream>
 
 #include <boost/variant.hpp>
@@ -10,9 +11,10 @@
 
 
 
+// ================================================================
+
 class Plot;
 class Parser;
-class LineAccum;
 
 // Token of the language
 typedef boost::variant<int, double, std::string> Token;
@@ -34,6 +36,39 @@ struct ParseParam {
 int yyparse(ParseParam);
 
 
+
+// ================================================================
+
+// Incremental parser for embedded data. E.g. graphs, histograms etc.
+class LineAccum {
+public:
+    virtual ~LineAccum() {}
+
+    // If accumulator is ready it adds its contents to the plot and
+    // returns true. Otherwise just returns false.
+    virtual bool flush(Plot* plot) = 0;
+    // Feed line to accumulator. If line is parsed sucesfully returns
+    // true
+    virtual bool feedLine(const std::string& str) = 0;
+    // Reads from data from file line by list name and flushes result
+    // into plot if succeeds.
+    bool readFromFile(const std::string& fname, Plot* plot);
+};
+
+// Accumulator for graphs
+class AccumGraph : public LineAccum {
+public:
+    virtual ~AccumGraph() {}
+    virtual bool flush(Plot*);
+    virtual bool feedLine(const std::string& str);
+private:
+    std::vector<double> xs, ys;
+};
+
+
+
+// ================================================================
+
 // Line parser
 class Parser {
 public:
@@ -42,6 +77,15 @@ public:
 
     // Feed line to the parser
     void feedLine(Plot* plot, const std::string& str);
+    // Templated setter for accmulator
+    template<typename T>
+    void accumulate() { accum = boost::shared_ptr<T>( new T() ); }
+    // Read data from file
+    template<typename T>
+    void readFromFile(const std::string& str, Plot* plot) {
+        T acc;
+        acc.readFromFile(str, plot);
+    }
 private:
     // Pointer to current accumulator
     boost::shared_ptr<LineAccum> accum;

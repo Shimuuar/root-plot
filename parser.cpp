@@ -13,23 +13,6 @@
 #include <TGraph.h>
 
 
-
-// Incremental parser for embedded data. E.g. graphs, histograms etc.
-class LineAccum {
-public:
-    virtual ~LineAccum() {}
-
-    // If accumulator is ready it adds its contents to the plot and
-    // returns true. Otherwise just returns false.
-    virtual bool flush(Plot* plot) = 0;
-    // Feed line to accumulator. If line is parsed sucesfully returns
-    // true
-    virtual bool feedLine(const std::string& str) = 0;
-    // Reads from data from file line by list name and flushes result
-    // into plot if succeeds.
-    bool readFromFile(const std::string& fname, Plot* plot);
-};
-
 bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
     // Open file
     std::ifstream in( fname.c_str() );
@@ -50,16 +33,6 @@ public:
     virtual ~NullAccum() {}
     virtual bool flush(Plot*)                  { return true; }
     virtual bool feedLine(const std::string& ) { return true; }
-};
-
-// Accumulator for graphs
-class AccumGraph : public LineAccum {
-public:
-    virtual ~AccumGraph() {}
-    virtual bool flush(Plot*);
-    virtual bool feedLine(const std::string& str);
-private:
-    std::vector<double> xs, ys;
 };
 
 bool AccumGraph::flush(Plot* plot) {
