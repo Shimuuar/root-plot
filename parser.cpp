@@ -44,6 +44,14 @@ bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
     return flush( plot );
 }
 
+// Accumulator which does nothing
+class NullAccum : public LineAccum {
+public:
+    virtual ~NullAccum() {}
+    virtual bool flush(Plot*)                  { return true; }
+    virtual bool feedLine(const std::string& ) { return true; }
+};
+
 // Accumulator for graphs
 class AccumGraph : public LineAccum {
 public:
@@ -85,7 +93,25 @@ Parser::Parser()
 
 void Parser::feedLine(Plot* plot, const std::string& str) {
     if( accum ) {
-        
+        // Did we hit end of data marker?
+        bool endOfData = str.size() > 3
+                      && str[0] == '>' && str[1] == '>' && str[2] == '>';
+        for(size_t i = 3; endOfData && i < str.size(); i++ )
+            endOfData = endOfData && isspace( str[i] );
+
+        if( endOfData ) {
+            // Flush and delete accumulator
+            if( ! accum->flush( plot ) ) {
+                std::cerr << "rt-plot: cannot add inline data to the plot";
+            }
+            accum.reset();
+        } else {
+            // Push one line to accumulator
+            if( !accum->feedLine(str) ) {
+                std::cerr << "rt-plot: cannot parse inline data dropping to null parser\n";
+                accum = boost::make_shared<NullAccum>();
+            }
+        }
     } else {
         YY_BUFFER_STATE state;
         state = yy_scan_string( str.c_str() );
