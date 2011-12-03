@@ -116,7 +116,7 @@ set
 
 setLine
   : KW_WIDTH TOK_WS TOK_INT eol
-    { par.plot->setLineWidth( boost::get<int>($3) ); std::cout << "ASDF\n"; }
+    { par.plot->setLineWidth( boost::get<int>($3) ); }
   | KW_COLOR TOK_WS TOK_INT eol
     { par.plot->setLineColor( Plot::toColor( boost::get<int>($3)) ); }
   | KW_COLOR TOK_WS TOK_STR eol
