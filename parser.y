@@ -5,6 +5,7 @@
 #include "parser.l.hpp"
 #include "object.hpp"
 
+#include <TApplication.h>
 #include <boost/make_shared.hpp>
 
 
@@ -59,6 +60,8 @@ static Plot::Color strToColor(std::string str) {
 %token KW_CLEAR
 %token KW_ON
 %token KW_OFF
+%token KW_EXIT
+
  // SET
 %token KW_SET
 %token KW_SILENT
@@ -84,6 +87,7 @@ input
 line // Top level statement
   : /* empty */
   | KW_CLEAR eol                { par.plot->clear(); }
+  | KW_EXIT  eol                { gApplication->Terminate(); }
   | KW_SET   TOK_WS set
   /* Plot commands */
   | KW_ADD   { par.clearPlot = false; } TOK_WS plot
