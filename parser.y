@@ -98,14 +98,15 @@ line // Top level statement
 plot // Plotting command
   : KW_GRAPH TOK_WS plot_graph
   | KW_HIST  TOK_WS plot_hist
+    // Horizonal/vertical lines
+  | KW_VLINE TOK_WS TOK_INT    eol
+    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   boost::get<int>($3)    ) ); }
   | KW_VLINE TOK_WS TOK_DOUBLE eol
-    { par.plot->pushObject(
-            boost::make_shared<PlotLine>( Plot::Vertical, boost::get<double>($3) ) );
-    }
+    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   boost::get<double>($3) ) ); }
+  | KW_HLINE TOK_WS TOK_INT    eol
+    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, boost::get<int>($3)    ) ); }
   | KW_HLINE TOK_WS TOK_DOUBLE eol
-    { par.plot->pushObject(
-            boost::make_shared<PlotLine>( Plot::Horizontal, boost::get<double>($3) ) );
-    }
+    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, boost::get<double>($3) ) ); }
   
 plot_graph // Plot graph
   : TOK_DASH eol

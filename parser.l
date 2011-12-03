@@ -11,6 +11,9 @@
 
 ident    [a-zA-Z][a-zA-Z0-9]*
 int      [-+]?[0-9]+
+doubleP  [-+]?[0-9]+(\.[0-9]*)?
+doubleE  [-+]?[0-9]+[eE][-+]+[0-9]+
+doublePE [-+]?[0-9]+\.[0-9]*[eE][-+]+[0-9]+
 ws       [ \t]+
 strlit   \"[^\"]*\"
 
@@ -37,7 +40,10 @@ width       { return KW_WIDTH;  }
 color       { return KW_COLOR;  }
 
  /* Literals */
-{int}       { *yylval = boost::lexical_cast<int>( yytext ); return TOK_INT; }
+{int}       { *yylval = boost::lexical_cast<int>   ( yytext ); return TOK_INT;    }
+{doubleP}   { *yylval = boost::lexical_cast<double>( yytext ); return TOK_DOUBLE; }
+{doubleE}   { *yylval = boost::lexical_cast<double>( yytext ); return TOK_DOUBLE; }
+{doublePE}  { *yylval = boost::lexical_cast<double>( yytext ); return TOK_DOUBLE; }
 {ws}        { return TOK_WS; }
 {strlit}    { *yylval = std::string( yytext+1, strlen(yytext+1) - 1 ); return TOK_STR; }
 -           { return TOK_DASH; }
