@@ -86,6 +86,7 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
             }
         }
     } else {
+        // We are parsing DSL
         YY_BUFFER_STATE state;
         state = yy_scan_string( str.c_str() );
         plot->setLineWidth(2);
@@ -94,4 +95,8 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
         // Parse completed
         yy_delete_buffer( state );
     }
+
+    // Redraw everything
+    if( !accum )
+        plot->draw();
 }

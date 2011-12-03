@@ -52,7 +52,6 @@ void RtPlot::readMoreData() {
         std::cout << "================\n";
         std::cout << "> '" << str << "'\n";
         parser->feedLine( plot, str );
-        plot->draw();
     }
 }
 
