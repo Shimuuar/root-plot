@@ -100,8 +100,9 @@ class PlotObject {
 public:
     virtual ~PlotObject() {}
     
-    // Add object on a plot
-    virtual void plotOn(Plot* cxt) = 0;
+    // Add object on a plot. Second parameter indicate whether object
+    // is first one to appear on the plot.
+    virtual void plotOn(Plot* cxt, bool first) = 0;
 
     // X range for object
     virtual RangeM xRange() const = 0;
@@ -122,7 +123,7 @@ class PlotHist : public PlotObject {
     // copy.
     PlotHist(TH1* h);
 
-    virtual void   plotOn(Plot* cxt);
+    virtual void   plotOn(Plot* cxt, bool first);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
@@ -138,7 +139,7 @@ public:
     // copy.
     PlotGraph(TGraph* g);
 
-    virtual void   plotOn(Plot* cxt);
+    virtual void   plotOn(Plot* cxt, bool first);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
@@ -160,7 +161,7 @@ public:
     {}
 
     virtual ~PlotLine() {}
-    virtual void   plotOn(Plot* cxt);
+    virtual void   plotOn(Plot* cxt, bool first);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
@@ -170,6 +171,8 @@ private:
     double     x;
     int        color;
     int        width;
+    
+    boost::shared_ptr<TGraph> graph;
 };
 
 #endif /* RT_ROOT_PLOT__HPP__ */

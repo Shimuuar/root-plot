@@ -47,15 +47,17 @@ void Plot::clear() {
 
 void Plot::draw() {
     clearCanvas();
-    for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o ) {
-        (*o)->plotOn( this );
+    bool first = true;
+    for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o, first=false )
+    {
+        (*o)->plotOn( this, first );
     }
     m_canvas->Update();
 }
 
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
-    plot->plotOn(this);
+    // plot->plotOn(this);
 }
 
 void Plot::setLineColor(Plot::Color color) {
@@ -99,7 +101,7 @@ PlotHist::PlotHist(TH1* h) :
     hist(h)
 {}
 
-void PlotHist::plotOn(Plot*) {
+void PlotHist::plotOn(Plot*, bool) {
     hist->Draw( "SAME" );
 }
 
@@ -130,9 +132,11 @@ PlotGraph::PlotGraph(TGraph* g) :
     graph(g)
 {}
 
-void PlotGraph::plotOn(Plot*) {
-    // FIXME! AL should be added only if graph is first one in stack
-    graph->Draw( "AL SAME" );
+void PlotGraph::plotOn(Plot*, bool first) {
+    std::string opts = "L SAME";
+    if( first )
+        opts += " A";
+    graph->Draw( opts.c_str() );
 }
 
 void PlotGraph::setLineWidth(int width) {
@@ -171,7 +175,7 @@ RangeM PlotGraph::yRange() const {
 // ==== Line
 
 
-void PlotLine::plotOn(Plot* cxt) {
+void PlotLine::plotOn(Plot* cxt, bool first) {
     // FIXME
 }
 
