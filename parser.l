@@ -31,6 +31,7 @@ hline       { return KW_HLINE;  }
 
 set         { return KW_SET;    }
 silent      { return KW_SILENT; }
+title       { return KW_TITLE;  }
 line        { return KW_LINE;   }
 width       { return KW_WIDTH;  }
 color       { return KW_COLOR;  }

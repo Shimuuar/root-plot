@@ -77,6 +77,7 @@ void Plot::draw() {
     m_axisGraph->SetLineColor( Plot::WHITE );
     m_axisGraph->GetXaxis()->SetRangeUser( xs[0], xs[1] );
     m_axisGraph->GetYaxis()->SetRangeUser( ys[0], ys[1] );
+    m_axisGraph->SetTitle( m_title.c_str() );
     m_axisGraph->Draw("AL");    
     
     for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o) {

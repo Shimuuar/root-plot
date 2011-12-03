@@ -65,6 +65,7 @@ static Plot::Color strToColor(std::string str) {
  // SET
 %token KW_SET
 %token KW_SILENT
+%token KW_TITLE
 %token KW_LINE
 %token KW_COLOR
 %token KW_WIDTH
@@ -120,8 +121,9 @@ plot_hist // Plot historam
 
 set
   : KW_LINE   TOK_WS setLine
-  | KW_SILENT TOK_WS KW_ON  eol    { par.plot->setSilent( true  ); }
-  | KW_SILENT TOK_WS KW_OFF eol    { par.plot->setSilent( false ); }
+  | KW_SILENT TOK_WS KW_ON   eol   { par.plot->setSilent( true  ); }
+  | KW_SILENT TOK_WS KW_OFF  eol   { par.plot->setSilent( false ); }
+  | KW_TITLE  TOK_WS TOK_STR eol   { par.plot->setTitle( boost::get<std::string>( $3 ) ); }
 
 setLine
   : KW_WIDTH TOK_WS TOK_INT eol

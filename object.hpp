@@ -86,6 +86,8 @@ public:
 
     // Push object on the top of stack;
     void pushObject(boost::shared_ptr<PlotObject> plot);
+    // Set title of the plot
+    void setTitle(const std::string& title) { m_title = title; }
     // Set line color for top object. Noop if stack is empty
     void setLineColor(Plot::Color);
     // Set line width for top object. Noop if stack is empty
@@ -102,13 +104,13 @@ private:
     
     typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
-    TCanvas*                   m_canvas;   // Canvas to draw on
-    Stack                      m_objStack; // Stack of objects
-    boost::optional<Range>     m_xRange;   // X range
-    boost::optional<Range>     m_yRange;   // Y range
-    boost::shared_ptr<TLegend> m_legend;   // Legend of the plot
-    bool                       m_isSilent; // Is silent mode on
-
+    TCanvas*                   m_canvas;    // Canvas to draw on
+    Stack                      m_objStack;  // Stack of objects
+    boost::optional<Range>     m_xRange;    // X range
+    boost::optional<Range>     m_yRange;    // Y range
+    boost::shared_ptr<TLegend> m_legend;    // Legend of the plot
+    bool                       m_isSilent;  // Is silent mode on
+    std::string                m_title;     // Title of plot
     boost::shared_ptr<TGraph>  m_axisGraph; // Graph which holds axis.
 };
 
