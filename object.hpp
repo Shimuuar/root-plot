@@ -38,6 +38,7 @@ class TLegend;
 class TGraph;
 class TH1;
 
+// Abstracts over ROOT's canvas. 
 class Plot : public boost::noncopyable {
 public:
     enum Color {
@@ -109,8 +110,12 @@ class PlotObject {
 public:
     virtual ~PlotObject() {}
     
-    // Add object on a plot. Second parameter indicate whether object
-    // is first one to appear on the plot.
+    // Draw object on the plot. This function depends on correct
+    // values of ROOT global variables (current dir) and correct
+    // canvas setup by Plot. and should be invoked from Plot only.
+    // 
+    // Plot* plot  - plot to draw on
+    // bool  first - Whether object is first on the plot or not.
     virtual void plotOn(Plot* cxt, bool first) = 0;
 
     // X range for object
