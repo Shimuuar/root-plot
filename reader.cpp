@@ -47,7 +47,14 @@ LineReader::Result LineReader::getLine(std::string& str) {
     // End of file.  
     if( n == 0  ) {
         done = true;
-        return Eof;
+        // If buffer still contain data return it. It must be single line
+        if( nBytes > 0 ) {
+            str    = std::string( &buf[0], nBytes );
+            nBytes = 0;
+            return OK;
+        } else {
+            return Eof;
+        }
     }
     if( n == -1 ) {
         // Early return and no data yet
