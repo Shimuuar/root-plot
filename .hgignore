@@ -1,6 +1,7 @@
 .*\.o$
 ^rt-plot$
--cint\.h$
+-cint\.(cpp|h)$
 \.l\.(cpp|hpp)$
 \.y\.(cpp|hpp)$
 \.tab\.h$
+hep-root-plot/dist
