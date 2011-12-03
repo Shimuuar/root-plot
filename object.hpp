@@ -12,6 +12,8 @@
 
 #define UNUSED(x) do{ (void)(x); }while(0)
 
+
+
 // ================================================================ //
 // == Small types
 // ================================================================ //
@@ -106,6 +108,8 @@ private:
     boost::optional<Range>     m_yRange;   // Y range
     boost::shared_ptr<TLegend> m_legend;   // Legend of the plot
     bool                       m_isSilent; // Is silent mode on
+
+    boost::shared_ptr<TGraph>  m_axisGraph; // Graph which holds axis.
 };
 
 // Object which
@@ -119,7 +123,7 @@ public:
     // 
     // Plot* plot  - plot to draw on
     // bool  first - Whether object is first on the plot or not.
-    virtual void plotOn(Plot* cxt, bool first) = 0;
+    virtual void plotOn(Plot* cxt) = 0;
 
     // X range for object
     virtual RangeM xRange() const = 0;
@@ -140,7 +144,7 @@ class PlotHist : public PlotObject {
     // copy.
     PlotHist(TH1* h);
 
-    virtual void   plotOn(Plot* cxt, bool first);
+    virtual void   plotOn(Plot* cxt);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
@@ -156,7 +160,7 @@ public:
     // copy.
     PlotGraph(TGraph* g);
 
-    virtual void   plotOn(Plot* cxt, bool first);
+    virtual void   plotOn(Plot* cxt);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
@@ -178,7 +182,7 @@ public:
     {}
 
     virtual ~PlotLine() {}
-    virtual void   plotOn(Plot* cxt, bool first);
+    virtual void   plotOn(Plot* cxt);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);

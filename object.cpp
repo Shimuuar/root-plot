@@ -2,6 +2,7 @@
 #include "object.hpp"
 
 #include <algorithm>
+#include <boost/make_shared.hpp>
 
 #include <TH1.h>
 #include <TGraph.h>
@@ -47,15 +48,41 @@ void Plot::clear() {
 }
 
 void Plot::draw() {
-    if( !m_isSilent ) {
-        clearCanvas();
-        bool first = true;
-        for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o, first=false )
-        {
-            (*o)->plotOn( this, first );
-        }
-        m_canvas->Update();
+    if( m_isSilent )
+        return;
+    // Remove everything from canvas
+    clearCanvas();
+
+    // Set ranges for graph
+    double xs[2] = {0, 1};
+    double ys[2] = {0, 1};
+    
+    RangeM rngX = xRange();
+    if( rngX.is_initialized() ) {
+        xs[0] = rngX->low;
+        xs[1] = rngX->hi;
     }
+    RangeM rngY = yRange();
+    if( rngY.is_initialized() ) {
+        ys[0] = rngY->low;
+        ys[1] = rngY->hi;
+    }
+
+    // Create invisible graph which holds axis for the plot. It's
+    // required because ROOT do not allow to resize axes arbitralily
+    // and one have to set them correctly upfront.
+    //
+    // On plus side axes are stored locally.    
+    m_axisGraph = boost::make_shared<TGraph>(2,xs,ys);
+    m_axisGraph->SetLineColor( Plot::WHITE );
+    m_axisGraph->GetXaxis()->SetRangeUser( xs[0], xs[1] );
+    m_axisGraph->GetYaxis()->SetRangeUser( ys[0], ys[1] );
+    m_axisGraph->Draw("AL");    
+    
+    for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o) {
+        (*o)->plotOn( this );
+    }
+    m_canvas->Update();
 }
 
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
@@ -99,12 +126,13 @@ RangeM Plot::yRange() const {
 
 // ================================================================ //
 // ==== Histogram
+// ================================================================ //
 
 PlotHist::PlotHist(TH1* h) :
     hist(h)
 {}
 
-void PlotHist::plotOn(Plot*, bool) {
+void PlotHist::plotOn(Plot*) {
     hist->Draw( "SAME" );
 }
 
@@ -135,10 +163,8 @@ PlotGraph::PlotGraph(TGraph* g) :
     graph(g)
 {}
 
-void PlotGraph::plotOn(Plot*, bool first) {
+void PlotGraph::plotOn(Plot*) {
     std::string opts = "L SAME";
-    if( first )
-        opts += " A";
     graph->Draw( opts.c_str() );
 }
 
@@ -158,7 +184,8 @@ RangeM PlotGraph::xRange() const {
     double* xs = graph->GetX();
     double hi = *std::max_element(xs, xs+n);
     double lo = *std::min_element(xs, xs+n);
-    return boost::optional<Range>( Range(hi,lo) );
+    double delta = 0.03 * (hi - lo);
+    return boost::optional<Range>( Range(lo - delta, hi + delta) );
 }
 
 RangeM PlotGraph::yRange() const {
@@ -169,7 +196,8 @@ RangeM PlotGraph::yRange() const {
     double* ys = graph->GetY();
     double hi = *std::max_element(ys, ys+n);
     double lo = *std::min_element(ys, ys+n);
-    return boost::optional<Range>( Range(hi,lo) );
+    double delta = 0.03 * (hi - lo);
+    return boost::optional<Range>( Range(lo - delta, hi + delta) );
 }
 
 
@@ -178,7 +206,7 @@ RangeM PlotGraph::yRange() const {
 // ==== Line
 
 
-void PlotLine::plotOn(Plot* cxt, bool first) {
+void PlotLine::plotOn(Plot* cxt) {
     // FIXME
 }
 
