@@ -41,6 +41,7 @@ class TH1;
 class Plot : public boost::noncopyable {
 public:
     enum Color {
+        WHITE   = 0,
         BLACK   = 1,
         RED     = 2,
         GREEN   = 3,
@@ -51,6 +52,14 @@ public:
         FOREST  = 8,
         VIOLET  = 9
     };
+    // Convert int to color. Values which are out of range are
+    // converted to black.
+    static Color toColor(int c) {
+        if( c < 0 || c > VIOLET )
+            return BLACK;
+        return Color(c);
+    }
+    
     enum Line {
         Vertical,
         Horizontal

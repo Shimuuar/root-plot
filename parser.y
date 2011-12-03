@@ -84,13 +84,15 @@ plot_hist // Plot historam
     { std::cerr << "Histograms are not implemented\n"; }
 
 
-set  : KW_LINE TOK_WS setLine
+set
+  : KW_LINE TOK_WS setLine
 
 setLine
   : KW_WIDTH TOK_WS TOK_INT eol
     { par.plot->setLineWidth( boost::get<int>($3) ); std::cout << "ASDF\n"; }
   | KW_COLOR TOK_WS TOK_INT eol
-    { par.plot->setLineColor( static_cast<Plot::Color>( boost::get<int>($3)) ); }
+    { par.plot->setLineColor( Plot::toColor( boost::get<int>($3)) ); }
+
 
 // End of line
 eol
