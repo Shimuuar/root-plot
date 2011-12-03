@@ -1,0 +1,17 @@
+Name:           hep-root-plot
+Version:        0.1
+Cabal-Version:  >= 1.6
+License:        AllRightsReserved
+License-File:   LICENSE
+Author:         Aleksey Khudyakov <alexey.skladnoy@gmail.com>
+Maintainer:     Aleksey Khudyakov <alexey.skladnoy@gmail.com>
+Homepage:       http://bitbucket.org/Shimuuar/hep-root-plot
+Category:       Data
+Build-Type:     Simple
+Synopsis:       Client for plotting using rt-plot
+Description:
+  Client for plotting using rt-plot
+
+Library
+  Build-Depends:        base >=3 && <5
+  Exposed-modules:      HEP.ROOT.Plot
