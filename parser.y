@@ -13,6 +13,33 @@ void yyerror(ParseParam, const char* err) {
     std::cerr << "rt-plot: " << err << std::endl;
 }
 
+static Plot::Color strToColor(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), toupper );
+    Plot::Color c = Plot::BLACK;
+    if( str == "WHITE" ) {
+        c = Plot::WHITE;
+    } else if( str == "BLACK"   ) {
+        c = Plot::BLACK;
+    } else if( str == "RED"     ) {
+        c = Plot::RED;
+    } else if( str == "GREEN"   ) {
+        c = Plot::GREEN;
+    } else if( str == "BLUE"    ) {
+        c = Plot::BLUE;
+    } else if( str == "YELLOW"  ) {
+        c = Plot::YELLOW;
+    } else if( str == "MAGENTA" ) {
+        c = Plot::MAGENTA;
+    } else if( str == "CYAN"    ) {
+        c = Plot::CYAN;
+    } else if( str == "FOREST"  ) {
+        c = Plot::FOREST;
+    } else if( str == "VIOLET"  ) {
+        c = Plot::VIOLET;
+    }
+    return c;
+}
+
 %}
 
 %define api.pure
@@ -92,6 +119,8 @@ setLine
     { par.plot->setLineWidth( boost::get<int>($3) ); std::cout << "ASDF\n"; }
   | KW_COLOR TOK_WS TOK_INT eol
     { par.plot->setLineColor( Plot::toColor( boost::get<int>($3)) ); }
+  | KW_COLOR TOK_WS TOK_STR eol
+    { par.plot->setLineColor( strToColor( boost::get<std::string>( $3 ) ) ); }
 
 
 // End of line
