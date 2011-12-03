@@ -17,19 +17,22 @@ strlit   \"[^\"]*\"
 %%%
 
  /* Keywords */
-clear       { return KW_CLEAR; }
+clear       { return KW_CLEAR;  }
+on          { return KW_ON;     }
+off         { return KW_OFF;    }
 
-plot        { return KW_PLOT;  }
-add         { return KW_ADD;   }
-hist        { return KW_HIST;  }
-graph       { return KW_GRAPH; }
-vline       { return KW_VLINE; }
-hline       { return KW_HLINE; }
+plot        { return KW_PLOT;   }
+add         { return KW_ADD;    }
+hist        { return KW_HIST;   }
+graph       { return KW_GRAPH;  }
+vline       { return KW_VLINE;  }
+hline       { return KW_HLINE;  }
 
-set         { return KW_SET;   }
-line        { return KW_LINE;  }
-width       { return KW_WIDTH; }
-color       { return KW_COLOR; }
+set         { return KW_SET;    }
+silent      { return KW_SILENT; }
+line        { return KW_LINE;   }
+width       { return KW_WIDTH;  }
+color       { return KW_COLOR;  }
 
  /* Literals */
 {int}       { *yylval = boost::lexical_cast<int>( yytext ); return TOK_INT; }

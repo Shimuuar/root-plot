@@ -79,7 +79,9 @@ public:
 
     // Clear plot and delete entire object stack
     void clear();
-    
+    // Set silent mode on/off. In silent mode canvas is not updated.
+    void setSilent(bool isSilent) { m_isSilent = isSilent; }
+
     // Push object on the top of stack;
     void pushObject(boost::shared_ptr<PlotObject> plot);
     // Set line color for top object. Noop if stack is empty
@@ -103,6 +105,7 @@ private:
     boost::optional<Range>     m_xRange;   // X range
     boost::optional<Range>     m_yRange;   // Y range
     boost::shared_ptr<TLegend> m_legend;   // Legend of the plot
+    bool                       m_isSilent; // Is silent mode on
 };
 
 // Object which

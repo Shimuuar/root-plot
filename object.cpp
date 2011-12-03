@@ -23,7 +23,8 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
 // ==== Plot
 
 Plot::Plot(TCanvas* cnv) :
-    m_canvas(cnv)
+    m_canvas(cnv),
+    m_isSilent(false)
 {
     m_canvas->cd();
 }
@@ -46,13 +47,15 @@ void Plot::clear() {
 }
 
 void Plot::draw() {
-    clearCanvas();
-    bool first = true;
-    for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o, first=false )
-    {
-        (*o)->plotOn( this, first );
+    if( !m_isSilent ) {
+        clearCanvas();
+        bool first = true;
+        for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o, first=false )
+        {
+            (*o)->plotOn( this, first );
+        }
+        m_canvas->Update();
     }
-    m_canvas->Update();
 }
 
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
