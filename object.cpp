@@ -208,7 +208,24 @@ RangeM PlotGraph::yRange() const {
 
 
 void PlotLine::plotOn(Plot* cxt) {
-    // FIXME
+    double consts[2] = {x,x};
+    double vars[2]   = {0,1};
+    RangeM rng       =
+        orientation == Plot::Vertical ? cxt->yRange() : cxt->xRange();
+    if( rng ) {
+        vars[0] = rng->low;
+        vars[1] = rng->hi;
+        std::cout << "RNG: " << vars[0] << " " << vars[1] << std::endl;
+    }
+
+    if( orientation == Plot::Vertical ) {
+        graph = boost::make_shared<TGraph>(2, consts, vars);
+    } else {
+        graph = boost::make_shared<TGraph>(2, vars, consts);
+    }
+    graph->SetLineWidth( width );
+    graph->SetLineColor( color );
+    graph->Draw("SAME L");
 }
 
 void PlotLine::setLineWidth(int w) {
