@@ -1,17 +1,19 @@
 #include "parser.hpp"
 #include "parser.l.hpp"
 #include "object.hpp"
+#include "exceptions.hpp"
 
 #include <ctype.h>
-#include <vector>
+#include <sstream>
 #include <fstream>
-#include <boost/noncopyable.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
 #include <TGraph.h>
 
+
+// ================================================================
+// ==== Line accumulator
+// ================================================================
 
 bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
     // Open file
@@ -27,6 +29,9 @@ bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
     return flush( plot );
 }
 
+
+// ----------------------------------------------------------------
+
 // Accumulator which does nothing
 class NullAccum : public LineAccum {
 public:
@@ -34,6 +39,9 @@ public:
     virtual bool flush(Plot*)                  { return true; }
     virtual bool feedLine(const std::string& ) { return true; }
 };
+
+
+// ----------------------------------------------------------------
 
 bool AccumGraph::flush(Plot* plot) {
     plot->pushObject(
@@ -55,8 +63,7 @@ bool AccumGraph::feedLine(const std::string& str) {
     }
 }
 
-// ================================================================ //
- 
+
 
 // ================================================================ //
 Parser::Parser() 

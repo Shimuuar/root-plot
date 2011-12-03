@@ -8,6 +8,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
 
 
@@ -65,6 +66,17 @@ private:
     std::vector<double> xs, ys;
 };
 
+// Accumulator for histograms.
+class AccumHist : public LineAccum {
+public:
+    AccumHist();
+    virtual ~AccumHist();
+    virtual bool flush(Plot*);
+    virtual bool feedLine(const std::string& str);
+private:
+    class Private;
+    boost::scoped_ptr<Private> p;
+};
 
 
 // ================================================================

@@ -142,6 +142,7 @@ public:
 
 // Wrapper around ROOT histograms
 class PlotHist : public PlotObject {
+public:
     // Create graph out of ROOT graph. Will take outnership of the
     // copy.
     PlotHist(TH1* h);
