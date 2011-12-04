@@ -252,6 +252,7 @@ RangeM PlotGraph::yRange() const {
 
 
 void PlotLine::plotOn(Plot* cxt) {
+    // Fill arrays for graph
     double consts[2] = {x,x};
     double vars[2]   = {0,1};
     RangeM rng       =
@@ -260,6 +261,10 @@ void PlotLine::plotOn(Plot* cxt) {
         vars[0] = rng->low;
         vars[1] = rng->hi;
     }
+    // Expand
+    double delta = vars[1] - vars[0];
+    vars[0] -= delta;
+    vars[1] += delta;
 
     if( orientation == Plot::Vertical ) {
         graph = boost::make_shared<TGraph>(2, consts, vars);
