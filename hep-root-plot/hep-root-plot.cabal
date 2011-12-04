@@ -13,5 +13,8 @@ Description:
   Client for plotting using rt-plot
 
 Library
-  Build-Depends:        base >=3 && <5
+  Build-Depends:        base >=3 && <5,
+                        unix,
+                        network,
+                        histogram-fill
   Exposed-modules:      HEP.ROOT.Plot
