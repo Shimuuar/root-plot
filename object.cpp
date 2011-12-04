@@ -146,13 +146,23 @@ void PlotHist::setLineColor(Plot::Color col) {
 }
 
 RangeM PlotHist::xRange() const {
-    // FIXME!
-    return boost::optional<Range>();
+    return boost::optional<Range>(
+        Range(
+            hist->GetXaxis()->GetXmin(),
+            hist->GetXaxis()->GetXmax() 
+            ) );
 }
 
 RangeM PlotHist::yRange() const {
-    // FIXME!
-    return boost::optional<Range>();
+    int    n     = hist->GetNbinsX();
+    double yMax = 0;
+    for( int i = 1; i <= n; i++ ) {
+        yMax = std::max( yMax, hist->GetBinContent(i) );
+    }
+    // std::cout << hist->GetYaxis()->GetXmin() << std::endl;
+    // std::cout << hist->GetYaxis()->GetXmax() << std::endl;
+    return boost::optional<Range>(
+        Range( 0, yMax ) );
 }
 
 
