@@ -5,6 +5,7 @@
 #include <boost/make_shared.hpp>
 
 #include <TH1.h>
+#include <TH2.h>
 #include <TGraph.h>
 #include <TCanvas.h>
 #include <TROOT.h>
@@ -154,15 +155,23 @@ RangeM PlotHist::xRange() const {
 }
 
 RangeM PlotHist::yRange() const {
-    int    n     = hist->GetNbinsX();
-    double yMax = 0;
-    for( int i = 1; i <= n; i++ ) {
-        yMax = std::max( yMax, hist->GetBinContent(i) );
+    TH2* h2d = dynamic_cast<TH2*>( &(*hist) );
+    if( h2d ) {
+        // 2D histogram
+        return boost::optional<Range>(
+            Range(
+                hist->GetYaxis()->GetXmin(),
+                hist->GetYaxis()->GetXmax() 
+                ) );
+    } else {
+        // 1D histogram
+        int    n     = hist->GetNbinsX();
+        double yMax = 0;
+        for( int i = 1; i <= n; i++ )
+            yMax = std::max( yMax, hist->GetBinContent(i) );
+        return boost::optional<Range>(
+            Range( 0, yMax ) );
     }
-    // std::cout << hist->GetYaxis()->GetXmin() << std::endl;
-    // std::cout << hist->GetYaxis()->GetXmax() << std::endl;
-    return boost::optional<Range>(
-        Range( 0, yMax ) );
 }
 
 
