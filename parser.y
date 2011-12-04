@@ -4,6 +4,7 @@
 #include "parser.hpp"
 #include "parser.l.hpp"
 #include "object.hpp"
+#include "exceptions.hpp"
 
 #include <TApplication.h>
 #include <boost/make_shared.hpp>
@@ -40,6 +41,17 @@ static Plot::Color strToColor(std::string str) {
     }
     return c;
 }
+
+// Pattern match over Token to retrieve double value
+struct GetDoubleVisitor : public boost::static_visitor<double> {
+    double operator()(int i)              const { return i; }
+    double operator()(double x)           const { return x; }
+    double operator()(const std::string&) const { throw std::logic_error("Impossible happened"); }
+};
+static double getDouble(const Token& tok) {
+    return boost::apply_visitor(GetDoubleVisitor(), tok);
+}
+
 
 %}
 
@@ -99,14 +111,10 @@ plot // Plotting command
   : KW_GRAPH TOK_WS plot_graph
   | KW_HIST  TOK_WS plot_hist
     // Horizonal/vertical lines
-  | KW_VLINE TOK_WS TOK_INT    eol
-    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   boost::get<int>($3)    ) ); }
-  | KW_VLINE TOK_WS TOK_DOUBLE eol
-    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   boost::get<double>($3) ) ); }
-  | KW_HLINE TOK_WS TOK_INT    eol
-    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, boost::get<int>($3)    ) ); }
-  | KW_HLINE TOK_WS TOK_DOUBLE eol
-    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, boost::get<double>($3) ) ); }
+  | KW_VLINE TOK_WS double eol
+    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   getDouble($3) ) ); }
+  | KW_HLINE TOK_WS double eol
+    { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, getDouble($3) ) ); }
   
 plot_graph // Plot graph
   : TOK_DASH eol
@@ -140,5 +148,9 @@ eol
   : /* empty */
   | TOK_WS
   ;
+// Double valued token. Value sould be retrieved using getDouble
+double
+  : TOK_INT
+  | TOK_DOUBLE
 
 %%
