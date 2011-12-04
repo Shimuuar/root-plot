@@ -58,10 +58,10 @@ parser.o : parser.l.cpp
 
 clean:
 	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h rt-plot 
-# install: all 
-# 	mkdir -p ${INSTALLDIR}
-# 	install rt-biplot ${INSTALLDIR}
-# 	install rt-shell  ${INSTALLDIR}
+install: all 
+	mkdir -p ${INSTALLDIR}
+	install rt-plot ${INSTALLDIR}
+#	install rt-shell  ${INSTALLDIR}
 # 	install rt-server ${INSTALLDIR}
 # #	install rt-tree   ${INSTALLDIR}
 # 	install rt-echo         ${INSTALLDIR}
