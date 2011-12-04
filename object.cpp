@@ -234,7 +234,6 @@ void PlotLine::plotOn(Plot* cxt) {
     if( rng ) {
         vars[0] = rng->low;
         vars[1] = rng->hi;
-        std::cout << "RNG: " << vars[0] << " " << vars[1] << std::endl;
     }
 
     if( orientation == Plot::Vertical ) {
