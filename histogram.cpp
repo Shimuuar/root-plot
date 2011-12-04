@@ -162,7 +162,8 @@ void AccumHist::Private::parseHistogram() {
 
 // ----------------------------------------------------------------
 
-AccumHist::AccumHist()
+AccumHist::AccumHist() :
+    p( new AccumHist::Private )
 {}
 
 AccumHist::~AccumHist()
@@ -177,8 +178,10 @@ bool AccumHist::feedLine(const std::string& str) {
             p->add( str );
         } else {
             // We just finished reading header
-            if( p->inHeader )
+            if( p->inHeader ) {
                 p->parseHistogram();
+                p->inHeader = false;
+            }
             // Read data
             if( p->nDim == 1 ) {
                 double x,y;
