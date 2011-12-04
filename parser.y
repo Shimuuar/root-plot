@@ -116,16 +116,34 @@ plot // Plotting command
   | KW_HLINE TOK_WS double eol
     { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, getDouble($3) ) ); }
   
-plot_graph // Plot graph
+// Plot graph
+plot_graph
   : TOK_DASH eol
-    { par.parser->accumulate<AccumGraph>(); }
+    {
+        if( par.clearPlot )
+            par.plot->clear();
+        par.parser->accumulate<AccumGraph>();
+    }
   | TOK_STR eol
-    { par.parser->readFromFile<AccumGraph>( boost::get<std::string>($1), par.plot ); }
-plot_hist // Plot historam
+    {
+        if( par.clearPlot )
+            par.plot->clear();
+        par.parser->readFromFile<AccumGraph>( boost::get<std::string>($1), par.plot );
+    }
+// Plot historam
+plot_hist
   : TOK_DASH eol
-    { par.parser->accumulate<AccumHist>(); }
+    {
+        if( par.clearPlot )
+            par.plot->clear();
+        par.parser->accumulate<AccumHist>();
+    }
   | TOK_STR eol
-    { par.parser->readFromFile<AccumHist>( boost::get<std::string>($1), par.plot ); }
+    {
+        if( par.clearPlot )
+            par.plot->clear();
+        par.parser->readFromFile<AccumHist>( boost::get<std::string>($1), par.plot );
+    }
 
 
 set
