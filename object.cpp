@@ -130,19 +130,15 @@ RangeM Plot::yRange() const {
 // ================================================================ //
 
 PlotHist::PlotHist(TH1* h) :
-    hist(h),
-    lw(1)
+    hist(h)
 {}
 
 void PlotHist::plotOn(Plot*) {
-    // Root does someting strange to line width so it has to be reset
-    // before each draw.
-    hist->SetLineWidth(lw);
     hist->Draw( "SAME" );
 }
 
 void PlotHist::setLineWidth(int width) {
-    lw = width;
+    hist->SetLineWidth(width);
 }
 
 void PlotHist::setLineColor(Plot::Color col) {

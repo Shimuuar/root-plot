@@ -153,7 +153,6 @@ public:
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(Plot::Color);
 private:
-    int                    lw;   // Line width.
     boost::scoped_ptr<TH1> hist;
 };
 
