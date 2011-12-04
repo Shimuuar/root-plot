@@ -1,5 +1,7 @@
 .*\.o$
 ^rt-plot$
+^rt-listen
+^rt-cat$
 -cint\.(cpp|h)$
 \.l\.(cpp|hpp)$
 \.y\.(cpp|hpp)$

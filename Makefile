@@ -30,11 +30,14 @@ OBJS     = \
 
 
 ################################################################
-all : rt-plot
+all : rt-plot rt-listen rt-cat
 
 rt-plot : ${OBJS}
 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
-
+rt-listen: rt-listen.o socket.o
+	${C} ${CFLAGS} $^ -o $@
+rt-cat: rt-echo.o socket.o
+	${C} ${CFLAGS} $^ -o $@
 
 # Add CINT classes.
 %-cint.h %-cint.cpp: %.hpp
