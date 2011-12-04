@@ -26,6 +26,8 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
 
 Plot::Plot(TCanvas* cnv) :
     m_canvas(cnv),
+    m_xLog( false ),
+    m_yLog( false ),
     m_isSilent(false)
 {
     m_canvas->cd();
@@ -41,10 +43,15 @@ void Plot::clearCanvas() {
     }
     m_canvas->Clear();
     m_canvas->cd();
+    m_canvas->SetLogx( m_xLog );
+    m_canvas->SetLogy( m_yLog );
 }
 
 void Plot::clear() {
     m_objStack.resize(0);
+    m_xLog   = m_yLog = false;
+    m_xLabel = boost::optional<std::string>();
+    m_xLabel = boost::optional<std::string>();
     clearCanvas();
 }
 
@@ -78,6 +85,10 @@ void Plot::draw() {
     m_axisGraph->SetLineColor( Plot::WHITE );
     m_axisGraph->GetXaxis()->SetRangeUser( xs[0], xs[1] );
     m_axisGraph->GetYaxis()->SetRangeUser( ys[0], ys[1] );
+    if( !!m_xLabel ) 
+        m_axisGraph->GetXaxis()->SetTitle( m_xLabel->c_str() );
+    if( !!m_yLabel )
+        m_axisGraph->GetYaxis()->SetTitle( m_yLabel->c_str() );
     m_axisGraph->SetTitle( m_title.c_str() );
     m_axisGraph->Draw("AL");    
     
@@ -90,6 +101,20 @@ void Plot::draw() {
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
     // plot->plotOn(this);
+}
+
+void Plot::setLabel(Axis axis, const std::string& label) {
+    switch( axis ) {
+    case X: m_xLabel = label; break;
+    case Y: m_yLabel = label; break;
+    }
+}
+
+void Plot::setLogScale(Axis axis, bool l) {
+    switch( axis ) {
+    case X: m_xLog = l; break;
+    case Y: m_yLog = l; break;
+    }
 }
 
 void Plot::setLineColor(Plot::Color color) {

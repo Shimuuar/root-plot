@@ -78,9 +78,15 @@ static double getDouble(const Token& tok) {
 %token KW_SET
 %token KW_SILENT
 %token KW_TITLE
+
 %token KW_LINE
 %token KW_COLOR
 %token KW_WIDTH
+
+%token KW_XAXIS
+%token KW_YAXIS
+%token KW_LOG
+%token KW_LABEL
 
  // PLOT
 %token KW_ADD
@@ -151,6 +157,24 @@ set
   | KW_SILENT TOK_WS KW_ON   eol   { par.plot->setSilent( true  ); }
   | KW_SILENT TOK_WS KW_OFF  eol   { par.plot->setSilent( false ); }
   | KW_TITLE  TOK_WS TOK_STR eol   { par.plot->setTitle( boost::get<std::string>( $3 ) ); }
+  // X axis
+  | KW_XAXIS  TOK_WS KW_LABEL TOK_WS TOK_DASH eol
+    { par.plot->setLabel(Plot::X, ""); }
+  | KW_XAXIS  TOK_WS KW_LABEL TOK_WS TOK_STR  eol
+    { par.plot->setLabel(Plot::X, boost::get<std::string>( $5 )); }
+  | KW_XAXIS  TOK_WS KW_LOG   TOK_WS KW_ON    eol
+    { par.plot->setLogScale(Plot::X, true ); }
+  | KW_XAXIS  TOK_WS KW_LOG   TOK_WS KW_OFF   eol
+    { par.plot->setLogScale(Plot::X, false ); }
+  // Y axis
+  | KW_YAXIS  TOK_WS KW_LABEL TOK_WS TOK_DASH eol
+    { par.plot->setLabel(Plot::Y, ""); }
+  | KW_YAXIS  TOK_WS KW_LABEL TOK_WS TOK_STR  eol
+    { par.plot->setLabel(Plot::Y, boost::get<std::string>( $5 )); }
+  | KW_YAXIS  TOK_WS KW_LOG   TOK_WS KW_ON    eol
+    { par.plot->setLogScale(Plot::Y, true ); }
+  | KW_YAXIS  TOK_WS KW_LOG   TOK_WS KW_OFF   eol
+    { par.plot->setLogScale(Plot::Y, false ); }
 
 setLine
   : KW_WIDTH TOK_WS TOK_INT eol

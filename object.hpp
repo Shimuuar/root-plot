@@ -62,10 +62,15 @@ public:
             return BLACK;
         return Color(c);
     }
-    
+
+    // Line orientation
     enum Line {
         Vertical,
         Horizontal
+    };
+    // Axis
+    enum Axis {
+        X, Y
     };
 
     // Construct plot object which will draw on the canvas. Plot
@@ -83,6 +88,10 @@ public:
     void clear();
     // Set silent mode on/off. In silent mode canvas is not updated.
     void setSilent(bool isSilent) { m_isSilent = isSilent; }
+    // Set label for axis
+    void setLabel(Axis axis, const std::string& label);
+    // Set log scale
+    void setLogScale(Axis axis, bool l);
 
     // Push object on the top of stack;
     void pushObject(boost::shared_ptr<PlotObject> plot);
@@ -104,14 +113,21 @@ private:
     
     typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
-    TCanvas*                   m_canvas;    // Canvas to draw on
-    Stack                      m_objStack;  // Stack of objects
-    boost::optional<Range>     m_xRange;    // X range
-    boost::optional<Range>     m_yRange;    // Y range
-    boost::shared_ptr<TLegend> m_legend;    // Legend of the plot
-    bool                       m_isSilent;  // Is silent mode on
-    std::string                m_title;     // Title of plot
-    boost::shared_ptr<TGraph>  m_axisGraph; // Graph which holds axis.
+    // Data
+    TCanvas*                     m_canvas;    // Canvas to draw on
+    Stack                        m_objStack;  // Stack of objects
+    // Axis
+    boost::optional<Range>       m_xRange;    // X range
+    boost::optional<Range>       m_yRange;    // Y range
+    boost::optional<std::string> m_xLabel;    // X axis label
+    boost::optional<std::string> m_yLabel;    // Y axis label
+    bool                         m_xLog;      // Log scale for X axis
+    bool                         m_yLog;      // Log scale for Y axis
+    // Whole plot
+    boost::shared_ptr<TLegend>   m_legend;    // Legend of the plot
+    bool                         m_isSilent;  // Is silent mode on
+    std::string                  m_title;     // Title of plot
+    boost::shared_ptr<TGraph>    m_axisGraph; // Graph which holds axis.
 };
 
 // Object which

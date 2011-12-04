@@ -1,4 +1,5 @@
 
+
 %{
 #include "parser.hpp"
 #include "parser.tab.h"
@@ -35,6 +36,12 @@ hline       { return KW_HLINE;  }
 set         { return KW_SET;    }
 silent      { return KW_SILENT; }
 title       { return KW_TITLE;  }
+
+xaxis       { return KW_XAXIS;  }
+yaxis       { return KW_YAXIS;  }
+log         { return KW_LOG;    }
+label       { return KW_LABEL;  }
+
 line        { return KW_LINE;   }
 width       { return KW_WIDTH;  }
 color       { return KW_COLOR;  }
