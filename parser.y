@@ -123,9 +123,9 @@ plot_graph // Plot graph
     { par.parser->readFromFile<AccumGraph>( boost::get<std::string>($1), par.plot ); }
 plot_hist // Plot historam
   : TOK_DASH eol
-    { std::cerr << "Histograms are not implemented\n"; }
+    { par.parser->accumulate<AccumHist>(); }
   | TOK_STR eol
-    { std::cerr << "Histograms are not implemented\n"; }
+    { par.parser->readFromFile<AccumHist>( boost::get<std::string>($1), par.plot ); }
 
 
 set
