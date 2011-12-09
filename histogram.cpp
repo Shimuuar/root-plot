@@ -137,9 +137,9 @@ void AccumHist::Private::parseHistogram2D() {
     parseString<void>(pop(), "# Y");
     parseBin1D       (pop(), ny, yMin, yMax);
     // Read histogram body
-    std::auto_ptr<TH2D> h( new TH2D("FOO", "",
-                                    nx, xMin, xMax,
-                                    ny, yMin, yMax) );
+    hist = std::auto_ptr<TH1>( new TH2D("FOO", "",
+                                        nx, xMin, xMax,
+                                        ny, yMin, yMax) );
 }
 
 void AccumHist::Private::parseHistogram() {
