@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module HEP.ROOT.Plot ( 
+module HEP.ROOT.Plot (
     -- * AST
     Command(..)
   , Plot(..)
@@ -50,14 +50,14 @@ data Plot where
   HLine    :: Double -> Plot
 
 -- | Set subcommand
-data Option = 
+data Option =
     Silent Toggle
   | Title  String
   | LineWidth Int
   | LineColorI Int
 
 -- | Toggle options on and off
-data Toggle = ON 
+data Toggle = ON
             | OFF
 
 -- | Convert command to the string
@@ -73,13 +73,12 @@ renderPlot :: Plot -> String
 renderPlot (Graph vals) =
   unlines $ ("graph -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
 renderPlot (Function (a,b) f) =
-  unlines $ "graph -" : 
-    [ show x ++ " " ++ show (f x) 
-    | i <- [0 .. n]
-    , let x = a + (b - a) * fromIntegral i / fromIntegral n 
-    ]
+  renderPlot $ Graph [ (x, f x)
+                     | i <- [0 .. n]
+                     , let x = a + (b - a) * fromIntegral i / fromIntegral n
+                     ]
   where n = 128 :: Int
-renderPlot (Hist  h   ) = 
+renderPlot (Hist  h   ) =
   unlines [ "hist -"
           , show h
           , "<<<"
@@ -107,8 +106,8 @@ draw cmds = do
   uname  <- userName <$> (getUserEntryForID =<< getRealUserID)
   let sock = tmpdir ++ "/" ++ uname ++ "/rt-socket"
   -- Send data
-  bracket (socket AF_UNIX Stream defaultProtocol) (sClose) $ \s -> do 
-    connect s (SockAddrUnix "/tmp/rt-fifo")
+  bracket (socket AF_UNIX Stream defaultProtocol) (sClose) $ \s -> do
+    connect s (SockAddrUnix sock)
     -- Send data
     let sendAll s str = do
           n <- send s str
