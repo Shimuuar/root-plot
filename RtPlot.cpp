@@ -47,9 +47,8 @@ void RtPlot::readMoreData() {
         fdWatcher = 0;
     }
 
-   std::string str;
-    if( reader->getLine( str ) == LineReader::OK ) {
-        std::cout << "================\n";
+    std::string str;
+    while( reader->getLine( str ) == LineReader::OK ) {
         std::cout << "> '" << str << "'\n";
         parser->feedLine( plot, str );
     }
