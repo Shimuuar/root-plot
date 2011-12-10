@@ -38,10 +38,16 @@ data Command =
 
 -- | Plot subcommand
 data Plot where
-  Graph :: [(Double,Double)] -> Plot
-  Hist  :: Show (Histogram v bin a) => Histogram v bin a -> Plot
-  VLine :: Double -> Plot
-  HLine :: Double -> Plot
+  -- | Simple graph
+  Graph    :: [(Double,Double)] -> Plot
+  -- | Plot function
+  Function :: (Double,Double) -> (Double -> Double) -> Plot
+  -- | Plot histogram
+  Hist     :: Show (Histogram v bin a) => Histogram v bin a -> Plot
+  -- | Vertical line
+  VLine    :: Double -> Plot
+  -- | Horizontal line
+  HLine    :: Double -> Plot
 
 -- | Set subcommand
 data Option = 
@@ -66,6 +72,13 @@ renderCommand (Add  pl) = "add  " ++ renderPlot pl
 renderPlot :: Plot -> String
 renderPlot (Graph vals) =
   unlines $ ("graph -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
+renderPlot (Function (a,b) f) =
+  unlines $ "graph -" : 
+    [ show x ++ " " ++ show (f x) 
+    | i <- [0 .. n]
+    , let x = a + (b - a) * fromIntegral i / fromIntegral n 
+    ]
+  where n = 128 :: Int
 renderPlot (Hist  h   ) = 
   unlines [ "hist -"
           , show h
