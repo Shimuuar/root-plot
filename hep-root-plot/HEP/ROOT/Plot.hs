@@ -40,6 +40,8 @@ data Command =
 data Plot where
   -- | Simple graph
   Graph    :: [(Double,Double)] -> Plot
+  -- | Sequence of points
+  Graph1   :: [Double]          -> Plot
   -- | Plot function
   Function :: (Double,Double) -> (Double -> Double) -> Plot
   -- | Plot histogram
@@ -72,6 +74,8 @@ renderCommand (Add  pl) = "add  " ++ renderPlot pl
 renderPlot :: Plot -> String
 renderPlot (Graph vals) =
   unlines $ ("graph -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
+renderPlot (Graph1 ys ) =
+  unlines $ ("graph -" : map show ys) ++ ["<<<"]
 renderPlot (Function (a,b) f) =
   renderPlot $ Graph [ (x, f x)
                      | i <- [0 .. n]
