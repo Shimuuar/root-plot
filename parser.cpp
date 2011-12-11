@@ -44,7 +44,35 @@ public:
 // ----------------------------------------------------------------
 
 struct AccumGraph::Private {
+    Private() :
+        mode( Unknown )
+    {}
+    enum Mode {
+        Unknown,
+        OneColumn,
+        TwoColumn
+    };
+
+    Mode mode;
     std::vector<double> xs, ys;
+
+    bool oneColumn(const std::string& str) {
+        double y;
+        bool   ok = 1 == sscanf(str.c_str(), "%lf", &y);
+        if( ok ) {
+            ys.push_back( y );
+        }
+        return ok;
+    }
+    bool twoColumn(const std::string& str ) {
+        double x, y;
+        bool   ok = 2 == sscanf(str.c_str(), "%lf %lf", &x, &y);
+        if( ok ) {
+            xs.push_back( x );
+            ys.push_back( y );
+        }
+        return ok;
+    }
 };
 
 AccumGraph::AccumGraph()
@@ -54,23 +82,45 @@ AccumGraph::~AccumGraph()
 {}
 
 bool AccumGraph::flush(Plot* plot) {
-    plot->pushObject(
-        boost::make_shared<PlotGraph>(
-            new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
-    return true;
+    size_t n;
+    switch( p->mode ) {
+    // One column data
+    case Private::OneColumn:
+        n = p->ys.size();
+        p->xs.resize( n );
+        for( unsigned i = 0; i < n; i++ )
+            p->xs[i] = i;
+        // !! FALLTHROUGH !!
+    // Two column data
+    case Private::TwoColumn:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
+        return true;
+    // Ooops
+    case Private::Unknown: ;
+    }
+    return false;
 }
 
 bool AccumGraph::feedLine(const std::string& str) {
-    std::istringstream is( str );
-    double x, y;
-    is >> x >> y;
-    if( is.fail() ) {
-        return false;
-    } else {
-        p->xs.push_back(x);
-        p->ys.push_back(y);
-        return true;
-    }
+    switch( p->mode ) {
+    // One column data
+    case Private::OneColumn:
+        return p->oneColumn(str);
+    // Two column data
+    case Private::TwoColumn:
+        return p->twoColumn(str);
+    // Decide type of data
+    case Private::Unknown:
+        if( p->twoColumn(str) ) {
+            p->mode = Private::TwoColumn;
+        } else if( p->oneColumn(str) ) {
+            p->mode = Private::OneColumn;
+        }
+        return p->mode != Private::Unknown;
+    };
+    return false; // Unreachable
 }
 
 
