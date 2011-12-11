@@ -75,7 +75,8 @@ struct AccumGraph::Private {
     }
 };
 
-AccumGraph::AccumGraph()
+AccumGraph::AccumGraph() :
+    p( new AccumGraph::Private )
 {}
 
 AccumGraph::~AccumGraph()
