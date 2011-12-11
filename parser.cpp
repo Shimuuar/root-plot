@@ -43,10 +43,20 @@ public:
 
 // ----------------------------------------------------------------
 
+struct AccumGraph::Private {
+    std::vector<double> xs, ys;
+};
+
+AccumGraph::AccumGraph()
+{}
+
+AccumGraph::~AccumGraph()
+{}
+
 bool AccumGraph::flush(Plot* plot) {
     plot->pushObject(
         boost::make_shared<PlotGraph>(
-            new TGraph(xs.size(), &xs[0], &ys[0]) ) );
+            new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
     return true;
 }
 
@@ -57,8 +67,8 @@ bool AccumGraph::feedLine(const std::string& str) {
     if( is.fail() ) {
         return false;
     } else {
-        xs.push_back(x);
-        ys.push_back(y);
+        p->xs.push_back(x);
+        p->ys.push_back(y);
         return true;
     }
 }

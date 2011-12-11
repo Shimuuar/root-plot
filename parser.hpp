@@ -59,11 +59,13 @@ public:
 // Accumulator for graphs
 class AccumGraph : public LineAccum {
 public:
-    virtual ~AccumGraph() {}
+    AccumGraph();
+    virtual ~AccumGraph();
     virtual bool flush(Plot*);
     virtual bool feedLine(const std::string& str);
 private:
-    std::vector<double> xs, ys;
+    class Private;
+    boost::scoped_ptr<Private> p;
 };
 
 // Accumulator for histograms.
