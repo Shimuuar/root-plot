@@ -25,6 +25,7 @@ clear       { return KW_CLEAR;  }
 on          { return KW_ON;     }
 off         { return KW_OFF;    }
 exit        { return KW_EXIT;   }
+save        { return KW_SAVE;   }
 
 plot        { return KW_PLOT;   }
 add         { return KW_ADD;    }

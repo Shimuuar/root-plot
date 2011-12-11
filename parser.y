@@ -73,6 +73,7 @@ static double getDouble(const Token& tok) {
 %token KW_ON
 %token KW_OFF
 %token KW_EXIT
+%token KW_SAVE
 
  // SET
 %token KW_SET
@@ -107,6 +108,7 @@ line // Top level statement
   : /* empty */
   | KW_CLEAR eol                { par.plot->clear(); }
   | KW_EXIT  eol                { gApplication->Terminate(); }
+  | KW_SAVE  TOK_WS TOK_STR eol { par.plot->save( boost::get<std::string>($3) ); }
   | KW_SET   TOK_WS set
   /* Plot commands */
   | KW_ADD   { par.clearPlot = false; } TOK_WS plot

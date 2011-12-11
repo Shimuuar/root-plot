@@ -98,6 +98,11 @@ void Plot::draw() {
     m_canvas->Update();
 }
 
+void Plot::save(const std::string& fname) {
+    draw();
+    m_canvas->SaveAs(fname.c_str(), "Landscape");
+}
+
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
     // plot->plotOn(this);

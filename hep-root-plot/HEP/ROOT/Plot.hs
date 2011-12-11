@@ -32,6 +32,7 @@ import Prelude hiding (catch)
 data Command =
     Clear
   | Exit
+  | Save String
   | Set  Option
   | Plot Plot
   | Add  Plot
@@ -66,6 +67,7 @@ data Toggle = ON
 renderCommand :: Command -> String
 renderCommand Clear     = "clear"
 renderCommand Exit      = "exit"
+renderCommand (Save nm) = "save " ++ show nm -- FIXME: absolute path!!!
 renderCommand (Set opt) = "set  " ++ renderOption opt
 renderCommand (Plot pl) = "plot " ++ renderPlot pl
 renderCommand (Add  pl) = "add  " ++ renderPlot pl
