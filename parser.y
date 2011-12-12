@@ -83,6 +83,7 @@ static double getDouble(const Token& tok) {
 %token KW_LINE
 %token KW_COLOR
 %token KW_WIDTH
+%token KW_FILL
 
 %token KW_XAXIS
 %token KW_YAXIS
@@ -156,6 +157,7 @@ plot_hist
 
 set
   : KW_LINE   TOK_WS setLine
+  | KW_FILL   TOK_WS setFill
   | KW_SILENT TOK_WS KW_ON   eol   { par.plot->setSilent( true  ); }
   | KW_SILENT TOK_WS KW_OFF  eol   { par.plot->setSilent( false ); }
   | KW_TITLE  TOK_WS TOK_STR eol   { par.plot->setTitle( boost::get<std::string>( $3 ) ); }
@@ -185,6 +187,12 @@ setLine
     { par.plot->setLineColor( Plot::toColor( boost::get<int>($3)) ); }
   | KW_COLOR TOK_WS TOK_STR eol
     { par.plot->setLineColor( strToColor( boost::get<std::string>( $3 ) ) ); }
+
+setFill
+  : KW_COLOR TOK_WS TOK_INT eol
+    { par.plot->setFillColor( Plot::toColor( boost::get<int>($3)) ); }
+  | KW_COLOR TOK_WS TOK_STR eol
+    { par.plot->setFillColor( strToColor( boost::get<std::string>( $3 ) ) ); }
 
 
 // End of line

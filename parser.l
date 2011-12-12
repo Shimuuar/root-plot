@@ -46,6 +46,7 @@ label       { return KW_LABEL;  }
 line        { return KW_LINE;   }
 width       { return KW_WIDTH;  }
 color       { return KW_COLOR;  }
+fill        { return KW_FILL;   }
 
  /* Literals */
 {int}       { *yylval = boost::lexical_cast<int>   ( yytext ); return TOK_INT;    }
