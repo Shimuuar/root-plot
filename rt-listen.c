@@ -82,6 +82,7 @@ int main(int argc, char** argv)
             exit(1);
         }
         while( 1 ) {
+            // Read data
             int n = recv(s2, buffer, BUF_SIZE, 0);
             if (n == 0)
                 break;
@@ -89,7 +90,9 @@ int main(int argc, char** argv)
                 perror("recv");
                 exit(1);
             }
-            write(STDOUT_FILENO, buffer, n);
+            // Write data to stdout
+            int nw = write(STDOUT_FILENO, buffer, n);
+            printf( "Bytes written %i of %i\n", nw, n);
         }
         close(s2);
     }
