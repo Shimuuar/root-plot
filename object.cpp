@@ -127,6 +127,11 @@ void Plot::setLineColor(Plot::Color color) {
         m_objStack.back()->setLineColor(color);
 }
 
+void Plot::setFillColor(Plot::Color color) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setFillColor(color);
+}
+
 void Plot::setLineWidth(int width) {
     if( !m_objStack.empty() )
         m_objStack.back()->setLineWidth(width);
@@ -174,6 +179,10 @@ void PlotHist::setLineWidth(int width) {
 
 void PlotHist::setLineColor(Plot::Color col) {
     hist->SetLineColor(col);
+}
+
+void PlotHist::setFillColor(Plot::Color col) {
+    hist->SetFillColor(col);
 }
 
 RangeM PlotHist::xRange() const {

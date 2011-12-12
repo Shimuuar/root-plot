@@ -101,6 +101,8 @@ public:
     void setTitle(const std::string& title) { m_title = title; }
     // Set line color for top object. Noop if stack is empty
     void setLineColor(Plot::Color);
+    // Set fill color for top object. Noop if stack is empty
+    void setFillColor(Plot::Color);
     // Set line width for top object. Noop if stack is empty
     void setLineWidth(int width);
     
@@ -152,6 +154,8 @@ public:
 
     // Set color of line
     virtual void setLineColor(Plot::Color) {}
+    // Set fill color
+    virtual void setFillColor(Plot::Color) {}
     // Set width of line
     virtual void setLineWidth(int width)   {UNUSED(width);}
 };
@@ -170,6 +174,7 @@ public:
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(Plot::Color);
+    virtual void   setFillColor(Plot::Color);
 private:
     boost::scoped_ptr<TH1> hist;
 };
