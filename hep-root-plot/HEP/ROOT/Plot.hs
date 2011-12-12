@@ -6,6 +6,7 @@ module HEP.ROOT.Plot (
     Command(..)
   , Plot(..)
   , Option(..)
+  , Color(..)
     -- * Sending commands
   , renderCommand
   , draw
@@ -54,14 +55,33 @@ data Plot where
 
 -- | Set subcommand
 data Option =
+    -- | Silence state
     Silent Toggle
+    -- | Title of plot
   | Title  String
+    -- | Width of line
   | LineWidth Int
+    -- | Color of line (with enum)
+  | LineColor  Color
+    -- | Color of line (with int)
   | LineColorI Int
 
 -- | Toggle options on and off
 data Toggle = ON
             | OFF
+
+data Color =
+    WHITE
+  | BLACK
+  | RED
+  | GREEN
+  | BLUE
+  | YELLOW
+  | MAGENTA
+  | CYAN
+  | FOREST
+  | VIOLET
+  deriving (Show,Eq,Enum)
 
 -- | Convert command to the string
 renderCommand :: Command -> String
@@ -98,6 +118,7 @@ renderOption (Silent ON)    = "silent on"
 renderOption (Silent OFF)   = "silent off"
 renderOption (Title  t)     = "title " ++ show t
 renderOption (LineWidth i)  = "line width " ++ show i
+renderOption (LineColor  c) = renderOption $ LineColorI $ fromEnum c
 renderOption (LineColorI i) = "line color " ++ show i
 
 
