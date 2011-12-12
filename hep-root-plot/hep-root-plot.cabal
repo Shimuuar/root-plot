@@ -1,3 +1,4 @@
+
 Name:           hep-root-plot
 Version:        0.1
 Cabal-Version:  >= 1.6
@@ -15,6 +16,7 @@ Description:
 Library
   Build-Depends:        base >=3 && <5,
                         unix,
+                        directory,
                         network,
                         histogram-fill
   Exposed-modules:      HEP.ROOT.Plot

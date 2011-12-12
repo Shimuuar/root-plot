@@ -66,6 +66,10 @@ data Option =
   | LineColor  Color
     -- | Color of line (with int)
   | LineColorI Int
+    -- | Fill color (with enum)
+  | FillColor  Color
+    -- | Fill color (with int)
+  | FillColorI Int
 
 -- | Toggle options on and off
 data Toggle = ON
@@ -121,6 +125,8 @@ renderOption (Title  t)     = "title " ++ show t
 renderOption (LineWidth i)  = "line width " ++ show i
 renderOption (LineColor  c) = renderOption $ LineColorI $ fromEnum c
 renderOption (LineColorI i) = "line color " ++ show i
+renderOption (FillColor  c) = renderOption $ FillColorI $ fromEnum c
+renderOption (FillColorI i) = "fill color " ++ show i
 
 
 ----------------------------------------------------------------
