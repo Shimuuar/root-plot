@@ -18,6 +18,7 @@ import Control.Exception
 import Data.Histogram.Generic
 import Network.Socket
 
+import System.Directory    (canonicalizePath)
 import System.Environment
 import System.Posix.User
 
@@ -84,13 +85,13 @@ data Color =
   deriving (Show,Eq,Enum)
 
 -- | Convert command to the string
-renderCommand :: Command -> String
-renderCommand Clear     = "clear"
-renderCommand Exit      = "exit"
-renderCommand (Save nm) = "save " ++ show nm -- FIXME: absolute path!!!
-renderCommand (Set opt) = "set  " ++ renderOption opt
-renderCommand (Plot pl) = "plot " ++ renderPlot pl
-renderCommand (Add  pl) = "add  " ++ renderPlot pl
+renderCommand :: Command -> IO String
+renderCommand Clear     = return $ "clear"
+renderCommand Exit      = return $ "exit"
+renderCommand (Save nm) = ("save " ++) <$> canonicalizePath nm
+renderCommand (Set opt) = return $ "set  " ++ renderOption opt
+renderCommand (Plot pl) = return $ "plot " ++ renderPlot pl
+renderCommand (Add  pl) = return $ "add  " ++ renderPlot pl
 
 -- plot subcommand
 renderPlot :: Plot -> String
@@ -141,7 +142,7 @@ draw cmds = do
           case drop n str of
             [] -> return ()
             xs -> sendAll s xs
-    sendAll s (unlines $ map renderCommand cmds)
+    sendAll s . unlines =<< mapM renderCommand cmds
 
 
 -- | Send list of commands surrounded in silent on/off marks
