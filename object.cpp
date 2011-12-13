@@ -50,8 +50,11 @@ void Plot::clearCanvas() {
 void Plot::clear() {
     m_objStack.resize(0);
     m_xLog   = m_yLog = false;
+    m_title  = "";
     m_xLabel = boost::optional<std::string>();
-    m_xLabel = boost::optional<std::string>();
+    m_yLabel = boost::optional<std::string>();
+    m_xRange = boost::optional<Range>();
+    m_yRange = boost::optional<Range>();
     clearCanvas();
 }
 
