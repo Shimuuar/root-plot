@@ -18,8 +18,11 @@ public:
     // Get canvas
     TCanvas* getCanvas() { return canvas; }
 private:
+
     TCanvas* canvas;
 public:
+    // Handler for saving PDF
+    void savePDF();
     // CINT stuff
     ClassDef(RtMainFrame,1);
 };

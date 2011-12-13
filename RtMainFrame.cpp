@@ -23,8 +23,8 @@ RtMainFrame::RtMainFrame(const TGWindow* p) :
 					, new TGLayoutHints(kLHintsCenterX,5,5,3,4));
     // Save button
     TGTextButton* buttonPDF = new TGTextButton(hframe, "Save &PDF");
-    // TQObject::Connect(buttonPDF, "Clicked()",
-    //                  "BiplotMainFrame", this, "savePDF_button()" );
+    TQObject::Connect(buttonPDF, "Clicked()",
+                     "RtMainFrame", this, "savePDF()" );
     hframe->AddFrame( buttonPDF
                     , new TGLayoutHints(kLHintsCenterX,5,5,3,4));
     AddFrame(hframe,new TGLayoutHints(kLHintsCenterX,2,2,2,2));
@@ -37,6 +37,10 @@ RtMainFrame::RtMainFrame(const TGWindow* p) :
 }
 
 RtMainFrame::~RtMainFrame() {
+}
+
+void RtMainFrame::savePDF() {
+    canvas->SaveAs("ROOT-Plot.pdf");
 }
 
 // ROOT
