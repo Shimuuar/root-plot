@@ -89,6 +89,7 @@ static double getDouble(const Token& tok) {
 %token KW_YAXIS
 %token KW_LOG
 %token KW_LABEL
+%token KW_RANGE
 
  // PLOT
 %token KW_ADD
@@ -174,6 +175,16 @@ setAxis
     { par.plot->setLogScale(Plot::Axis(par.axis), true ); }
   | KW_LOG   TOK_WS KW_OFF   eol
     { par.plot->setLogScale(Plot::Axis(par.axis), false ); }
+  | KW_RANGE TOK_WS TOK_DASH eol
+    { par.plot->setRange(Plot::Axis(par.axis)); }
+  | KW_RANGE TOK_WS double TOK_WS double eol
+    {
+        par.plot->setRange(
+            Plot::Axis(par.axis),
+            getDouble( $3 ),
+            getDouble( $5 )
+            );
+    }
 
 setLine
   : KW_WIDTH TOK_WS TOK_INT eol

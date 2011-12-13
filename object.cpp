@@ -159,6 +159,28 @@ RangeM Plot::yRange() const {
     return rng;
 }
 
+void Plot::setRange(Axis axis, double a, double b) {
+    switch( axis ) {
+    case X:
+        m_xRange = Range(a,b);
+        return;
+    case Y:
+        m_yRange = Range(a,b);
+        return;
+    }
+}
+
+void Plot::setRange(Axis axis) {
+    switch( axis ) {
+    case X:
+        m_xRange.reset();
+        return;
+    case Y:
+        m_yRange.reset();
+        return;
+    }
+}
+
 
 
 // ================================================================ //

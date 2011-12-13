@@ -110,6 +110,10 @@ public:
     RangeM xRange() const;
     // Y range for plot
     RangeM yRange() const;
+    // Set range for axis
+    void setRange(Axis axis, double a, double b);
+    // Set range for axis to auto scale
+    void setRange(Axis axis);
 
 private:
     // Remove everything from canvas

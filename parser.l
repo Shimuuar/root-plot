@@ -42,6 +42,7 @@ xaxis       { return KW_XAXIS;  }
 yaxis       { return KW_YAXIS;  }
 log         { return KW_LOG;    }
 label       { return KW_LABEL;  }
+range       { return KW_RANGE;  }
 
 line        { return KW_LINE;   }
 width       { return KW_WIDTH;  }
