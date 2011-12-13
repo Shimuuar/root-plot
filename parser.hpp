@@ -27,12 +27,15 @@ struct ParseParam {
     ParseParam(Parser* par, Plot* p) :
         parser(par),
         plot(p),
-        clearPlot(false)
+        clearPlot(false),
+        axis(0)
     {}
     
-    Parser* parser;
-    Plot*   plot;
-    bool    clearPlot;
+    Parser*    parser;          // Pointer to parser
+    Plot*      plot;            // Pointer to plot object
+    // ==== Locals ================
+    bool       clearPlot;       // Should we clear plot
+    int        axis;            // Axis
 };
 int yyparse(ParseParam);
 

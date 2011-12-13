@@ -209,7 +209,7 @@ RangeM PlotHist::yRange() const {
         for( int i = 1; i <= n; i++ )
             yMax = std::max( yMax, hist->GetBinContent(i) );
         return boost::optional<Range>(
-            Range( 0, yMax ) );
+            Range( 0, 1.05 * yMax ) );
     }
 }
 
