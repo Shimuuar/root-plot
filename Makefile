@@ -63,7 +63,4 @@ install: all
 	install rt-plot    ${INSTALLDIR}
 	install rt-listen  ${INSTALLDIR}
 	install rt-cat     ${INSTALLDIR}
-# #	install rt-tree   ${INSTALLDIR}
-# 	install rt-echo         ${INSTALLDIR}
-# 	install rt-unix-wrapper ${INSTALLDIR}
-
+	install rt-tree   ${INSTALLDIR}
