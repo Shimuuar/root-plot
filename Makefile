@@ -13,10 +13,13 @@ endif
 
 INSTALLDIR=${HOME}/opt/bin
 ################################################################
+# Strict aliasing is turned off since it triggers warning for
+# boost::optional. It maybe unjustified but it's better to be on safe
+# side.
 
 C        = gcc
 CXX      = g++
-CXXFLAGS = -g -O2 -Wall -Wextra `${ROOTCFG} --cflags`
+CXXFLAGS = -g -O2 -fno-strict-aliasing  -Wall -Wextra `${ROOTCFG} --cflags`
 CFLAGS   = -g -O2 -Wall -Wextra -std=c99
 LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 PREFIX   = ${HOME}/opt
