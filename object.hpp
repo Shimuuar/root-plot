@@ -3,7 +3,7 @@
 
 // Classes for plotting
 
-
+#include <string>
 #include <vector>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
