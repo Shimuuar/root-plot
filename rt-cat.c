@@ -93,10 +93,10 @@ int main(int argc, char** argv)
 
     // Dump stdin to socket
     if( optind == argc ) {
-        dump_fd( STDIN_FILENO );
+        dump_fd( s, STDIN_FILENO );
     } else {
         for(int i = optind; i < argc; i++)
-            dump_file( argv[i] );
+            dump_file( s, argv[i] );
     }
     close(s);
     return 0;
