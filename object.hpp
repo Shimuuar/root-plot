@@ -35,6 +35,7 @@ typedef boost::optional<Range> RangeM;
 
 class PlotObject;
 
+class TObject;
 class TCanvas;
 class TLegend;
 class TGraph;
@@ -119,6 +120,10 @@ public:
     void removeLegend();
     // Add legend to the plot
     void addLegend(double x1, double y1, double x2, double y2);
+    // Add string to a legend
+    void addLegendString(const std::string& str);
+    // Add string to a legend and link it with last object
+    void addPlotToLegend(const std::string& str);
 private:
     // Remove everything from canvas
     void clearCanvas();
@@ -166,6 +171,9 @@ public:
     virtual void setFillColor(Plot::Color) {}
     // Set width of line
     virtual void setLineWidth(int width)   {UNUSED(width);}
+
+    // Get pointer to ROOT object. May return NULL
+    virtual TObject* getRootObject() { return 0; }
 };
 
 
@@ -177,12 +185,13 @@ public:
     // copy.
     PlotHist(TH1* h);
 
-    virtual void   plotOn(Plot* cxt);
-    virtual RangeM xRange() const;
-    virtual RangeM yRange() const;
-    virtual void   setLineWidth(int width);
-    virtual void   setLineColor(Plot::Color);
-    virtual void   setFillColor(Plot::Color);
+    virtual void     plotOn(Plot* cxt);
+    virtual RangeM   xRange() const;
+    virtual RangeM   yRange() const;
+    virtual void     setLineWidth(int width);
+    virtual void     setLineColor(Plot::Color);
+    virtual void     setFillColor(Plot::Color);
+    virtual TObject* getRootObject();
 private:
     boost::scoped_ptr<TH1> hist;
 };
@@ -194,11 +203,12 @@ public:
     // copy.
     PlotGraph(TGraph* g);
 
-    virtual void   plotOn(Plot* cxt);
-    virtual RangeM xRange() const;
-    virtual RangeM yRange() const;
-    virtual void   setLineWidth(int width);
-    virtual void   setLineColor(Plot::Color);
+    virtual void     plotOn(Plot* cxt);
+    virtual RangeM   xRange() const;
+    virtual RangeM   yRange() const;
+    virtual void     setLineWidth(int width);
+    virtual void     setLineColor(Plot::Color);
+    virtual TObject* getRootObject();
 private:
     boost::scoped_ptr<TGraph> graph;
 };

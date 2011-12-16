@@ -198,6 +198,20 @@ void Plot::addLegend(double x1, double y1, double x2, double y2) {
     m_legend = boost::make_shared<TLegend>(x1, y1, x2, y2);
 }
 
+void Plot::addLegendString(const std::string& str) {
+    if( m_legend )
+        m_legend->AddEntry(new TObject(), str.c_str(), "");
+}
+
+void Plot::addPlotToLegend(const std::string& str) {
+    if( m_legend && !m_objStack.empty() ) {
+        TObject* obj = m_objStack.back()->getRootObject();
+        if( obj )
+            m_legend->AddEntry(obj, str.c_str() );
+    }
+}
+
+
 // ================================================================ //
 // ==== Histogram
 // ================================================================ //
@@ -250,6 +264,9 @@ RangeM PlotHist::yRange() const {
     }
 }
 
+TObject* PlotHist::getRootObject() {
+    return &( *hist );
+}
 
 
 // ================================================================ //
@@ -294,6 +311,10 @@ RangeM PlotGraph::yRange() const {
     double lo = *std::min_element(ys, ys+n);
     double delta = 0.03 * (hi - lo);
     return boost::optional<Range>( Range(lo - delta, hi + delta) );
+}
+
+TObject* PlotGraph::getRootObject() {
+    return &( *graph );
 }
 
 

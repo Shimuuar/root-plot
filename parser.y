@@ -170,6 +170,11 @@ legend
             getDouble( $7 ),
             getDouble( $9 ) );
     }
+  | KW_ADD TOK_WS TOK_STR eol
+    { par.plot->addPlotToLegend( boost::get<std::string>( $3 ) ); }
+  | KW_ADD TOK_WS KW_LABEL TOK_WS TOK_STR eol
+    { par.plot->addLegendString( boost::get<std::string>( $5 ) ); }
+
 
 set
   : KW_LINE   TOK_WS setLine
