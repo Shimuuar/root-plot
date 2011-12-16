@@ -88,6 +88,8 @@ public:
 
     // Clear plot and delete entire object stack
     void clear();
+    // Set title of the plot
+    void setTitle(const std::string& title) { m_title = title; }
     // Set silent mode on/off. In silent mode canvas is not updated.
     void setSilent(bool isSilent) { m_isSilent = isSilent; }
     // Set label for axis
@@ -97,8 +99,6 @@ public:
 
     // Push object on the top of stack;
     void pushObject(boost::shared_ptr<PlotObject> plot);
-    // Set title of the plot
-    void setTitle(const std::string& title) { m_title = title; }
     // Set line color for top object. Noop if stack is empty
     void setLineColor(Plot::Color);
     // Set fill color for top object. Noop if stack is empty
@@ -115,6 +115,10 @@ public:
     // Set range for axis to auto scale
     void setRange(Axis axis);
 
+    // Remove legend from plot. Noop if there is no legend
+    void removeLegend();
+    // Add legend to the plot
+    void addLegend(double x1, double y1, double x2, double y2);
 private:
     // Remove everything from canvas
     void clearCanvas();

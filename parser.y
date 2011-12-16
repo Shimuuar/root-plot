@@ -74,6 +74,7 @@ static double getDouble(const Token& tok) {
 %token KW_OFF
 %token KW_EXIT
 %token KW_SAVE
+%token KW_LEGEND
 
  // SET
 %token KW_SET
@@ -115,6 +116,8 @@ line // Top level statement
   /* Plot commands */
   | KW_ADD   { par.clearPlot = false; } TOK_WS plot
   | KW_PLOT  { par.clearPlot = true;  } TOK_WS plot
+  /* Legend */
+  | KW_LEGEND TOK_WS legend
   ;
 
 plot // Plotting command
@@ -155,6 +158,18 @@ plot_hist
         par.parser->readFromFile<AccumHist>( boost::get<std::string>($1), par.plot );
     }
 
+// Legend
+legend
+  : TOK_DASH eol
+    { par.plot->removeLegend(); }
+  | KW_ADD TOK_WS double TOK_WS double TOK_WS double TOK_WS double eol
+    {
+        par.plot->addLegend(
+            getDouble( $3 ),
+            getDouble( $5 ),
+            getDouble( $7 ),
+            getDouble( $9 ) );
+    }
 
 set
   : KW_LINE   TOK_WS setLine

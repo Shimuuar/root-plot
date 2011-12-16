@@ -9,6 +9,7 @@
 #include <TGraph.h>
 #include <TCanvas.h>
 #include <TROOT.h>
+#include <TLegend.h>
 
 
 
@@ -55,6 +56,7 @@ void Plot::clear() {
     m_yLabel = boost::optional<std::string>();
     m_xRange = boost::optional<Range>();
     m_yRange = boost::optional<Range>();
+    removeLegend();
     clearCanvas();
 }
 
@@ -94,10 +96,14 @@ void Plot::draw() {
         m_axisGraph->GetYaxis()->SetTitle( m_yLabel->c_str() );
     m_axisGraph->SetTitle( m_title.c_str() );
     m_axisGraph->Draw("AL");    
-    
+
+    // Draw all objects
     for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o) {
         (*o)->plotOn( this );
     }
+    // Draw legend
+    if( m_legend )
+        m_legend->Draw();
     m_canvas->Update();
 }
 
@@ -184,7 +190,13 @@ void Plot::setRange(Axis axis) {
     }
 }
 
+void Plot::removeLegend() {
+    m_legend.reset();
+}
 
+void Plot::addLegend(double x1, double y1, double x2, double y2) {
+    m_legend = boost::make_shared<TLegend>(x1, y1, x2, y2);
+}
 
 // ================================================================ //
 // ==== Histogram
