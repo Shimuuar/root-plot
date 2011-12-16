@@ -1,6 +1,8 @@
 
 #include "RtPlot.hpp"
 
+#include <iostream>
+#include <cstdlib>
 #include <signal.h>
 
 #include <TH1.h>
@@ -8,9 +10,19 @@
 #include <TStyle.h>
 
 
+void usage() {
+    std::cerr <<
+        "Usage:\n"
+        "    rt-plot [flags]\n"
+        "\n"
+        "Reads commands from standard input and creates a plot\n"
+        "\n"
+        "    -x - do not create window\n"
+        ;
+    std::exit(1);
+}
 
-int main()
-// int main(int argc, char** argv)
+int main(int argc, char** argv)
 {
     // Uninstall SIGSEVG handler
     signal( SIGSEGV, SIG_DFL );
@@ -20,6 +32,23 @@ int main()
     gROOT ->SetStyle("Plain");
     gStyle->SetPalette(1);
 
+    // Parse command line parameters
+    for( int c; ((c = getopt (argc, argv, "hx")) != -1); ) {
+        switch(c) {
+        case 'x':
+            // We don't wanr graphics so we have to unset display.
+            // Otherwise ROOT will create windows
+            if( -1 == unsetenv("DISPLAY") ) {
+                perror("rt-plot: unable to unset DISPLAY");
+                exit(1);
+            }
+            break;
+        case 'h':
+        default :
+            usage();
+            break;
+        }
+    }
     RtPlot app;
     app.Run();
     return 0;
