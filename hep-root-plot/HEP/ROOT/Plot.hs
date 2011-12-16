@@ -6,6 +6,7 @@ module HEP.ROOT.Plot (
     Command(..)
   , Plot(..)
   , Option(..)
+  , Legend(..)
   , Color(..)
     -- * Sending commands
   , renderCommand
@@ -21,6 +22,7 @@ import Network.Socket
 import System.Directory    (canonicalizePath)
 import System.Environment
 import System.Posix.User
+import Text.Printf
 
 import Prelude hiding (catch)
 
@@ -34,10 +36,11 @@ import Prelude hiding (catch)
 data Command =
     Clear
   | Exit
-  | Save String
-  | Set  Option
-  | Plot Plot
-  | Add  Plot
+  | Save   String
+  | Legend Legend
+  | Set    Option
+  | Plot   Plot
+  | Add    Plot
 
 -- | Plot subcommand
 data Plot where
@@ -71,6 +74,16 @@ data Option =
     -- | Fill color (with int)
   | FillColorI Int
 
+data Legend = 
+    -- | Add new legend to the plot
+    NewL (Double,Double) (Double,Double)
+    -- | Delete legend from the plot
+  | DeleteL
+    -- | Add label to the last item in the stack
+  | LegendStr   String
+    -- | Add label to the item
+  | LegendLabel String
+
 -- | Toggle options on and off
 data Toggle = ON
             | OFF
@@ -90,12 +103,13 @@ data Color =
 
 -- | Convert command to the string
 renderCommand :: Command -> IO String
-renderCommand Clear     = return $ "clear"
-renderCommand Exit      = return $ "exit"
-renderCommand (Save nm) = ("save " ++) <$> canonicalizePath nm
-renderCommand (Set opt) = return $ "set  " ++ renderOption opt
-renderCommand (Plot pl) = return $ "plot " ++ renderPlot pl
-renderCommand (Add  pl) = return $ "add  " ++ renderPlot pl
+renderCommand Clear      = return $ "clear"
+renderCommand Exit       = return $ "exit"
+renderCommand (Save nm)  = ("save " ++) <$> canonicalizePath nm
+renderCommand (Set opt)  = return $ "set  " ++ renderOption opt
+renderCommand (Plot pl)  = return $ "plot " ++ renderPlot pl
+renderCommand (Add  pl)  = return $ "add  " ++ renderPlot pl
+renderCommand (Legend l) = return $ "legend " ++ renderLegend l
 
 -- plot subcommand
 renderPlot :: Plot -> String
@@ -127,6 +141,14 @@ renderOption (LineColor  c) = renderOption $ LineColorI $ fromEnum c
 renderOption (LineColorI i) = "line color " ++ show i
 renderOption (FillColor  c) = renderOption $ FillColorI $ fromEnum c
 renderOption (FillColorI i) = "fill color " ++ show i
+
+-- Legend subcommand
+renderLegend :: Legend -> String
+renderLegend (NewL (x1,y1) (x2,y2)) = printf "add %g %g %g %g" x1 y1 x2 y2
+renderLegend DeleteL                = "-"
+renderLegend (LegendStr   s)        = "add "       ++ show s
+renderLegend (LegendLabel s)        = "add label " ++ show s
+
 
 
 ----------------------------------------------------------------
