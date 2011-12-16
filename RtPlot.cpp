@@ -26,10 +26,15 @@ RtPlot::RtPlot() :
     fdWatcher->Add();
     TQObject::Connect(fdWatcher, "Notified()",
                       "RtPlot", this, "readMoreData()");
-    // Create window
-    // FIXME: should work even without X
-    RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
-    plot = new Plot( bp->getCanvas() );
+    // Create canvas to drow upon
+    if( getenv("DISPLAY") != 0 ) {
+        // We have X. Let create window
+        RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
+        plot = new Plot( bp->getCanvas() );
+    } else {
+        TCanvas* cnv = new TCanvas;
+        plot = new Plot( cnv );
+    }
 }
 
 RtPlot::~RtPlot()
