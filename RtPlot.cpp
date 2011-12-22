@@ -16,47 +16,49 @@ static const char* dummy_argv[] = {"rt-plot"};
 static int         dummy_argc   = 1;
 
 
-RtPlot::RtPlot() :
+RtPlot::RtPlot(bool verbose) :
     TApplication( "rt-plot", &dummy_argc, const_cast<char**>( dummy_argv ) ),
-    reader(    new LineReader(STDIN_FILENO) ),
-    parser(    new Parser ),
-    fdWatcher( new TFileHandler(STDIN_FILENO , TFileHandler::kRead) )
+    m_reader(    new LineReader(STDIN_FILENO) ),
+    m_parser(    new Parser ),
+    m_fdWatcher( new TFileHandler(STDIN_FILENO , TFileHandler::kRead) ),
+    m_verbose( verbose )
 {
     // Set up notification
-    fdWatcher->Add();
-    TQObject::Connect(fdWatcher, "Notified()",
+    m_fdWatcher->Add();
+    TQObject::Connect(m_fdWatcher, "Notified()",
                       "RtPlot", this, "readMoreData()");
     // Create canvas to drow upon
     if( getenv("DISPLAY") == 0 ) {
         // No graphics
         TCanvas* cnv = new TCanvas;
-        plot = new Plot( cnv );
+        m_plot = new Plot( cnv );
     } else {
         // We have X. Let create window
         RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
-        plot = new Plot( bp->getCanvas() );
+        m_plot = new Plot( bp->getCanvas() );
     }
 }
 
 RtPlot::~RtPlot()
 {
-    delete fdWatcher;
-    delete parser;
-    delete reader;
-    delete plot;
+    delete m_fdWatcher;
+    delete m_parser;
+    delete m_reader;
+    delete m_plot;
 }
 
 void RtPlot::readMoreData() {
     // No more data from stdin
-    if( reader->eof() ) {
-        delete fdWatcher;
-        fdWatcher = 0;
+    if( m_reader->eof() ) {
+        delete m_fdWatcher;
+        m_fdWatcher = 0;
     }
 
     std::string str;
-    while( reader->getLine( str ) == LineReader::OK ) {
-        std::cout << "> '" << str << "'\n";
-        parser->feedLine( plot, str );
+    while( m_reader->getLine( str ) == LineReader::OK ) {
+        if( m_verbose )
+            std::cout << "> '" << str << "'\n";
+        m_parser->feedLine( m_plot, str );
     }
 }
 

@@ -18,6 +18,7 @@ void usage() {
         "Reads commands from standard input and creates a plot\n"
         "\n"
         "    -x - do not create window\n"
+        "    -v - verbose. Echo input to stdout\n"
         ;
     std::exit(1);
 }
@@ -33,7 +34,8 @@ int main(int argc, char** argv)
     gStyle->SetPalette(1);
 
     // Parse command line parameters
-    for( int c; ((c = getopt (argc, argv, "hx")) != -1); ) {
+    bool verbose = false;
+    for( int c; ((c = getopt (argc, argv, "hxv")) != -1); ) {
         switch(c) {
         case 'x':
             // We don't wanr graphics so we have to unset display.
@@ -43,13 +45,16 @@ int main(int argc, char** argv)
                 exit(1);
             }
             break;
+        case 'v':
+            verbose = true;
+            break;
         case 'h':
         default :
             usage();
             break;
         }
     }
-    RtPlot app;
+    RtPlot app( verbose );
     app.Run();
     return 0;
 }

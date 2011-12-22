@@ -15,16 +15,17 @@ class Plot;
 class RtPlot : public TApplication {
     RQ_OBJECT()
 public:
-    RtPlot();
+    RtPlot(bool verbose);
     virtual ~RtPlot();
 
     // Read more data from standard input
     void readMoreData();
 private:
-    LineReader*   reader;       // Reader for stdin
-    Parser*       parser;       // Parser
-    Plot*         plot;         // Plot to draw on
-    TFileHandler* fdWatcher;    // Notify when there is data to read
+    LineReader*   m_reader;       // Reader for stdin
+    Parser*       m_parser;       // Parser
+    Plot*         m_plot;         // Plot to draw on
+    TFileHandler* m_fdWatcher;    // Notify when there is data to read
+    bool          m_verbose;      // Verbose mode
 public:
     // CINT stuff
     ClassDef(RtPlot,1);
