@@ -1,5 +1,5 @@
 
-.PHONY : all clean install uninstall 
+.PHONY : all clean install install-c install-haskell uninstall 
 
 # Check for ROOTSYS 
 ifeq ($(ROOTSYS),)
@@ -61,7 +61,11 @@ parser.o : parser.l.cpp
 
 clean:
 	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h rt-plot 
-install: all 
+# Installation
+install : install-c install-haskell
+install-haskell:
+	cd hep-root-plot && cabal install
+install-c: all 
 	mkdir -p ${INSTALLDIR}
 	install rt-plot    ${INSTALLDIR}
 	install rt-listen  ${INSTALLDIR}
