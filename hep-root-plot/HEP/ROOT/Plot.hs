@@ -16,7 +16,7 @@ module HEP.ROOT.Plot (
 
 import Control.Applicative
 import Control.Exception
-import Data.Histogram.Generic
+import Data.Histogram.Generic (Histogram)
 import Network.Socket
 
 import System.Directory    (canonicalizePath)
