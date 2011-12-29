@@ -20,3 +20,4 @@ Library
                         network,
                         histogram-fill
   Exposed-modules:      HEP.ROOT.Plot
+  ghc-options:		-Wall

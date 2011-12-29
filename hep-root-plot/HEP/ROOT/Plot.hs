@@ -73,6 +73,26 @@ data Option =
   | FillColor  Color
     -- | Fill color (with int)
   | FillColorI Int
+    -- | Histogram options
+  | HistOpt    HistOpt
+
+-- | Histogram options
+data HistOpt =
+    -- | Draw text
+    HistText 
+  | HistTextF Toggle
+    -- | Draw colored
+  | HistBox
+  | HistBoxF Toggle
+    -- | Draw colored
+  | HistColor
+  | HistColorF Toggle
+    -- | Scatter plot
+  | HistScatter
+  | HistScatterF Toggle
+    -- | Contour plot
+  | HistContour
+  | HistContourN Int
 
 data Legend = 
     -- | Add new legend to the plot
@@ -133,14 +153,26 @@ renderPlot (HLine x) = "hline " ++ show x
 
 -- Option subcommand
 renderOption :: Option -> String
-renderOption (Silent ON)    = "silent on"
-renderOption (Silent OFF)   = "silent off"
+renderOption (Silent o)     = "silent " ++ toggle o
 renderOption (Title  t)     = "title " ++ show t
 renderOption (LineWidth i)  = "line width " ++ show i
 renderOption (LineColor  c) = renderOption $ LineColorI $ fromEnum c
 renderOption (LineColorI i) = "line color " ++ show i
 renderOption (FillColor  c) = renderOption $ FillColorI $ fromEnum c
 renderOption (FillColorI i) = "fill color " ++ show i
+renderOption (HistOpt o )   = "hist " ++ renderHistOpt o
+
+renderHistOpt :: HistOpt -> String
+renderHistOpt  HistText        = "text"
+renderHistOpt (HistTextF o)    = "text " ++ toggle o
+renderHistOpt  HistBox         = "box"
+renderHistOpt (HistBoxF o)     = "box " ++ toggle o
+renderHistOpt  HistColor       = "color"
+renderHistOpt (HistColorF o)   = "color " ++ toggle o
+renderHistOpt  HistScatter     = "scattter"
+renderHistOpt (HistScatterF o) = "scattter" ++ toggle o
+renderHistOpt  HistContour     = "contour"
+renderHistOpt (HistContourN n) = "contour" ++ show n
 
 -- Legend subcommand
 renderLegend :: Legend -> String
@@ -149,6 +181,9 @@ renderLegend DeleteL                = "-"
 renderLegend (LegendStr   s)        = "add "       ++ show s
 renderLegend (LegendLabel s)        = "add label " ++ show s
 
+toggle :: Toggle -> String
+toggle ON  = "on"
+toggle OFF = "off"
 
 
 ----------------------------------------------------------------
@@ -158,19 +193,19 @@ renderLegend (LegendLabel s)        = "add label " ++ show s
 -- | Send list of command to rt-plot
 draw :: [Command] -> IO ()
 draw cmds = do
-  tmpdir <- catch (getEnv "TMPDIR") (\(e :: SomeException) -> return "/tmp")
+  tmpdir <- catch (getEnv "TMPDIR") (\(_ :: SomeException) -> return "/tmp")
   uname  <- userName <$> (getUserEntryForID =<< getRealUserID)
   let sock = tmpdir ++ "/" ++ uname ++ "/rt-socket"
   -- Send data
   bracket (socket AF_UNIX Stream defaultProtocol) (sClose) $ \s -> do
     connect s (SockAddrUnix sock)
     -- Send data
-    let sendAll s str = do
+    let sendAll str = do
           n <- send s str
           case drop n str of
             [] -> return ()
-            xs -> sendAll s xs
-    sendAll s . unlines =<< mapM renderCommand cmds
+            xs -> sendAll xs
+    sendAll . unlines =<< mapM renderCommand cmds
 
 
 -- | Send list of commands surrounded in silent on/off marks
