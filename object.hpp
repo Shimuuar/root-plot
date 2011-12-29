@@ -44,6 +44,7 @@ class TH1;
 // Abstracts over ROOT's canvas. 
 class Plot : public boost::noncopyable {
 public:
+    // Allowed values of color
     enum Color {
         WHITE   = 0,
         BLACK   = 1,
@@ -56,6 +57,16 @@ public:
         FOREST  = 8,
         VIOLET  = 9
     };
+    // Line orientation
+    enum Line {
+        Vertical,
+        Horizontal
+    };
+    // Axis orientation
+    enum Axis {
+        X, Y
+    };
+
     // Convert int to color. Values which are out of range are
     // converted to black.
     static Color toColor(int c) {
@@ -63,16 +74,6 @@ public:
             return BLACK;
         return Color(c);
     }
-
-    // Line orientation
-    enum Line {
-        Vertical,
-        Horizontal
-    };
-    // Axis
-    enum Axis {
-        X, Y
-    };
 
     // Construct plot object which will draw on the canvas. Plot
     // object doesn't own canvas.
@@ -124,6 +125,15 @@ public:
     void addLegendString(const std::string& str);
     // Add string to a legend and link it with last object
     void addPlotToLegend(const std::string& str);
+
+    // Set text drawing histograms
+    void setHistText( bool txt );
+    // Set scatter plot for 2D histogram
+    void setHistScatter( bool scat );
+    // Set contour plot for 2D histograms (negative to disable)
+    void setHistContour( int n );
+    // Set color plot for 2D histogram
+    void setHistColor( bool c );
 private:
     // Remove everything from canvas
     void clearCanvas();
@@ -172,6 +182,17 @@ public:
     // Set width of line
     virtual void setLineWidth(int width)   {UNUSED(width);}
 
+    // Set text drawing histograms
+    virtual void setHistText   ( bool txt )  {UNUSED(txt);}
+    // Set scatter plot for 2D histogram
+    virtual void setHistScatter( bool scat ) {UNUSED(scat);}
+    // Set contour plot for 2D histograms (negative to disable)
+    virtual void setHistContour( int n )     {UNUSED(n);}
+    // Set color plot for 2D histogram
+    virtual void setHistColor  ( bool c )    {UNUSED(c);}
+    // Set color plot for 2D histogram
+    virtual void setHistBox    ( bool b )    {UNUSED(b);}
+
     // Get pointer to ROOT object. May return NULL
     virtual TObject* getRootObject() { return 0; }
 };
@@ -192,8 +213,21 @@ public:
     virtual void     setLineColor(Plot::Color);
     virtual void     setFillColor(Plot::Color);
     virtual TObject* getRootObject();
+
+    virtual void setHistText( bool txt )     { m_text    = txt;  }
+    virtual void setHistScatter( bool scat ) { m_scatter = scat; }
+    virtual void setHistContour( int n )     { m_nCont   = n;    }
+    virtual void setHistColor( bool c )      { m_color   = c;    }
+    virtual void setHistBox  ( bool b )      { m_box     = b;    }
 private:
-    boost::scoped_ptr<TH1> hist;
+    boost::scoped_ptr<TH1> hist; // Histogram
+    // Common flags
+    bool m_text;                 // Draw text at nodes?
+    // 2D histogram
+    bool m_scatter;              // Draw as scatter plot
+    bool m_box;                  // Draw as box plot
+    int  m_nCont;                // Number of contours. Negative for no contours
+    bool m_color;                // Color plot
 };
 
 // Wrapper around ROOT graphs

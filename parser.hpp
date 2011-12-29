@@ -26,9 +26,10 @@ typedef boost::variant<int, double, std::string> Token;
 struct ParseParam {
     ParseParam(Parser* par, Plot* p) :
         parser(par),
-        plot(p),
+        plot  (p),
         clearPlot(false),
-        axis(0)
+        axis     (0),
+        onOff    (true)
     {}
     
     Parser*    parser;          // Pointer to parser
@@ -36,6 +37,7 @@ struct ParseParam {
     // ==== Locals ================
     bool       clearPlot;       // Should we clear plot
     int        axis;            // Axis
+    bool       onOff;           // ON/OFF flag
 };
 int yyparse(ParseParam);
 

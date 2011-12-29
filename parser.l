@@ -1,5 +1,4 @@
 
-
 %{
 #include "parser.hpp"
 #include "parser.tab.h"
@@ -45,10 +44,13 @@ log         { return KW_LOG;    }
 label       { return KW_LABEL;  }
 range       { return KW_RANGE;  }
 
-line        { return KW_LINE;   }
-width       { return KW_WIDTH;  }
-color       { return KW_COLOR;  }
-fill        { return KW_FILL;   }
+line        { return KW_LINE;    }
+width       { return KW_WIDTH;   }
+color       { return KW_COLOR;   }
+fill        { return KW_FILL;    }
+text        { return KW_TEXT;    }
+box         { return KW_BOX;     }
+contour     { return KW_CONTOUR; }
 
  /* Literals */
 {int}       { *yylval = boost::lexical_cast<int>   ( yytext ); return TOK_INT;    }

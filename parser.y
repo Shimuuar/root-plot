@@ -85,6 +85,10 @@ static double getDouble(const Token& tok) {
 %token KW_COLOR
 %token KW_WIDTH
 %token KW_FILL
+%token KW_TEXT
+%token KW_BOX
+%token KW_SCATTER
+%token KW_CONTOUR
 
 %token KW_XAXIS
 %token KW_YAXIS
@@ -179,6 +183,7 @@ legend
 set
   : KW_LINE   TOK_WS setLine
   | KW_FILL   TOK_WS setFill
+  | KW_HIST   TOK_WS setHist
   | KW_SILENT TOK_WS KW_ON   eol   { par.plot->setSilent( true  ); }
   | KW_SILENT TOK_WS KW_OFF  eol   { par.plot->setSilent( false ); }
   | KW_TITLE  TOK_WS TOK_STR eol   { par.plot->setTitle( boost::get<std::string>( $3 ) ); }
@@ -206,6 +211,7 @@ setAxis
             );
     }
 
+// Line options
 setLine
   : KW_WIDTH TOK_WS TOK_INT eol
     { par.plot->setLineWidth( boost::get<int>($3) ); }
@@ -214,12 +220,27 @@ setLine
   | KW_COLOR TOK_WS TOK_STR eol
     { par.plot->setLineColor( strToColor( boost::get<std::string>( $3 ) ) ); }
 
+// Fill options
 setFill
   : KW_COLOR TOK_WS TOK_INT eol
     { par.plot->setFillColor( Plot::toColor( boost::get<int>($3)) ); }
   | KW_COLOR TOK_WS TOK_STR eol
     { par.plot->setFillColor( strToColor( boost::get<std::string>( $3 ) ) ); }
 
+// Histogram options
+setHist
+  : KW_TEXT    onOff
+    { par.plot->setHistText( par.onOff ); }
+  | KW_COLOR   onOff
+    { par.plot->setHistColor( par.onOff ); }
+  | KW_BOX     onOff
+    { par.plot->setHistColor( par.onOff ); }
+  | KW_SCATTER onOff
+    { par.plot->setHistScatter( par.onOff ); }
+  | KW_CONTOUR onOff
+    { par.plot->setHistContour( par.onOff ? 10 : -1 ); }
+  | KW_CONTOUR TOK_WS TOK_INT eol
+    { par.plot->setHistContour( boost::get<int>( $3 ) ); }
 
 // End of line
 eol
@@ -230,5 +251,9 @@ eol
 double
   : TOK_INT
   | TOK_DOUBLE
-
+// ON/OFF end of line switch
+onOff
+  : eol               { par.onOff = true;  }
+  | TOK_WS KW_ON eol  { par.onOff = true;  }
+  | TOK_WS KW_OFF eol { par.onOff = false; }
 %%

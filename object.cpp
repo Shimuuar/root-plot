@@ -146,6 +146,26 @@ void Plot::setLineWidth(int width) {
         m_objStack.back()->setLineWidth(width);
 }
 
+void Plot::setHistText( bool txt ) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setHistText( txt );
+}
+
+void Plot::setHistScatter( bool scat ) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setHistScatter( scat );
+}
+
+void Plot::setHistContour( int n ) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setHistContour( n );
+}
+
+void Plot::setHistColor( bool c ) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setHistColor( c );
+}
+
 RangeM Plot::xRange() const {
     if( m_xRange.is_initialized() )
         return m_xRange;
@@ -221,7 +241,16 @@ PlotHist::PlotHist(TH1* h) :
 {}
 
 void PlotHist::plotOn(Plot*) {
-    hist->Draw( "SAME" );
+    std::string opt = "SAME";
+    if( m_text )
+        opt += " TEXT";
+    if( m_scatter )
+        opt += " SCAT";
+    if( m_box )
+        opt += " BOX";
+    if( m_color )
+        opt += " COL";
+    hist->Draw( opt.c_str() );
 }
 
 void PlotHist::setLineWidth(int width) {
