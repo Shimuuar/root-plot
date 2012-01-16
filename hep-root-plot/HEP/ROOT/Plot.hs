@@ -6,6 +6,7 @@ module HEP.ROOT.Plot (
     Command(..)
   , Plot(..)
   , Option(..)
+  , HistOpt(..)
   , Axis(..)
   , Legend(..)
   , Color(..)
