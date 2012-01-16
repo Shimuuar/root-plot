@@ -164,8 +164,7 @@ renderPlot (Function (a,b) f) =
   where n = 128 :: Int
 renderPlot (Hist  h   ) =
   unlines [ "hist -"
-          , show h
-          , "<<<"
+          , show h ++ "<<<"
           ]
 renderPlot (VLine x) = "vline " ++ show x
 renderPlot (HLine x) = "hline " ++ show x
