@@ -15,7 +15,7 @@ class Plot;
 class RtPlot : public TApplication {
     RQ_OBJECT()
 public:
-    RtPlot(bool verbose);
+    RtPlot(bool verbose, bool batch);
     virtual ~RtPlot();
 
     // Read more data from standard input
@@ -25,7 +25,8 @@ private:
     Parser*       m_parser;       // Parser
     Plot*         m_plot;         // Plot to draw on
     TFileHandler* m_fdWatcher;    // Notify when there is data to read
-    bool          m_verbose;      // Verbose mode
+    bool          m_verbose;      // Verbose mode flag
+    bool          m_batch;        // Batch mode flag
 public:
     // CINT stuff
     ClassDef(RtPlot,1);

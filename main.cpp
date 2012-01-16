@@ -17,8 +17,10 @@ void usage() {
         "\n"
         "Reads commands from standard input and creates a plot\n"
         "\n"
+        "    -b - batch mode. terminate after end of input\n"
         "    -x - do not create window\n"
         "    -v - verbose. Echo input to stdout\n"
+        "    -h - this message\n"
         ;
     std::exit(1);
 }
@@ -35,15 +37,19 @@ int main(int argc, char** argv)
 
     // Parse command line parameters
     bool verbose = false;
-    for( int c; ((c = getopt (argc, argv, "hxv")) != -1); ) {
+    bool batch   = false;
+    for( int c; ((c = getopt (argc, argv, "hxvb")) != -1); ) {
         switch(c) {
         case 'x':
-            // We don't wanr graphics so we have to unset display.
+            // We don't want graphics so we have to unset display.
             // Otherwise ROOT will create windows
             if( -1 == unsetenv("DISPLAY") ) {
                 perror("rt-plot: unable to unset DISPLAY");
                 exit(1);
             }
+            break;
+        case 'b':
+            batch = true;
             break;
         case 'v':
             verbose = true;
@@ -54,7 +60,7 @@ int main(int argc, char** argv)
             break;
         }
     }
-    RtPlot app( verbose );
+    RtPlot app( verbose, batch );
     app.Run();
     return 0;
 }

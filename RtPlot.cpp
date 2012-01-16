@@ -16,12 +16,13 @@ static const char* dummy_argv[] = {"rt-plot"};
 static int         dummy_argc   = 1;
 
 
-RtPlot::RtPlot(bool verbose) :
+RtPlot::RtPlot(bool verbose, bool batch) :
     TApplication( "rt-plot", &dummy_argc, const_cast<char**>( dummy_argv ) ),
     m_reader(    new LineReader(STDIN_FILENO) ),
     m_parser(    new Parser ),
     m_fdWatcher( new TFileHandler(STDIN_FILENO , TFileHandler::kRead) ),
-    m_verbose( verbose )
+    m_verbose( verbose ),
+    m_batch  ( batch   )
 {
     // Set up notification
     m_fdWatcher->Add();
@@ -50,6 +51,9 @@ RtPlot::~RtPlot()
 void RtPlot::readMoreData() {
     // No more data from stdin
     if( m_reader->eof() ) {
+        if( m_batch ) {
+            gApplication->Terminate();
+        }
         delete m_fdWatcher;
         m_fdWatcher = 0;
     }
