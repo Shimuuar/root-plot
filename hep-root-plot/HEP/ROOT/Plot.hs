@@ -144,7 +144,7 @@ data Color =
 renderCommand :: Command -> IO String
 renderCommand Clear      = return $ "clear"
 renderCommand Exit       = return $ "exit"
-renderCommand (Save nm)  = ("save " ++) <$> canonicalizePath nm
+renderCommand (Save nm)  = ("save " ++) . show <$> canonicalizePath nm
 renderCommand (Set opt)  = return $ "set  " ++ renderOption opt
 renderCommand (Plot pl)  = return $ "plot " ++ renderPlot pl
 renderCommand (Add  pl)  = return $ "add  " ++ renderPlot pl
