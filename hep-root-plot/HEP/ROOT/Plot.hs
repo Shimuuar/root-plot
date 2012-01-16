@@ -10,6 +10,7 @@ module HEP.ROOT.Plot (
   , Axis(..)
   , Legend(..)
   , Color(..)
+  , Toggle(..)
     -- * Sending commands
   , renderCommand
   , draw
