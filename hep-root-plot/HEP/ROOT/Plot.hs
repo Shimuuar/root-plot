@@ -6,6 +6,7 @@ module HEP.ROOT.Plot (
     Command(..)
   , Plot(..)
   , Option(..)
+  , Axis(..)
   , Legend(..)
   , Color(..)
     -- * Sending commands
@@ -75,11 +76,28 @@ data Option =
   | FillColorI Int
     -- | Histogram options
   | HistOpt    HistOpt
+    -- | X axis
+  | XAxis Axis
+    -- | Y axis
+  | YAxis Axis
+
+-- | Axis parameters
+data Axis
+    -- ^ Axis label
+  = Label String
+    -- ^ No label
+  | NoLabel
+    -- ^ Set log scale
+  | LogScale Toggle
+    -- ^ Set range
+  | Range Double Double
+    -- ^ Set automatic range
+  | RangeAuto
 
 -- | Histogram options
 data HistOpt =
     -- | Draw text
-    HistText 
+    HistText
   | HistTextF Toggle
     -- | Draw colored
   | HistBox
@@ -94,7 +112,7 @@ data HistOpt =
   | HistContour
   | HistContourN Int
 
-data Legend = 
+data Legend =
     -- | Add new legend to the plot
     NewL (Double,Double) (Double,Double)
     -- | Delete legend from the plot
@@ -161,7 +179,18 @@ renderOption (LineColorI i) = "line color " ++ show i
 renderOption (FillColor  c) = renderOption $ FillColorI $ fromEnum c
 renderOption (FillColorI i) = "fill color " ++ show i
 renderOption (HistOpt o )   = "hist " ++ renderHistOpt o
+renderOption (XAxis   a )   = "xaxis " ++ renderAxis a
+renderOption (YAxis   a )   = "yaxis " ++ renderAxis a
 
+-- Axis
+renderAxis :: Axis -> String
+renderAxis (Label str)  = "label " ++ show str
+renderAxis  NoLabel     = "label -"
+renderAxis (LogScale t) = "log " ++ toggle t
+renderAxis (Range a b)  = "range " ++ show a ++ " " ++ show b
+renderAxis  RangeAuto   = "range -"
+
+-- Histogram options
 renderHistOpt :: HistOpt -> String
 renderHistOpt  HistText        = "text"
 renderHistOpt (HistTextF o)    = "text " ++ toggle o
