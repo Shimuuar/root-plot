@@ -29,6 +29,7 @@ Plot::Plot(TCanvas* cnv) :
     m_canvas(cnv),
     m_xLog( false ),
     m_yLog( false ),
+    m_zLog( false ),
     m_isSilent(false)
 {
     m_canvas->cd();
@@ -46,6 +47,7 @@ void Plot::clearCanvas() {
     m_canvas->cd();
     m_canvas->SetLogx( m_xLog );
     m_canvas->SetLogy( m_yLog );
+    m_canvas->SetLogz( m_zLog );
 }
 
 void Plot::clear() {
@@ -121,6 +123,7 @@ void Plot::setLabel(Axis axis, const std::string& label) {
     switch( axis ) {
     case X: m_xLabel = label; break;
     case Y: m_yLabel = label; break;
+    case Z: break;
     }
 }
 
@@ -128,6 +131,7 @@ void Plot::setLogScale(Axis axis, bool l) {
     switch( axis ) {
     case X: m_xLog = l; break;
     case Y: m_yLog = l; break;
+    case Z: m_zLog = l; break;
     }
 }
 
@@ -196,6 +200,9 @@ void Plot::setRange(Axis axis, double a, double b) {
     case Y:
         m_yRange = Range(a,b);
         return;
+    case Z:
+        // FIXME: treat Z!
+        return;
     }
 }
 
@@ -206,6 +213,9 @@ void Plot::setRange(Axis axis) {
         return;
     case Y:
         m_yRange.reset();
+        return;
+    case Z:
+        // FIXME: treat Z!
         return;
     }
 }

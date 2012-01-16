@@ -64,7 +64,7 @@ public:
     };
     // Axis orientation
     enum Axis {
-        X, Y
+        X, Y, Z
     };
 
     // Convert int to color. Values which are out of range are
@@ -150,6 +150,7 @@ private:
     boost::optional<std::string> m_yLabel;    // Y axis label
     bool                         m_xLog;      // Log scale for X axis
     bool                         m_yLog;      // Log scale for Y axis
+    bool                         m_zLog;      // Log scale for Z axis
     // Whole plot
     boost::shared_ptr<TLegend>   m_legend;    // Legend of the plot
     bool                         m_isSilent;  // Is silent mode on

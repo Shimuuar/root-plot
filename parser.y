@@ -92,6 +92,7 @@ static double getDouble(const Token& tok) {
 
 %token KW_XAXIS
 %token KW_YAXIS
+%token KW_ZAXIS
 %token KW_LOG
 %token KW_LABEL
 %token KW_RANGE
@@ -190,6 +191,7 @@ set
   // Axes
   | KW_XAXIS  { par.axis = Plot::X; } TOK_WS setAxis
   | KW_YAXIS  { par.axis = Plot::Y; } TOK_WS setAxis
+  | KW_ZAXIS  { par.axis = Plot::Z; } TOK_WS setAxis
 
 setAxis
   : KW_LABEL TOK_WS TOK_DASH eol

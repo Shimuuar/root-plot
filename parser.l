@@ -40,6 +40,7 @@ title       { return KW_TITLE;  }
 
 xaxis       { return KW_XAXIS;  }
 yaxis       { return KW_YAXIS;  }
+zaxis       { return KW_ZAXIS;  }
 log         { return KW_LOG;    }
 label       { return KW_LABEL;  }
 range       { return KW_RANGE;  }

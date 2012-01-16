@@ -81,6 +81,8 @@ data Option =
   | XAxis Axis
     -- | Y axis
   | YAxis Axis
+    -- | Z axis
+  | ZAxis Axis
 
 -- | Axis parameters
 data Axis
@@ -181,6 +183,7 @@ renderOption (FillColorI i) = "fill color " ++ show i
 renderOption (HistOpt o )   = "hist " ++ renderHistOpt o
 renderOption (XAxis   a )   = "xaxis " ++ renderAxis a
 renderOption (YAxis   a )   = "yaxis " ++ renderAxis a
+renderOption (ZAxis   a )   = "zaxis " ++ renderAxis a
 
 -- Axis
 renderAxis :: Axis -> String
