@@ -22,7 +22,7 @@ import Control.Exception
 import Data.Histogram.Generic (Histogram)
 import Network.Socket
 
-import System.Directory    (canonicalizePath)
+import System.Directory       (getCurrentDirectory,makeRelativeToCurrentDirectory)
 import System.Environment
 import System.Posix.User
 import Text.Printf
@@ -147,7 +147,12 @@ data Color =
 renderCommand :: Command -> IO String
 renderCommand Clear      = return $ "clear"
 renderCommand Exit       = return $ "exit"
-renderCommand (Save nm)  = ("save " ++) . show <$> canonicalizePath nm
+renderCommand (Save nm)  = do
+  -- canonicalizePath doesn't work for nonexistent path
+  -- See GHC bugs #4215 #5014
+  cwd <- getCurrentDirectory
+  rel <- makeRelativeToCurrentDirectory nm
+  return $ "save " ++ (show $ cwd ++ "/" ++ rel)
 renderCommand (Set opt)  = return $ "set  " ++ renderOption opt
 renderCommand (Plot pl)  = return $ "plot " ++ renderPlot pl
 renderCommand (Add  pl)  = return $ "add  " ++ renderPlot pl
