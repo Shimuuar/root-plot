@@ -198,7 +198,7 @@ setAxis
     { par.plot->setLabel(Plot::Axis(par.axis), ""); }
   | KW_LABEL TOK_WS TOK_STR  eol
     { par.plot->setLabel(Plot::Axis(par.axis), boost::get<std::string>( $3 )); }
-  | KW_LOG   TOK_WS onOff
+  | KW_LOG   onOff
     { par.plot->setLogScale(Plot::Axis(par.axis), par.onOff ); }
   | KW_RANGE TOK_WS TOK_DASH eol
     { par.plot->setRange(Plot::Axis(par.axis)); }
