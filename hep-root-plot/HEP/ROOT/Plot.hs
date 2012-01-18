@@ -246,6 +246,6 @@ draw cmds = do
     sendAll . unlines =<< mapM renderCommand cmds
 
 
--- | Send list of commands surrounded in silent on/off marks
+-- | Send list of commands surrounded with silent on/off marks and leading clear command
 draws :: [Command] -> IO ()
-draws cmds = draw $ [Set (Silent ON)] ++ cmds ++ [Set (Silent OFF)]
+draws cmds = draw $ [Set (Silent ON), Clear] ++ cmds ++ [Set (Silent OFF)]
