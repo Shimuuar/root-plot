@@ -157,7 +157,9 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
         // We are parsing DSL
         YY_BUFFER_STATE state;
         state = yy_scan_string( str.c_str() );
-        yyparse( ParseParam(this, plot) );
+        if( 0 != yyparse( ParseParam(this, plot) ) ) {
+            std::cerr << "  in string: '" << str << "'\n";
+        }
         // Parse completed
         yy_delete_buffer( state );
     }
