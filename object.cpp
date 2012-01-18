@@ -62,8 +62,8 @@ void Plot::clear() {
     clearCanvas();
 }
 
-void Plot::draw() {
-    if( m_isSilent )
+void Plot::draw(bool force) {
+    if( !force && m_isSilent )
         return;
     // Remove everything from canvas
     clearCanvas();
@@ -110,7 +110,7 @@ void Plot::draw() {
 }
 
 void Plot::save(const std::string& fname) {
-    draw();
+    draw(true);
     m_canvas->SaveAs(fname.c_str(), "Landscape");
 }
 

@@ -81,7 +81,7 @@ public:
     
     // Draw everything. This is slow call since it first remove
     // everything from canvas and then redraws every element in stack
-    void draw();
+    void draw(bool force = false);
     // Try to save plot into file
     void save(const std::string& str);
 
