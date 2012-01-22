@@ -53,6 +53,8 @@ data Plot where
   Graph1   :: [Double]          -> Plot
   -- | Plot function
   Function :: (Double,Double) -> (Double -> Double) -> Plot
+  -- | Plot function using many points at same time
+  FunctionN :: Int -> (Double,Double) -> (Double -> Double) -> Plot
   -- | Plot histogram
   Hist     :: Show (Histogram v bin a) => Histogram v bin a -> Plot
   -- | Vertical line
@@ -164,12 +166,13 @@ renderPlot (Graph vals) =
   unlines $ ("graph -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
 renderPlot (Graph1 ys ) =
   unlines $ ("graph -" : map show ys) ++ ["<<<"]
-renderPlot (Function (a,b) f) =
+renderPlot (Function    rng f)   =
+  renderPlot (FunctionN 128 rng f)
+renderPlot (FunctionN n (a,b) f) =
   renderPlot $ Graph [ (x, f x)
                      | i <- [0 .. n]
                      , let x = a + (b - a) * fromIntegral i / fromIntegral n
                      ]
-  where n = 128 :: Int
 renderPlot (Hist  h   ) =
   unlines [ "hist -"
           , show h ++ "<<<"
