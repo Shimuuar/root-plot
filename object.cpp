@@ -247,7 +247,12 @@ void Plot::addPlotToLegend(const std::string& str) {
 // ================================================================ //
 
 PlotHist::PlotHist(TH1* h) :
-    hist(h)
+    hist(h),
+    m_text   ( false ),
+    m_scatter( false ),
+    m_box    ( false ),
+    m_nCont  ( -1    ),
+    m_color  ( false )
 {}
 
 void PlotHist::plotOn(Plot*) {
