@@ -223,7 +223,7 @@ setLine
 // Fill options
 setFill
   : KW_COLOR TOK_WS TOK_INT eol
-    { par.plot->setFillColor( Plot::toColor( boost::get<int>($3)) ); }
+    { par.plot->setFillColor( boost::get<int>($3) ); }
   | KW_COLOR TOK_WS TOK_STR eol
     { par.plot->setFillColor( strToColor( boost::get<std::string>( $3 ) ) ); }
 

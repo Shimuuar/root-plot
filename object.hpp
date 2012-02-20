@@ -102,9 +102,9 @@ public:
     // Push object on the top of stack;
     void pushObject(boost::shared_ptr<PlotObject> plot);
     // Set line color for top object. Noop if stack is empty
-    void setLineColor(Plot::Color);
+    void setLineColor(int);
     // Set fill color for top object. Noop if stack is empty
-    void setFillColor(Plot::Color);
+    void setFillColor(int);
     // Set line width for top object. Noop if stack is empty
     void setLineWidth(int width);
     
@@ -177,9 +177,9 @@ public:
     virtual RangeM yRange() const = 0;
 
     // Set color of line
-    virtual void setLineColor(Plot::Color) {}
+    virtual void setLineColor(int) {}
     // Set fill color
-    virtual void setFillColor(Plot::Color) {}
+    virtual void setFillColor(int) {}
     // Set width of line
     virtual void setLineWidth(int width)   {UNUSED(width);}
 
@@ -211,8 +211,8 @@ public:
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setLineWidth(int width);
-    virtual void     setLineColor(Plot::Color);
-    virtual void     setFillColor(Plot::Color);
+    virtual void     setLineColor(int);
+    virtual void     setFillColor(int);
     virtual TObject* getRootObject();
 
     virtual void setHistText( bool txt )     { m_text    = txt;  }
@@ -242,7 +242,7 @@ public:
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setLineWidth(int width);
-    virtual void     setLineColor(Plot::Color);
+    virtual void     setLineColor(int);
     virtual TObject* getRootObject();
 private:
     boost::scoped_ptr<TGraph> graph;
@@ -265,7 +265,7 @@ public:
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
-    virtual void   setLineColor(Plot::Color);
+    virtual void   setLineColor(int);
 private:
     Plot::Line orientation;
     double     x;

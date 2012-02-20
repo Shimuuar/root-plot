@@ -135,12 +135,12 @@ void Plot::setLogScale(Axis axis, bool l) {
     }
 }
 
-void Plot::setLineColor(Plot::Color color) {
+void Plot::setLineColor(int color) {
     if( !m_objStack.empty() )
         m_objStack.back()->setLineColor(color);
 }
 
-void Plot::setFillColor(Plot::Color color) {
+void Plot::setFillColor(int color) {
     if( !m_objStack.empty() )
         m_objStack.back()->setFillColor(color);
 }
@@ -272,11 +272,11 @@ void PlotHist::setLineWidth(int width) {
     hist->SetLineWidth(width);
 }
 
-void PlotHist::setLineColor(Plot::Color col) {
+void PlotHist::setLineColor(int col) {
     hist->SetLineColor(col);
 }
 
-void PlotHist::setFillColor(Plot::Color col) {
+void PlotHist::setFillColor(int col) {
     hist->SetFillColor(col);
 }
 
@@ -329,7 +329,7 @@ void PlotGraph::setLineWidth(int width) {
     graph->SetLineWidth(width);
 }
 
-void PlotGraph::setLineColor(Plot::Color col) {
+void PlotGraph::setLineColor(int col) {
     graph->SetLineColor(col);
 }
 
@@ -396,7 +396,7 @@ void PlotLine::setLineWidth(int w) {
     width = w;
 }
 
-void PlotLine::setLineColor(Plot::Color col) {
+void PlotLine::setLineColor(int col) {
     color = col;
 }
 
