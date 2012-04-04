@@ -19,6 +19,7 @@ module HEP.ROOT.Plot (
 
 import Control.Applicative
 import Control.Exception
+import Data.List              (intercalate)
 import Data.Histogram.Generic (Histogram)
 import Network.Socket
 
@@ -44,6 +45,7 @@ data Command =
   | Set    Option
   | Plot   Plot
   | Add    Plot
+  | Cmds   [Command]
 
 -- | Plot subcommand
 data Plot where
@@ -159,6 +161,7 @@ renderCommand (Set opt)  = return $ "set  " ++ renderOption opt
 renderCommand (Plot pl)  = return $ "plot " ++ renderPlot pl
 renderCommand (Add  pl)  = return $ "add  " ++ renderPlot pl
 renderCommand (Legend l) = return $ "legend " ++ renderLegend l
+renderCommand (Cmds cs)  = intercalate "\n" <$> mapM renderCommand cs
 
 -- plot subcommand
 renderPlot :: Plot -> String
