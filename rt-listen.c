@@ -92,8 +92,10 @@ int main(int argc, char** argv)
             }
             // Write data to stdout
             int nw = write(STDOUT_FILENO, buffer, n);
-            fprintf( stderr, "Bytes written %i of %i\n", nw, n);
+            /* fprintf( stderr, "Bytes written %i of %i\n", nw, n); */
         }
+        // Add line break
+        write(STDOUT_FILENO, "\n", 1);
         close(s2);
     }
     return 0;
