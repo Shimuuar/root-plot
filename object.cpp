@@ -10,7 +10,7 @@
 #include <TCanvas.h>
 #include <TROOT.h>
 #include <TLegend.h>
-
+#include <TPolyLine.h>
 
 
 static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
@@ -366,7 +366,6 @@ TObject* PlotGraph::getRootObject() {
 // ================================================================ //
 // ==== Line
 
-
 void PlotLine::plotOn(Plot* cxt) {
     // Fill arrays for graph
     double consts[2] = {x,x};
@@ -406,4 +405,57 @@ RangeM PlotLine::xRange() const {
 
 RangeM PlotLine::yRange() const {
     return boost::optional<Range>();
+}
+
+
+
+// ================================================================ //
+// ==== Band
+
+
+void PlotBand::plotOn(Plot* cxt) {
+    // Determine range
+    double lo = 0;
+    double hi = 1;
+    RangeM rng       =
+        orientation == Plot::Vertical ? cxt->yRange() : cxt->xRange();
+    if( rng ) {
+        lo = rng->low;
+        hi = rng->hi;
+    }
+
+    if( orientation == Plot::Vertical ) {
+        double xs[4] = {x1,x1,x2,x2};
+        double ys[4] = {lo,hi,hi,lo};
+        poly = boost::shared_ptr<TPolyLine>( new TPolyLine(4, xs, ys, "") );
+    } else {
+        double xs[4] = {x1,x2,x2,x1};
+        double ys[4] = {lo,lo,hi,hi};
+        poly = boost::shared_ptr<TPolyLine>( new TPolyLine(4, xs, ys, "") );
+    }
+    poly->SetFillColor( fill  );
+    poly->SetFillStyle( 1001  );
+    poly->Draw("F");
+}
+
+void PlotBand::setFillColor(int col) {
+    fill = col;
+}
+
+RangeM PlotBand::xRange() const {
+    switch( orientation ) {
+    case Plot::Vertical:
+        return Range(x1,x2);
+    case Plot::Horizontal:
+        return boost::optional<Range>();
+    }
+}
+
+RangeM PlotBand::yRange() const {
+    switch( orientation ) {
+    case Plot::Vertical:
+        return boost::optional<Range>();
+    case Plot::Horizontal:
+        return Range(x1,x2);
+    }
 }

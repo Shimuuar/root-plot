@@ -33,6 +33,8 @@ hist        { return KW_HIST;   }
 graph       { return KW_GRAPH;  }
 vline       { return KW_VLINE;  }
 hline       { return KW_HLINE;  }
+vband       { return KW_VBAND;  }
+hband       { return KW_HBAND;  }
 
 set         { return KW_SET;    }
 silent      { return KW_SILENT; }

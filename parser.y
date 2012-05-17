@@ -104,6 +104,8 @@ static double getDouble(const Token& tok) {
 %token KW_GRAPH
 %token KW_VLINE
 %token KW_HLINE
+%token KW_VBAND
+%token KW_HBAND
 
  // ================================================================
 %%
@@ -133,7 +135,16 @@ plot // Plotting command
     { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   getDouble($3) ) ); }
   | KW_HLINE TOK_WS double eol
     { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, getDouble($3) ) ); }
-  
+    // Horizontal/vertical bands
+  | KW_VBAND TOK_WS double TOK_WS double eol
+    { par.plot->pushObject(
+          boost::make_shared<PlotBand>(
+              Plot::Vertical, getDouble($3), getDouble( $5 ) ) ); }
+  | KW_HBAND TOK_WS double TOK_WS double eol
+    { par.plot->pushObject(
+          boost::make_shared<PlotBand>(
+              Plot::Horizontal, getDouble($3), getDouble( $5 ) ) ); }
+
 // Plot graph
 plot_graph
   : TOK_DASH eol

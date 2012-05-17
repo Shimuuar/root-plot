@@ -39,6 +39,7 @@ class TObject;
 class TCanvas;
 class TLegend;
 class TGraph;
+class TPolyLine;
 class TH1;
 
 // Abstracts over ROOT's canvas. 
@@ -249,7 +250,8 @@ private:
 };
 
 
-// Line of the plot. Ranges are determined automatically
+// Vertical or horizontal line on the plot. Ranges are adjusted
+// automatically
 class PlotLine : public PlotObject {
 public:
     // Create vertical line at position x
@@ -273,6 +275,31 @@ private:
     int        width;
     
     boost::shared_ptr<TGraph> graph;
+};
+
+// Vertical or horizontal line on the plot. Ranges are adjusted
+// automatically
+class PlotBand : public PlotObject {
+public:
+    // Create vertical line at position x
+    PlotBand(Plot::Line orientation_, double x1_, double x2_) :
+        orientation(orientation_),
+        x1   (x1_ < x2 ? x1_ : x2_),
+        x2   (x1_ < x2 ? x2_ : x1_),
+        fill (20)
+    {}
+
+    virtual ~PlotBand() {}
+    virtual void   plotOn(Plot* cxt);
+    virtual RangeM xRange() const;
+    virtual RangeM yRange() const;
+    virtual void   setFillColor(int);
+private:
+    Plot::Line orientation;
+    double     x1,x2;
+    int        fill;
+
+    boost::shared_ptr<TPolyLine> poly;
 };
 
 #endif /* RT_ROOT_PLOT__HPP__ */
