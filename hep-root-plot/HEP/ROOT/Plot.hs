@@ -63,6 +63,10 @@ data Plot where
   VLine    :: Double -> Plot
   -- | Horizontal line
   HLine    :: Double -> Plot
+  -- | Vertical band
+  VBand    :: Double -> Double -> Plot
+  -- | Horizontal band
+  HBand    :: Double -> Double -> Plot
 
 -- | Set subcommand
 data Option =
@@ -180,8 +184,10 @@ renderPlot (Hist  h   ) =
   unlines [ "hist -"
           , show h ++ "<<<"
           ]
-renderPlot (VLine x) = "vline " ++ show x
-renderPlot (HLine x) = "hline " ++ show x
+renderPlot (VLine x)   = printf "vline %g" x
+renderPlot (HLine x)   = printf "hline %g" x
+renderPlot (VBand a b) = printf "vband %g %g" a b
+renderPlot (HBand a b) = printf "hband %g %g" a b
 
 -- Option subcommand
 renderOption :: Option -> String
