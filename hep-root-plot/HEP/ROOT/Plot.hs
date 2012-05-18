@@ -46,6 +46,7 @@ data Command =
   | Plot   Plot
   | Add    Plot
   | Cmds   [Command]
+  | NoCmd
 
 -- | Plot subcommand
 data Plot where
@@ -166,6 +167,7 @@ renderCommand (Plot pl)  = return $ "plot " ++ renderPlot pl
 renderCommand (Add  pl)  = return $ "add  " ++ renderPlot pl
 renderCommand (Legend l) = return $ "legend " ++ renderLegend l
 renderCommand (Cmds cs)  = intercalate "\n" <$> mapM renderCommand cs
+renderCommand NoCmd      = return ""
 
 -- plot subcommand
 renderPlot :: Plot -> String
