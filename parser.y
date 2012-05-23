@@ -52,6 +52,19 @@ static double getDouble(const Token& tok) {
     return boost::apply_visitor(GetDoubleVisitor(), tok);
 }
 
+template<typename T>
+void setParserStdin(ParseParam& par) {
+    if( par.clearPlot )
+        par.plot->clear();
+    par.parser->accumulate<T>();
+}
+
+template<typename T>
+void setParserFile(ParseParam& par, const Token& tok) {
+    if( par.clearPlot )
+        par.plot->clear();
+    par.parser->readFromFile<AccumPoly>( boost::get<std::string>(tok), par.plot ); 
+}
 
 %}
 
@@ -149,46 +162,16 @@ plot // Plotting command
 
 // Plot graph
 plot_graph
-  : TOK_DASH eol
-    {
-        if( par.clearPlot )
-            par.plot->clear();
-        par.parser->accumulate<AccumGraph>();
-    }
-  | TOK_STR eol
-    {
-        if( par.clearPlot )
-            par.plot->clear();
-        par.parser->readFromFile<AccumGraph>( boost::get<std::string>($1), par.plot );
-    }
+  : TOK_DASH eol { setParserStdin<AccumGraph>( par     ); }
+  | TOK_STR  eol { setParserFile <AccumGraph>( par, $1 ); }
 // Plot polygon
 plot_poly
-  : TOK_DASH eol
-    {
-        if( par.clearPlot )
-            par.plot->clear();
-        par.parser->accumulate<AccumPoly>();
-    }
-  | TOK_STR eol
-    {
-        if( par.clearPlot )
-            par.plot->clear();
-        par.parser->readFromFile<AccumPoly>( boost::get<std::string>($1), par.plot );
-    }
+  : TOK_DASH eol { setParserStdin<AccumPoly>( par     ); }
+  | TOK_STR  eol { setParserFile <AccumPoly>( par, $1 ); }
 // Plot historam
 plot_hist
-  : TOK_DASH eol
-    {
-        if( par.clearPlot )
-            par.plot->clear();
-        par.parser->accumulate<AccumHist>();
-    }
-  | TOK_STR eol
-    {
-        if( par.clearPlot )
-            par.plot->clear();
-        par.parser->readFromFile<AccumHist>( boost::get<std::string>($1), par.plot );
-    }
+  : TOK_DASH eol { setParserStdin<AccumHist>( par     ); }
+  | TOK_STR  eol { setParserFile <AccumHist>( par, $1 ); }
 
 // Legend
 legend
