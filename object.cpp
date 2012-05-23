@@ -435,11 +435,23 @@ void PlotBand::plotOn(Plot* cxt) {
     }
     poly->SetFillColor( fill  );
     poly->SetFillStyle( 1001  );
+    poly->SetLineWidth( width );
+    poly->SetLineColor( color );
     poly->Draw("F");
+    if( width > 0 )
+        poly->Draw("");
 }
 
 void PlotBand::setFillColor(int col) {
     fill = col;
+}
+
+void PlotBand::setLineWidth(int w) {
+    width = w;
+}
+
+void PlotBand::setLineColor(int col) {
+    color = col;
 }
 
 RangeM PlotBand::xRange() const {

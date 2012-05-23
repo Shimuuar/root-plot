@@ -286,7 +286,9 @@ public:
         orientation(orientation_),
         x1   (x1_ < x2 ? x1_ : x2_),
         x2   (x1_ < x2 ? x2_ : x1_),
-        fill (20)
+        width( 0     ),
+        color( Plot::BLACK ),
+        fill ( 20    )
     {}
 
     virtual ~PlotBand() {}
@@ -294,10 +296,12 @@ public:
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setFillColor(int);
+    virtual void   setLineWidth(int width);
+    virtual void   setLineColor(int);
 private:
     Plot::Line orientation;
     double     x1,x2;
-    int        fill;
+    int        width, color, fill;
 
     boost::shared_ptr<TPolyLine> poly;
 };
