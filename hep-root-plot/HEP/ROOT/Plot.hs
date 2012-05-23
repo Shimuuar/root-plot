@@ -54,6 +54,8 @@ data Plot where
   Graph    :: [(Double,Double)] -> Plot
   -- | Sequence of points
   Graph1   :: [Double]          -> Plot
+  -- | Polygon
+  Polygon    :: [(Double,Double)] -> Plot
   -- | Plot function
   Function :: (Double,Double) -> (Double -> Double) -> Plot
   -- | Plot function using many points at same time
@@ -175,6 +177,8 @@ renderPlot (Graph vals) =
   unlines $ ("graph -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
 renderPlot (Graph1 ys ) =
   unlines $ ("graph -" : map show ys) ++ ["<<<"]
+renderPlot (Polygon vals) =
+  unlines $ ("poly -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
 renderPlot (Function    rng f)   =
   renderPlot (FunctionN 128 rng f)
 renderPlot (FunctionN n (a,b) f) =

@@ -64,7 +64,7 @@ clean:
 # Installation
 install : install-c install-haskell
 install-haskell:
-	cd hep-root-plot && cabal install
+	cd hep-root-plot && cabal install --force-reinstalls
 install-c: all 
 	mkdir -p ${INSTALLDIR}
 	install rt-plot    ${INSTALLDIR}
