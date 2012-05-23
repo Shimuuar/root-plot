@@ -519,7 +519,7 @@ RangeM PlotBand::xRange() const {
     switch( orientation ) {
     case Plot::Vertical:
         return Range(x1,x2);
-    case Plot::Horizontal:
+    default:
         return boost::optional<Range>();
     }
 }
@@ -528,7 +528,7 @@ RangeM PlotBand::yRange() const {
     switch( orientation ) {
     case Plot::Vertical:
         return boost::optional<Range>();
-    case Plot::Horizontal:
+    default:
         return Range(x1,x2);
     }
 }
