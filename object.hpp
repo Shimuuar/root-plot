@@ -249,6 +249,25 @@ private:
     boost::scoped_ptr<TGraph> graph;
 };
 
+// Wrapper around ROOT polygons
+class PlotPoly : public PlotObject {
+public:
+    // Create graph out of ROOT TPolyLine. Will take outnership of the
+    // copy.
+    PlotPoly(TPolyLine* g);
+
+    virtual void     plotOn(Plot* cxt);
+    virtual RangeM   xRange() const;
+    virtual RangeM   yRange() const;
+    virtual void     setLineWidth(int width);
+    virtual void     setLineColor(int);
+    virtual void     setFillColor(int);
+    virtual TObject* getRootObject();
+private:
+    int width;
+    boost::scoped_ptr<TPolyLine> poly;
+};
+
 
 // Vertical or horizontal line on the plot. Ranges are adjusted
 // automatically

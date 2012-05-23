@@ -102,6 +102,7 @@ static double getDouble(const Token& tok) {
 %token KW_PLOT
 %token KW_HIST
 %token KW_GRAPH
+%token KW_POLY
 %token KW_VLINE
 %token KW_HLINE
 %token KW_VBAND
@@ -129,6 +130,7 @@ line // Top level statement
 
 plot // Plotting command
   : KW_GRAPH TOK_WS plot_graph
+  | KW_POLY  TOK_WS plot_poly
   | KW_HIST  TOK_WS plot_hist
     // Horizonal/vertical lines
   | KW_VLINE TOK_WS double eol
@@ -158,6 +160,20 @@ plot_graph
         if( par.clearPlot )
             par.plot->clear();
         par.parser->readFromFile<AccumGraph>( boost::get<std::string>($1), par.plot );
+    }
+// Plot polygon
+plot_poly
+  : TOK_DASH eol
+    {
+        if( par.clearPlot )
+            par.plot->clear();
+        par.parser->accumulate<AccumPoly>();
+    }
+  | TOK_STR eol
+    {
+        if( par.clearPlot )
+            par.plot->clear();
+        par.parser->readFromFile<AccumPoly>( boost::get<std::string>($1), par.plot );
     }
 // Plot historam
 plot_hist

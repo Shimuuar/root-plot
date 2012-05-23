@@ -9,6 +9,8 @@
 #include <boost/make_shared.hpp>
 
 #include <TGraph.h>
+#include <TPolyLine.h>
+
 
 
 // ================================================================
@@ -122,6 +124,31 @@ bool AccumGraph::feedLine(const std::string& str) {
         return p->mode != Private::Unknown;
     };
     return false; // Unreachable
+}
+
+
+
+AccumPoly::AccumPoly()
+{}
+
+AccumPoly::~AccumPoly()
+{}
+
+bool AccumPoly::flush(Plot* plot) {
+    switch( p->mode ) {
+    case Private::TwoColumn:
+        // Close outline manually
+        if( p->ys.size() == 0 )
+            return false;
+        p->xs.push_back( p->xs[0] );
+        p->ys.push_back( p->ys[0] );
+        plot->pushObject(
+            boost::make_shared<PlotPoly>(
+                new TPolyLine( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
+        return true;
+    default:
+        return false;
+    }
 }
 
 

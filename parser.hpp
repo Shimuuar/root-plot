@@ -68,9 +68,17 @@ public:
     virtual ~AccumGraph();
     virtual bool flush(Plot*);
     virtual bool feedLine(const std::string& str);
-private:
+protected:
     class Private;
     boost::scoped_ptr<Private> p;
+};
+
+// Accumulator for polygons
+class AccumPoly : public AccumGraph {
+public:
+    AccumPoly();
+    virtual ~AccumPoly();
+    virtual bool flush(Plot*);
 };
 
 // Accumulator for histograms.

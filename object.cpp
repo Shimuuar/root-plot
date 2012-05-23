@@ -337,11 +337,11 @@ RangeM PlotGraph::xRange() const {
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
-    
-    double* xs = graph->GetX();
-    double hi = *std::max_element(xs, xs+n);
-    double lo = *std::min_element(xs, xs+n);
-    double delta = 0.03 * (hi - lo);
+
+    double* xs    = graph->GetX();
+    double  hi    = *std::max_element(xs, xs+n);
+    double  lo    = *std::min_element(xs, xs+n);
+    double  delta = 0.03 * (hi - lo);
     return boost::optional<Range>( Range(lo - delta, hi + delta) );
 }
 
@@ -349,16 +349,77 @@ RangeM PlotGraph::yRange() const {
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
-    
-    double* ys = graph->GetY();
-    double hi = *std::max_element(ys, ys+n);
-    double lo = *std::min_element(ys, ys+n);
-    double delta = 0.03 * (hi - lo);
+
+    double* ys    = graph->GetY();
+    double  hi    = *std::max_element(ys, ys+n);
+    double  lo    = *std::min_element(ys, ys+n);
+    double  delta = 0.03 * (hi - lo);
     return boost::optional<Range>( Range(lo - delta, hi + delta) );
 }
 
 TObject* PlotGraph::getRootObject() {
     return &( *graph );
+}
+
+
+
+// ================================================================ //
+// ==== Poly
+
+PlotPoly::PlotPoly(TPolyLine* g) :
+    poly(g)
+{
+    setLineWidth( 0);
+    setFillColor(20);
+}
+
+void PlotPoly::plotOn(Plot*) {
+    // std::string opts = "SAME";
+    poly->Draw( "F" );
+    if( width > 0 ) {
+        poly->SetLineWidth(width);
+        poly->Draw(  );
+    }
+}
+
+void PlotPoly::setLineWidth(int w) {
+    width = w;
+}
+
+void PlotPoly::setLineColor(int col) {
+    poly->SetLineColor(col);
+}
+
+void PlotPoly::setFillColor(int col) {
+    poly->SetFillColor(col);
+}
+
+RangeM PlotPoly::xRange() const {
+    int n = poly->GetN();
+    if( n == 0 )
+        return boost::optional<Range>();
+
+    double* xs    = poly->GetX();
+    double  hi    = *std::max_element(xs, xs+n);
+    double  lo    = *std::min_element(xs, xs+n);
+    double  delta = 0.03 * (hi - lo);
+    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+}
+
+RangeM PlotPoly::yRange() const {
+    int n = poly->GetN();
+    if( n == 0 )
+        return boost::optional<Range>();
+
+    double* ys   = poly->GetY();
+    double hi    = *std::max_element(ys, ys+n);
+    double lo    = *std::min_element(ys, ys+n);
+    double delta = 0.03 * (hi - lo);
+    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+}
+
+TObject* PlotPoly::getRootObject() {
+    return &( *poly );
 }
 
 
