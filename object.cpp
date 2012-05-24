@@ -150,6 +150,16 @@ void Plot::setLineWidth(int width) {
         m_objStack.back()->setLineWidth(width);
 }
 
+void Plot::setLineStyle(Plot::LineStyle l) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setLineStyle( l );
+}
+
+void Plot::setMarkerStyle(Plot::MarkerStyle m) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setMarkerStyle( m );
+}
+
 void Plot::setHistText( bool txt ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistText( txt );
@@ -317,11 +327,30 @@ TObject* PlotHist::getRootObject() {
 // ==== Graph
 
 PlotGraph::PlotGraph(TGraph* g) :
-    graph(g)
+    color ( Plot::BLACK     ),
+    line  ( Plot::SolidLine ),
+    marker( Plot::NoMarker  ),
+    graph ( g )
 {}
 
 void PlotGraph::plotOn(Plot*) {
-    std::string opts = "L SAME";
+    std::string opts = " SAME";
+    // Set line style
+    switch( line ) {
+    case Plot::SolidLine:
+        opts = "L" + opts;
+        break;
+    case Plot::Splines:
+        opts = "C" + opts;
+        break;
+    default: ;
+    }
+    // Set marker style
+    if( marker != Plot::NoMarker ) {
+        opts = "P" + opts;
+        graph->SetMarkerStyle( marker );
+        graph->SetMarkerColor( color  );
+    }
     graph->Draw( opts.c_str() );
 }
 
@@ -329,7 +358,16 @@ void PlotGraph::setLineWidth(int width) {
     graph->SetLineWidth(width);
 }
 
+void PlotGraph::setLineStyle(Plot::LineStyle l) {
+    line = l;
+}
+
+void PlotGraph::setMarkerStyle(Plot::MarkerStyle m) {
+    marker = m;
+}
+
 void PlotGraph::setLineColor(int col) {
+    color = col;
     graph->SetLineColor(col);
 }
 

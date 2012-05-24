@@ -50,6 +50,8 @@ range       { return KW_RANGE;  }
 
 line        { return KW_LINE;    }
 width       { return KW_WIDTH;   }
+style       { return KW_STYLE;   }
+marker      { return KW_MARKER;  }
 color       { return KW_COLOR;   }
 fill        { return KW_FILL;    }
 text        { return KW_TEXT;    }

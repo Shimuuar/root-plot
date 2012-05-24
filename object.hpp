@@ -42,7 +42,7 @@ class TGraph;
 class TPolyLine;
 class TH1;
 
-// Abstracts over ROOT's canvas. 
+// Abstracts over ROOT's canvas.
 class Plot : public boost::noncopyable {
 public:
     // Allowed values of color
@@ -67,6 +67,21 @@ public:
     enum Axis {
         X, Y, Z
     };
+    // Style of line for graphs
+    enum LineStyle {
+        NoLine,
+        SolidLine,
+        Splines
+    };
+    // Marker style for graphs
+    enum MarkerStyle {
+        NoMarker   = 0,
+        MarkerDot  = 1,
+        MarkerPlus = 2,
+        MarkerStar = 3,
+        MarkerO    = 4,
+        MarkerX    = 5,
+    };
 
     // Convert int to color. Values which are out of range are
     // converted to black.
@@ -79,7 +94,7 @@ public:
     // Construct plot object which will draw on the canvas. Plot
     // object doesn't own canvas.
     Plot(TCanvas* cnv);
-    
+
     // Draw everything. This is slow call since it first remove
     // everything from canvas and then redraws every element in stack
     void draw(bool force = false);
@@ -104,11 +119,15 @@ public:
     void pushObject(boost::shared_ptr<PlotObject> plot);
     // Set line color for top object. Noop if stack is empty
     void setLineColor(int);
+    // Set line style for top object. Noop if stack is empty
+    virtual void setLineStyle(Plot::LineStyle);
+    // Set marker style for top object. Noop if stack is empty
+    virtual void setMarkerStyle(Plot::MarkerStyle);
     // Set fill color for top object. Noop if stack is empty
     void setFillColor(int);
     // Set line width for top object. Noop if stack is empty
     void setLineWidth(int width);
-    
+
     // X range for plot
     RangeM xRange() const;
     // Y range for plot
@@ -138,7 +157,7 @@ public:
 private:
     // Remove everything from canvas
     void clearCanvas();
-    
+
     typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
     // Data
@@ -163,11 +182,11 @@ private:
 class PlotObject {
 public:
     virtual ~PlotObject() {}
-    
+
     // Draw object on the plot. This function depends on correct
     // values of ROOT global variables (current dir) and correct
     // canvas setup by Plot. and should be invoked from Plot only.
-    // 
+    //
     // Plot* plot  - plot to draw on
     // bool  first - Whether object is first on the plot or not.
     virtual void plotOn(Plot* cxt) = 0;
@@ -179,10 +198,14 @@ public:
 
     // Set color of line
     virtual void setLineColor(int) {}
-    // Set fill color
-    virtual void setFillColor(int) {}
+    // Set line style. Used for graphs
+    virtual void setLineStyle(Plot::LineStyle) {}
+    // Set marker style
+    virtual void setMarkerStyle(Plot::MarkerStyle) {}
     // Set width of line
     virtual void setLineWidth(int width)   {UNUSED(width);}
+    // Set fill color
+    virtual void setFillColor(int) {}
 
     // Set text drawing histograms
     virtual void setHistText   ( bool txt )  {UNUSED(txt);}
@@ -243,9 +266,14 @@ public:
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setLineWidth(int width);
+    virtual void     setLineStyle(Plot::LineStyle);
+    virtual void     setMarkerStyle(Plot::MarkerStyle);
     virtual void     setLineColor(int);
     virtual TObject* getRootObject();
 private:
+    int               color;
+    Plot::LineStyle   line;
+    Plot::MarkerStyle marker;
     boost::scoped_ptr<TGraph> graph;
 };
 
@@ -292,7 +320,7 @@ private:
     double     x;
     int        color;
     int        width;
-    
+
     boost::shared_ptr<TGraph> graph;
 };
 

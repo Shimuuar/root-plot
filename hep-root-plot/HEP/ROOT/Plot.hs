@@ -83,6 +83,10 @@ data Option =
   | LineColor  Color
     -- | Color of line (with int)
   | LineColorI Int
+    -- | Line style
+  | LineStyle   String
+    -- | Marker style
+  | MarkerStyle String
     -- | Fill color (with enum)
   | FillColor  Color
     -- | Fill color (with int)
@@ -197,17 +201,19 @@ renderPlot (HBand a b) = printf "hband %g %g" a b
 
 -- Option subcommand
 renderOption :: Option -> String
-renderOption (Silent o)     = "silent " ++ toggle o
-renderOption (Title  t)     = "title " ++ show t
-renderOption (LineWidth i)  = "line width " ++ show i
-renderOption (LineColor  c) = renderOption $ LineColorI $ fromEnum c
-renderOption (LineColorI i) = "line color " ++ show i
-renderOption (FillColor  c) = renderOption $ FillColorI $ fromEnum c
-renderOption (FillColorI i) = "fill color " ++ show i
-renderOption (HistOpt o )   = "hist " ++ renderHistOpt o
-renderOption (XAxis   a )   = "xaxis " ++ renderAxis a
-renderOption (YAxis   a )   = "yaxis " ++ renderAxis a
-renderOption (ZAxis   a )   = "zaxis " ++ renderAxis a
+renderOption (Silent o)      = "silent " ++ toggle o
+renderOption (Title  t)      = "title " ++ show t
+renderOption (LineWidth i)   = "line width " ++ show i
+renderOption (LineColor  c)  = renderOption $ LineColorI $ fromEnum c
+renderOption (LineColorI i)  = "line color " ++ show i
+renderOption (LineStyle   s) = "line style " ++ show s
+renderOption (MarkerStyle s) = "line marker " ++ show s
+renderOption (FillColor   c) = renderOption $ FillColorI $ fromEnum c
+renderOption (FillColorI  i) = "fill color " ++ show i
+renderOption (HistOpt o )    = "hist " ++ renderHistOpt o
+renderOption (XAxis   a )    = "xaxis " ++ renderAxis a
+renderOption (YAxis   a )    = "yaxis " ++ renderAxis a
+renderOption (ZAxis   a )    = "zaxis " ++ renderAxis a
 
 -- Axis
 renderAxis :: Axis -> String

@@ -15,7 +15,7 @@ void yyerror(ParseParam, const char* err) {
     std::cerr << "rt-plot: " << err << std::endl;
 }
 
-static Plot::Color strToColor(std::string str) {
+static Plot::Color strToColor( std::string str) {
     std::transform(str.begin(), str.end(), str.begin(), toupper );
     Plot::Color c = Plot::BLACK;
     if( str == "WHITE" ) {
@@ -40,6 +40,38 @@ static Plot::Color strToColor(std::string str) {
         c = Plot::VIOLET;
     }
     return c;
+}
+
+static Plot::LineStyle strToLine( std::string str ) {
+    std::transform(str.begin(), str.end(), str.begin(), toupper );
+    Plot::LineStyle l = Plot::SolidLine;
+    if( str == "NO" ) {
+        l = Plot::NoLine;
+    } else if( str == "LINE" ) {
+        l = Plot::SolidLine;
+    } else if( str == "SPLINES" ) {
+        l = Plot::Splines;
+    }
+    return l;
+}
+
+static Plot::MarkerStyle strToMarker( std::string str ) {
+    std::transform(str.begin(), str.end(), str.begin(), toupper );
+    Plot::MarkerStyle m = Plot::NoMarker;
+    if( str == "NO" ) {
+        m = Plot::NoMarker;
+    } else if( str == "DOT" ) {
+        m = Plot::MarkerDot;
+    } else if( str == "PLUS" || str == "+" ) {
+        m = Plot::MarkerPlus;
+    } else if( str == "STAR" || str == "*" ) {
+        m = Plot::MarkerStar;
+    } else if( str == "O" ) {
+        m = Plot::MarkerO;
+    } else if( str == "X" ) {
+        m = Plot::MarkerPlus;
+    }
+    return m;
 }
 
 // Pattern match over Token to retrieve double value
@@ -97,6 +129,8 @@ void setParserFile(ParseParam& par, const Token& tok) {
 %token KW_LINE
 %token KW_COLOR
 %token KW_WIDTH
+%token KW_STYLE
+%token KW_MARKER
 %token KW_FILL
 %token KW_TEXT
 %token KW_BOX
@@ -223,12 +257,16 @@ setAxis
 
 // Line options
 setLine
-  : KW_WIDTH TOK_WS TOK_INT eol
+  : KW_WIDTH  TOK_WS TOK_INT eol
     { par.plot->setLineWidth( boost::get<int>($3) ); }
-  | KW_COLOR TOK_WS TOK_INT eol
+  | KW_COLOR  TOK_WS TOK_INT eol
     { par.plot->setLineColor( boost::get<int>($3) ); }
-  | KW_COLOR TOK_WS TOK_STR eol
+  | KW_COLOR  TOK_WS TOK_STR eol
     { par.plot->setLineColor( strToColor( boost::get<std::string>( $3 ) ) ); }
+  | KW_STYLE  TOK_WS TOK_STR eol
+    { par.plot->setLineStyle( strToLine( boost::get<std::string>( $3 ) ) ); }
+  | KW_MARKER TOK_WS TOK_STR eol
+    { par.plot->setMarkerStyle( strToMarker( boost::get<std::string>( $3 ) ) ); }
 
 // Fill options
 setFill
