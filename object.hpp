@@ -247,6 +247,7 @@ public:
 private:
     boost::scoped_ptr<TH1> hist; // Histogram
     // Common flags
+    int  m_lineWidth;            // Line width
     bool m_text;                 // Draw text at nodes?
     // 2D histogram
     bool m_scatter;              // Draw as scatter plot

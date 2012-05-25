@@ -258,11 +258,12 @@ void Plot::addPlotToLegend(const std::string& str) {
 
 PlotHist::PlotHist(TH1* h) :
     hist(h),
-    m_text   ( false ),
-    m_scatter( false ),
-    m_box    ( false ),
-    m_nCont  ( -1    ),
-    m_color  ( false )
+    m_lineWidth( 1     ),
+    m_text     ( false ),
+    m_scatter  ( false ),
+    m_box      ( false ),
+    m_nCont    ( -1    ),
+    m_color    ( false )
 {}
 
 void PlotHist::plotOn(Plot*) {
@@ -275,11 +276,17 @@ void PlotHist::plotOn(Plot*) {
         opt += " BOX";
     if( m_color )
         opt += " COL";
+    if( m_lineWidth > 0 ) {
+        hist->SetLineWidth( m_lineWidth );
+    } else {
+        hist->SetLineWidth( 1 );
+        opt = "B " + opt;
+    }
     hist->Draw( opt.c_str() );
 }
 
 void PlotHist::setLineWidth(int width) {
-    hist->SetLineWidth(width);
+    m_lineWidth = width;
 }
 
 void PlotHist::setLineColor(int col) {
