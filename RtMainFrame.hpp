@@ -3,6 +3,7 @@
 
 #include <TGFrame.h>
 #include <TCanvas.h>
+#include <TGToolTip.h>
 #include <RQ_OBJECT.h>
 
 
@@ -16,13 +17,18 @@ public:
     virtual ~RtMainFrame();
 
     // Get canvas
-    TCanvas* getCanvas() { return canvas; }
-private:
+    TCanvas* getCanvas() { return m_canvas; }
 
-    TCanvas* canvas;
+private:
+    TCanvas*   m_canvas;
+    TGToolTip* m_tip;
+
 public:
     // Handler for saving PDF
     void savePDF();
+    // Event handler
+    void eventHandler(Int_t event, Int_t px, Int_t py, TObject *selected);
+
     // CINT stuff
     ClassDef(RtMainFrame,1);
 };

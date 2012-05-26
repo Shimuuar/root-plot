@@ -1,5 +1,7 @@
-
 #include "RtMainFrame.hpp"
+
+#include <string>
+#include <boost/format.hpp>
 
 #include <TRootEmbeddedCanvas.h>
 #include <TGButton.h>
@@ -11,9 +13,15 @@ RtMainFrame::RtMainFrame(const TGWindow* p) :
 {
     // Create canvas
     TRootEmbeddedCanvas* eCanvas = new TRootEmbeddedCanvas("Embedded canvas",this,800,600);
-    canvas = eCanvas->GetCanvas();
+    m_canvas = eCanvas->GetCanvas();
 	AddFrame(eCanvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY,
                                         10, 10, 10, 1));
+
+    // ========================================
+    // Tooltip
+    m_canvas->Connect("ProcessedEvent(Int_t,Int_t,Int_t,TObject*)",
+                       "RtMainFrame", this, "eventHandler(Int_t,Int_t,Int_t,TObject*)");
+    m_tip = new TGToolTip( gClient->GetDefaultRoot(), eCanvas, "", 0 );
 
     // ========================================
     // Buttons
@@ -40,7 +48,28 @@ RtMainFrame::~RtMainFrame() {
 }
 
 void RtMainFrame::savePDF() {
-    canvas->SaveAs("ROOT-Plot.pdf");
+    m_canvas->SaveAs("ROOT-Plot.pdf");
+}
+
+void RtMainFrame::eventHandler(Int_t event, Int_t px, Int_t py, TObject*)
+{
+    switch( event ) {
+    case kMouseLeave:  {
+        m_tip->Hide();
+        break;
+    }
+    case kMouseMotion: {
+        double x = m_canvas->AbsPixeltoX( px );
+        double y = m_canvas->AbsPixeltoY( py );
+        m_tip->SetText(
+            ( boost::format( "X=%.3g Y=%.3g" ) % x % y).str().c_str() );
+        m_tip->SetPosition(px+8, py+8);
+        m_tip->Reset();
+        break;
+    }
+    default: ;
+    }
+
 }
 
 // ROOT
