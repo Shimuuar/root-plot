@@ -14,10 +14,14 @@ Description:
   Client for plotting using rt-plot
 
 Library
-  Build-Depends:        base >=3 && <5,
-                        unix,
-                        directory,
-                        network,
-                        histogram-fill
-  Exposed-modules:      HEP.ROOT.Plot
   ghc-options:		-Wall
+  Build-Depends:
+    base >=3 && <5,
+    unix,
+    directory,
+    network,
+    transformers,
+    histogram-fill
+  Exposed-modules:
+    HEP.ROOT.Plot
+    HEP.ROOT.Plot.AST
