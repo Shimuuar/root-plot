@@ -5,6 +5,7 @@
 module HEP.ROOT.Plot (
     -- * AST
     Cmd
+  , Command
   , Plot(..)
   , Color(..)
   , Toggle(..)
