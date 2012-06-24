@@ -540,8 +540,8 @@ void PlotBand::plotOn(Plot* cxt) {
         double ys[4] = {lo,hi,hi,lo};
         poly = boost::shared_ptr<TPolyLine>( new TPolyLine(4, xs, ys, "") );
     } else {
-        double xs[4] = {x1,x2,x2,x1};
-        double ys[4] = {lo,lo,hi,hi};
+        double ys[4] = {x1,x1,x2,x2};
+        double xs[4] = {lo,hi,hi,lo};
         poly = boost::shared_ptr<TPolyLine>( new TPolyLine(4, xs, ys, "") );
     }
     poly->SetFillColor( fill  );
