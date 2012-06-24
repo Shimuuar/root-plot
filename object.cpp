@@ -180,6 +180,11 @@ void Plot::setHistColor( bool c ) {
         m_objStack.back()->setHistColor( c );
 }
 
+void Plot::setHistBox( bool c ) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setHistBox( c );
+}
+
 RangeM Plot::xRange() const {
     if( m_xRange.is_initialized() )
         return m_xRange;

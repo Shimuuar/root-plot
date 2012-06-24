@@ -154,6 +154,8 @@ public:
     void setHistContour( int n );
     // Set color plot for 2D histogram
     void setHistColor( bool c );
+    // Set color plot for 2D histogram
+    void setHistBox  ( bool b );
 private:
     // Remove everything from canvas
     void clearCanvas();

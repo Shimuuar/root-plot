@@ -282,7 +282,7 @@ setHist
   | KW_COLOR   onOff
     { par.plot->setHistColor( par.onOff ); }
   | KW_BOX     onOff
-    { par.plot->setHistColor( par.onOff ); }
+    { par.plot->setHistBox( par.onOff ); }
   | KW_SCATTER onOff
     { par.plot->setHistScatter( par.onOff ); }
   | KW_CONTOUR onOff
