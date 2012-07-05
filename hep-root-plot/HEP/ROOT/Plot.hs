@@ -57,6 +57,7 @@ import Control.Applicative
 import Control.Monad
 import Control.Monad.Trans.Writer
 import Control.Exception
+import Control.Concurrent         (threadDelay)
 import Network.Socket
 
 import System.Environment
@@ -102,7 +103,7 @@ plot :: Plot -> Cmd Command
 plot = cmd . Plot
 
 set :: Cmd Option -> Cmd Command
-set = cmds Set 
+set = cmds Set
 
 
 ----------------------------------------------------------------
@@ -204,6 +205,12 @@ legendLabel = cmd . LegendLabel
 -- Communicate with user
 ----------------------------------------------------------------
 
+-- | Send list of commands surrounded with silent on/off marks and leading clear command
+draws :: Cmd Command -> IO ()
+draws commands
+  = sendCommands $ [Set (Silent ON), Clear] ++ execWriter commands ++ [Set (Silent OFF)]
+
+
 -- | Send list of command to rt-plot
 sendCommands :: [Command] -> IO ()
 sendCommands commands = do
@@ -212,7 +219,7 @@ sendCommands commands = do
   let sock = tmpdir ++ "/" ++ uname ++ "/rt-socket"
   -- Send data
   bracket (socket AF_UNIX Stream defaultProtocol) (sClose) $ \s -> do
-    connect s (SockAddrUnix sock)
+    forceConnect s (SockAddrUnix sock)
     -- Send data
     let sendAll str = do
           n <- send s str
@@ -221,8 +228,15 @@ sendCommands commands = do
             xs -> sendAll xs
     sendAll . unlines =<< mapM renderCommand commands
 
-
--- | Send list of commands surrounded with silent on/off marks and leading clear command
-draws :: Cmd Command -> IO ()
-draws commands
-  = sendCommands $ [Set (Silent ON), Clear] ++ execWriter commands ++ [Set (Silent OFF)]
+-- Connect forcefully
+forceConnect :: Socket -> SockAddr -> IO ()
+forceConnect s addr
+  = connect s addr `catch` handler
+  where
+    handler :: IOException -> IO ()
+    handler e
+      -- If we there isn't any available connections wait for 100ms
+      -- and try again It's VERY ugly but works.
+      | show e == msg = threadDelay 100000 >> forceConnect s addr
+      | otherwise     = throw e
+    msg = "connect: resource exhausted (Resource temporarily unavailable)"
