@@ -33,25 +33,25 @@ data Command =
 
 -- | Plot subcommand
 data Plot where
-  -- | Simple graph
+  -- Simple graph
   Graph     :: [(Double,Double)] -> Plot
-  -- | Sequence of points
+  -- Sequence of points
   Graph1    :: [Double]          -> Plot
-  -- | Polygon
+  -- Polygon
   Polygon   :: [(Double,Double)] -> Plot
-  -- | Plot function
+  -- Plot function
   Function  :: (Double,Double) -> (Double -> Double) -> Plot
-  -- | Plot function using many points at same time
+  -- Plot function using many points at same time
   FunctionN :: Int -> (Double,Double) -> (Double -> Double) -> Plot
-  -- | Plot histogram
+  -- Plot histogram
   Hist      :: Show (Histogram v bin a) => Histogram v bin a -> Plot
-  -- | Vertical line
+  -- Vertical line
   VLine     :: Double -> Plot
-  -- | Horizontal line
+  -- Horizontal line
   HLine     :: Double -> Plot
-  -- | Vertical band
+  -- Vertical band
   VBand     :: Double -> Double -> Plot
-  -- | Horizontal band
+  -- Horizontal band
   HBand     :: Double -> Double -> Plot
 
 -- | Set subcommand
@@ -81,15 +81,15 @@ data Option =
 
 -- | Axis parameters
 data Axis
-    -- ^ Axis label
+    -- | Axis label
   = Label String
-    -- ^ No label
+    -- | No label
   | NoLabel
-    -- ^ Set log scale
+    -- | Set log scale
   | LogScale Toggle
-    -- ^ Set range
+    -- | Set range
   | Range Double Double
-    -- ^ Set automatic range
+    -- | Set automatic range
   | RangeAuto
 
 -- | Histogram options
