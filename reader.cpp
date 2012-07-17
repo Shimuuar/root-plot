@@ -1,8 +1,9 @@
-
+#include <iostream>
 #include "reader.hpp"
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 #include <errno.h>
 
 
@@ -10,24 +11,24 @@
 LineReader::LineReader(int fd_) :
     fd(fd_),
     buf(4096),
-    nBytes(0),
+    first(0),
+    last(0),
     done(false)
 {
     fcntl(fd, F_SETFL, O_NONBLOCK);
 }
 
 bool LineReader::findLine(std::string& str) {
-    char* start = &buf[0];
-    char* last  = &buf[0] + nBytes;
-    char* end   = start;
-    while( *end != '\n' && end++ <= last );
-    if( end <= last ) {
-        size_t size = end - start + 1;
-        str         = std::string(start, size-1);
-        // Move data to 0 offset
-        for(size_t i = 0; i < nBytes; i++)
-            buf[i] = buf[size+i];
-        nBytes -= size;
+    if( first >= last )
+        return false;
+    // Find EOL
+    size_t i = first;
+    while( i < last && buf[i] != '\n' )
+        i++;
+    // EOL is found
+    if( i < last && buf[i] == '\n' ) {
+        str   = std::string( &buf[first], i - first );
+        first = i+1;
         return true;
     }
     return false;
@@ -38,19 +39,23 @@ LineReader::Result LineReader::getLine(std::string& str) {
     if( findLine( str ) )
         return OK;
 
+    // Move data to beginning of buffer
+    memmove( &buf[0], &buf[first], last - first );
+    last  -= first;
+    first  = 0;
     // Unsuccesful. Try to read more
-    if( nBytes == buf.size() ) {
+    if( first == 0 && last == buf.size() ) {
         throw "FIXME: Too long line";
     }
-    ssize_t n = read(fd, &buf[0]+nBytes, buf.size() - nBytes);
+    ssize_t n = read(fd, &buf[last], buf.size() - last);
 
     // End of file.  
     if( n == 0  ) {
         done = true;
         // If buffer still contain data return it. It must be single line
-        if( nBytes > 0 ) {
-            str    = std::string( &buf[0], nBytes );
-            nBytes = 0;
+        if( first < last ) {
+            str   = std::string( &buf[first], last - first );
+            first = last;
             return OK;
         } else {
             return Eof;
@@ -67,7 +72,7 @@ LineReader::Result LineReader::getLine(std::string& str) {
     }
 
     // Try to find line again
-    nBytes += n;
+    last += n;
     if( findLine( str ) )
         return OK;
     else

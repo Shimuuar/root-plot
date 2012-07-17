@@ -32,7 +32,8 @@ private:
     
     int               fd;       // File descriptor
     std::vector<char> buf;      // Data buffer
-    size_t            nBytes;   // Number of bytes in buffer
+    size_t            first;    // Index of data beginning
+    size_t            last;     // Index right after the data
     bool              done;     // Are we at EOF
 };
 
