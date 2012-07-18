@@ -41,6 +41,7 @@ module HEP.ROOT.Plot (
   , histColor
   , histScatter
   , histContour
+  , histPalette
     -- ** Legend
   , newLegend
   , deleteLegend
@@ -59,6 +60,8 @@ import Control.Monad.Trans.Writer
 import Control.Exception
 import Control.Concurrent         (threadDelay)
 import Network.Socket
+import Network.Socket.ByteString.Lazy (sendAll)
+import Blaze.ByteString.Builder       (toLazyByteString)
 
 import System.Environment
 import System.Posix.User
@@ -180,8 +183,11 @@ histColor = cmd . HistColor
 histScatter :: Toggle -> Cmd HistOpt
 histScatter = cmd . HistScatter
 
-histContour :: Cmd (Int -> HistOpt)
-histContour = cmd HistContour
+histContour :: Int -> Cmd HistOpt
+histContour = cmd . HistContour
+
+histPalette :: Toggle -> Cmd HistOpt
+histPalette = cmd . HistPalette
 
 
 ----------------------------------------------------------------
@@ -221,12 +227,8 @@ sendCommands commands = do
   bracket (socket AF_UNIX Stream defaultProtocol) (sClose) $ \s -> do
     forceConnect s (SockAddrUnix sock)
     -- Send data
-    let sendAll str = do
-          n <- send s str
-          case drop n str of
-            [] -> return ()
-            xs -> sendAll xs
-    sendAll . unlines =<< mapM renderCommand commands
+    mapM_ (sendAll s . toLazyByteString) =<< mapM renderCommand commands
+
 
 -- Connect forcefully
 forceConnect :: Socket -> SockAddr -> IO ()

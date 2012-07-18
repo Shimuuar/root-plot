@@ -1,6 +1,6 @@
 
 Name:           hep-root-plot
-Version:        0.2.1.1
+Version:        0.2.1.2
 Cabal-Version:  >= 1.6
 License:        AllRightsReserved
 License-File:   LICENSE
@@ -21,6 +21,8 @@ Library
     directory,
     network,
     transformers,
+    bytestring,
+    blaze-builder,
     histogram-fill
   Exposed-modules:
     HEP.ROOT.Plot
