@@ -185,6 +185,11 @@ void Plot::setHistBox( bool c ) {
         m_objStack.back()->setHistBox( c );
 }
 
+void Plot::setHistPalette( bool p ) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setHistPalette( p );
+}
+
 RangeM Plot::xRange() const {
     if( m_xRange.is_initialized() )
         return m_xRange;
@@ -279,8 +284,12 @@ void PlotHist::plotOn(Plot*) {
         opt += " SCAT";
     if( m_box )
         opt += " BOX";
-    if( m_color )
+    if( m_color ) {
         opt += " COL";
+        if( m_palette ) {
+            opt += " Z";
+        }
+    }
     if( m_lineWidth > 0 ) {
         hist->SetLineWidth( m_lineWidth );
     } else {

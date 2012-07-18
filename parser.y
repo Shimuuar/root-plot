@@ -136,6 +136,7 @@ void setParserFile(ParseParam& par, const Token& tok) {
 %token KW_BOX
 %token KW_SCATTER
 %token KW_CONTOUR
+%token KW_PALETTE
 
 %token KW_XAXIS
 %token KW_YAXIS
@@ -286,9 +287,11 @@ setHist
   | KW_SCATTER onOff
     { par.plot->setHistScatter( par.onOff ); }
   | KW_CONTOUR onOff
-    { par.plot->setHistContour( par.onOff ? 10 : -1 ); }
+    { par.plot->setHistContour( par.onOff ? 10 : -1 ); } // 10 is default number of contours
   | KW_CONTOUR TOK_WS TOK_INT eol
     { par.plot->setHistContour( boost::get<int>( $3 ) ); }
+  | KW_PALETTE onOff
+    { par.plot->setHistPalette( par.onOff ); }
 
 // End of line
 eol

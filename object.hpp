@@ -156,6 +156,8 @@ public:
     void setHistColor( bool c );
     // Set color plot for 2D histogram
     void setHistBox  ( bool b );
+    // Set palette of and off. Have effect iff color option is on.
+    void setHistPalette( bool p );
 private:
     // Remove everything from canvas
     void clearCanvas();
@@ -219,6 +221,8 @@ public:
     virtual void setHistColor  ( bool c )    {UNUSED(c);}
     // Set color plot for 2D histogram
     virtual void setHistBox    ( bool b )    {UNUSED(b);}
+    // Set palette of and off. Have effect iff color option is on
+    virtual void setHistPalette( bool p )    {UNUSED(p);}
 
     // Get pointer to ROOT object. May return NULL
     virtual TObject* getRootObject() { return 0; }
@@ -246,6 +250,8 @@ public:
     virtual void setHistContour( int n )     { m_nCont   = n;    }
     virtual void setHistColor( bool c )      { m_color   = c;    }
     virtual void setHistBox  ( bool b )      { m_box     = b;    }
+    virtual void setHistPalette( bool p )    { m_palette = p;    }
+
 private:
     boost::scoped_ptr<TH1> hist; // Histogram
     // Common flags
@@ -256,6 +262,7 @@ private:
     bool m_box;                  // Draw as box plot
     int  m_nCont;                // Number of contours. Negative for no contours
     bool m_color;                // Color plot
+    bool m_palette;              // Pallette
 };
 
 // Wrapper around ROOT graphs

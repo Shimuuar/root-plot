@@ -57,6 +57,7 @@ fill        { return KW_FILL;    }
 text        { return KW_TEXT;    }
 box         { return KW_BOX;     }
 contour     { return KW_CONTOUR; }
+palette     { return KW_PALETTE; }
 
  /* Literals */
 {int}       { *yylval = boost::lexical_cast<int>   ( yytext ); return TOK_INT;    }
