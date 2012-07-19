@@ -17,6 +17,8 @@ module HEP.ROOT.Plot.AST (
   ) where
 
 import Data.Histogram.Generic (Histogram)
+import qualified Data.Histogram.Generic as H
+import qualified Data.Vector.Generic    as G
 import Data.Monoid
 import System.Directory       (getCurrentDirectory,makeRelativeToCurrentDirectory)
 import Text.Printf
@@ -171,7 +173,7 @@ renderPlot (FunctionN n (a,b) f) =
                      | i <- [0 .. n]
                      , let x = a + (b - a) * fromIntegral i / fromIntegral n
                      ]
-renderPlot (Hist  h   ) 
+renderPlot (Hist  h   )
   =  co "hist -\n"
   <> fromString (show h)
   <> co "<<<\n"
@@ -255,15 +257,29 @@ real = fromShow
 strLit :: String -> Builder
 strLit = fromShow
 
-class HistShow h where
-  histShow :: h -> BS.ByteString
 
--- instance (Show a, Show (BinValue bin), Show bin, Bin bin, Vector v a) => Show (Histogram v bin a) where
---     show h@(Histogram bin uo _) = "# Histogram\n" ++ showUO uo ++ show bin ++
---                                   unlines (fmap showT $ asList h)
---         where
---           showT (x,y) = show x ++ "\t" ++ show y
---           showUO (Just (u,o)) = "# Underflows = " ++ show u ++ "\n" ++
---                                 "# Overflows  = " ++ show o ++ "\n"
---           showUO Nothing      = "# Underflows = \n" ++
---                                 "# Overflows  = \n"
+----------------------------------------------------------------
+-- Show helper
+
+class ShowBS a where
+  serialize :: a -> Builder
+
+
+instance ShowBS Int    where serialize = int
+instance ShowBS Double where serialize = real
+instance (ShowBS a, ShowBS b) => ShowBS (a,b) where
+  serialize (a,b) = co "(" <> serialize a <> co "," <> serialize b <> co ")"
+
+
+instance (ShowBS a, ShowBS (H.BinValue bin), Show bin, H.Bin bin, G.Vector v a)
+  => ShowBS (Histogram v bin a) where
+  serialize h
+    =  co "# Histogram\n"
+    <> showUO (H.outOfRange h)
+    <> fromString (show $ H.bins h)
+    <> mconcat (map showT $ H.asList h)
+    where
+      showUO Nothing      = mempty
+      showUO (Just (u,o)) =  co "# Underflows = " <> serialize u <> co "\n"
+                          <> co "# Overflows  = " <> serialize o <> co "\n"
+      showT (x,y) = serialize x <> co "\t" <> serialize y

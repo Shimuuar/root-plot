@@ -1,6 +1,6 @@
 
 Name:           hep-root-plot
-Version:        0.2.1.2
+Version:        0.2.2
 Cabal-Version:  >= 1.6
 License:        AllRightsReserved
 License-File:   LICENSE
@@ -14,7 +14,8 @@ Description:
   Client for plotting using rt-plot
 
 Library
-  ghc-options:		-Wall
+  Ghc-options:		-Wall -O2
+  Ghc-prof-options:     -auto-all
   Build-Depends:
     base >=3 && <5,
     unix,
@@ -23,6 +24,7 @@ Library
     transformers,
     bytestring,
     blaze-builder,
+    vector,
     histogram-fill
   Exposed-modules:
     HEP.ROOT.Plot
