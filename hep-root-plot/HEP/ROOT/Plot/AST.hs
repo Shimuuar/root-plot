@@ -19,7 +19,6 @@ module HEP.ROOT.Plot.AST (
 import Data.Histogram.Generic (Histogram)
 import qualified Data.Histogram.Generic as H
 import qualified Data.Vector.Generic    as G
-import Data.List              (foldl')
 import Data.Monoid
 import System.Directory       (getCurrentDirectory,makeRelativeToCurrentDirectory)
 import Text.Printf
@@ -298,8 +297,7 @@ instance (ShowBS a, ShowBS (H.BinValue bin), Show bin, H.Bin bin, G.Vector v a)
       showT (x,y) = serialize x <> co "\t" <> serialize y
 
 linesBS :: [Builder] -> Builder
-linesBS []     = mempty
-linesBS (x:xs) = foldl' (\b a -> b <> co "\n" <> a) x xs
+linesBS = mconcat . map (<> co "\n")
 
 pair :: (ShowBS a, ShowBS b) => (a,b) -> Builder
 pair (a,b) = serialize a <> co "\t" <> serialize b
