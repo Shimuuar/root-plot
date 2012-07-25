@@ -51,14 +51,16 @@ struct AccumGraph::Private {
     {}
     enum Mode {
         Unknown,
-        OneColumn,
-        TwoColumn
+        Col_1,              // Y   (X implicit [0,1...])
+        Col_2,              // X,Y data
+        Col_3,              // X,Y,ΔY
+        Col_4               // X,Y,ΔX,ΔY
     };
 
     Mode mode;
-    std::vector<double> xs, ys;
+    std::vector<double> xs, ys, dxs, dys;
 
-    bool oneColumn(const std::string& str) {
+    bool column_1(const std::string& str) {
         double y;
         bool   ok = 1 == sscanf(str.c_str(), "%lf", &y);
         if( ok ) {
@@ -66,12 +68,33 @@ struct AccumGraph::Private {
         }
         return ok;
     }
-    bool twoColumn(const std::string& str ) {
+    bool column_2(const std::string& str ) {
         double x, y;
         bool   ok = 2 == sscanf(str.c_str(), "%lf %lf", &x, &y);
         if( ok ) {
             xs.push_back( x );
             ys.push_back( y );
+        }
+        return ok;
+    }
+    bool column_3(const std::string& str ) {
+        double x, y, dy;
+        bool   ok = 2 == sscanf(str.c_str(), "%lf %lf %lf", &x, &y, &dy);
+        if( ok ) {
+            xs.push_back(  x  );
+            ys.push_back(  y  );
+            dys.push_back( dy );
+        }
+        return ok;
+    }
+    bool column_4(const std::string& str ) {
+        double x, y, dx,dy;
+        bool   ok = 2 == sscanf(str.c_str(), "%lf %lf %lf %lf", &x, &y, &dx, &dy);
+        if( ok ) {
+            xs.push_back(  x  );
+            ys.push_back(  y  );
+            dxs.push_back( dx );
+            dys.push_back( dy );
         }
         return ok;
     }
@@ -88,14 +111,14 @@ bool AccumGraph::flush(Plot* plot) {
     size_t n;
     switch( p->mode ) {
     // One column data
-    case Private::OneColumn:
+    case Private::Col_1:
         n = p->ys.size();
         p->xs.resize( n );
         for( unsigned i = 0; i < n; i++ )
             p->xs[i] = i;
         // !! FALLTHROUGH !!
     // Two column data
-    case Private::TwoColumn:
+    case Private::Col_2:
         plot->pushObject(
             boost::make_shared<PlotGraph>(
                 new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
@@ -109,18 +132,23 @@ bool AccumGraph::flush(Plot* plot) {
 bool AccumGraph::feedLine(const std::string& str) {
     switch( p->mode ) {
     // One column data
-    case Private::OneColumn:
-        return p->oneColumn(str);
+    case Private::Col_1:
+        return p->column_1(str);
     // Two column data
-    case Private::TwoColumn:
-        return p->twoColumn(str);
+    case Private::Col_2:
+        return p->column_2(str);
+    // Three column data
+    case Private::Col_3:
+        return p->column_3(str);
+    // Four column data
+    case Private::Col_4:
+        return p->column_4(str);
     // Decide type of data
     case Private::Unknown:
-        if( p->twoColumn(str) ) {
-            p->mode = Private::TwoColumn;
-        } else if( p->oneColumn(str) ) {
-            p->mode = Private::OneColumn;
-        }
+             if ( p->column_4(str) ) { p->mode = Private::Col_4; }
+        else if ( p->column_3(str) ) { p->mode = Private::Col_3; }
+        else if ( p->column_2(str) ) { p->mode = Private::Col_2; }
+        else if ( p->column_1(str) ) { p->mode = Private::Col_1; }
         return p->mode != Private::Unknown;
     };
     return false; // Unreachable
@@ -136,7 +164,7 @@ AccumPoly::~AccumPoly()
 
 bool AccumPoly::flush(Plot* plot) {
     switch( p->mode ) {
-    case Private::TwoColumn:
+    case Private::Col_2:
         // Close outline manually
         if( p->ys.size() == 0 )
             return false;
