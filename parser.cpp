@@ -192,6 +192,24 @@ bool AccumPoly::flush(Plot* plot) {
     }
 }
 
+AccumBarchart::AccumBarchart()
+{}
+
+AccumBarchart::~AccumBarchart()
+{}
+
+bool AccumBarchart::flush(Plot* plot) {
+    switch( p->mode ) {
+    case Private::Col_2:
+        plot->pushObject(
+            boost::make_shared<PlotBarChart>(
+                new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
+        return true;
+    default:
+        return false;
+    }
+}
+
 
 
 // ================================================================ //

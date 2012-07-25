@@ -81,6 +81,14 @@ public:
     virtual bool flush(Plot*);
 };
 
+// Accumulator for barchart
+class AccumBarchart : public AccumGraph {
+public:
+    AccumBarchart();
+    virtual ~AccumBarchart();
+    virtual bool flush(Plot*);
+};
+
 // Accumulator for histograms.
 class AccumHist : public LineAccum {
 public:

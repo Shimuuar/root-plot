@@ -19,6 +19,7 @@ module HEP.ROOT.Plot.AST (
 import Data.Histogram.Generic (Histogram)
 import qualified Data.Histogram.Generic as H
 import qualified Data.Vector.Generic    as G
+import Data.List              (foldl')
 import Data.Monoid
 import System.Directory       (getCurrentDirectory,makeRelativeToCurrentDirectory)
 import Text.Printf
@@ -44,6 +45,8 @@ data Plot where
   Graph     :: [(Double,Double)] -> Plot
   -- Sequence of points
   Graph1    :: [Double]          -> Plot
+  -- Barchart
+  Barchart  :: [(Double,Double)] -> Plot
   -- Polygon
   Polygon   :: [(Double,Double)] -> Plot
   -- Plot function
@@ -160,12 +163,22 @@ renderCommand (Legend l) = return $ co "legend " <> renderLegend l   <> co "\n"
 
 -- plot subcommand
 renderPlot :: Plot -> Builder
-renderPlot (Graph vals) =
-  fromString $ unlines $ ("graph -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
-renderPlot (Graph1 ys ) =
-  fromString $ unlines $ ("graph -" : map show ys) ++ ["<<<"]
-renderPlot (Polygon vals) =
-  fromString $ unlines $ ("poly -" : map (\(x,y) -> show x ++ "\t" ++ show y) vals) ++ ["<<<"]
+renderPlot (Graph vals) 
+  =  co "graph -\n"
+  <> linesBS (map pair vals)
+  <> co "<<<\n"
+renderPlot (Graph1 ys ) 
+  =  co "graph -\n"
+  <> linesBS (map real ys)
+  <> co "<<<\n"
+renderPlot (Barchart vals)
+  =  co "barchart -\n"
+  <> linesBS (map pair vals)
+  <> co "<<<\n"
+renderPlot (Polygon vals)
+  =  co "poly -\n"
+  <> linesBS (map pair vals)
+  <> co "<<<\n"
 renderPlot (Function    rng f)   =
   renderPlot (FunctionN 128 rng f)
 renderPlot (FunctionN n (a,b) f) =
@@ -283,3 +296,11 @@ instance (ShowBS a, ShowBS (H.BinValue bin), Show bin, H.Bin bin, G.Vector v a)
       showUO (Just (u,o)) =  co "# Underflows = " <> serialize u <> co "\n"
                           <> co "# Overflows  = " <> serialize o <> co "\n"
       showT (x,y) = serialize x <> co "\t" <> serialize y
+
+linesBS :: [Builder] -> Builder
+linesBS []     = mempty
+linesBS (x:xs) = foldl' (\b a -> b <> co "\n" <> a) x xs
+
+pair :: (ShowBS a, ShowBS b) => (a,b) -> Builder
+pair (a,b) = serialize a <> co "\t" <> serialize b
+{-# INLINE pair #-}

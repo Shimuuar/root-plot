@@ -27,15 +27,16 @@ exit        { return KW_EXIT;   }
 save        { return KW_SAVE;   }
 legend      { return KW_LEGEND; }
 
-plot        { return KW_PLOT;   }
-add         { return KW_ADD;    }
-hist        { return KW_HIST;   }
-graph       { return KW_GRAPH;  }
-poly        { return KW_POLY;   }
-vline       { return KW_VLINE;  }
-hline       { return KW_HLINE;  }
-vband       { return KW_VBAND;  }
-hband       { return KW_HBAND;  }
+plot        { return KW_PLOT;     }
+add         { return KW_ADD;      }
+hist        { return KW_HIST;     }
+graph       { return KW_GRAPH;    }
+barchart    { return KW_BARCHART; }
+poly        { return KW_POLY;     }
+vline       { return KW_VLINE;    }
+hline       { return KW_HLINE;    }
+vband       { return KW_VBAND;    }
+hband       { return KW_HBAND;    }
 
 set         { return KW_SET;    }
 silent      { return KW_SILENT; }

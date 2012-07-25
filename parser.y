@@ -150,6 +150,7 @@ void setParserFile(ParseParam& par, const Token& tok) {
 %token KW_PLOT
 %token KW_HIST
 %token KW_GRAPH
+%token KW_BARCHART
 %token KW_POLY
 %token KW_VLINE
 %token KW_HLINE
@@ -177,9 +178,10 @@ line // Top level statement
   ;
 
 plot // Plotting command
-  : KW_GRAPH TOK_WS plot_graph
-  | KW_POLY  TOK_WS plot_poly
-  | KW_HIST  TOK_WS plot_hist
+  : KW_GRAPH    TOK_WS plot_graph
+  | KW_BARCHART TOK_WS plot_barchart
+  | KW_POLY     TOK_WS plot_poly
+  | KW_HIST     TOK_WS plot_hist
     // Horizonal/vertical lines
   | KW_VLINE TOK_WS double eol
     { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   getDouble($3) ) ); }
@@ -199,6 +201,10 @@ plot // Plotting command
 plot_graph
   : TOK_DASH eol { setParserStdin<AccumGraph>( par     ); }
   | TOK_STR  eol { setParserFile <AccumGraph>( par, $1 ); }
+// Barchart
+plot_barchart
+  : TOK_DASH eol { setParserStdin<AccumBarchart>( par     ); }
+  | TOK_STR  eol { setParserFile <AccumBarchart>( par, $1 ); }
 // Plot polygon
 plot_poly
   : TOK_DASH eol { setParserStdin<AccumPoly>( par     ); }

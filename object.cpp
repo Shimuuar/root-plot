@@ -444,6 +444,43 @@ TObject* PlotGraph::getRootObject() {
 
 
 // ================================================================ //
+// ==== BarChart
+
+PlotBarChart::PlotBarChart( TGraph* g ) :
+    PlotGraph( g )
+{
+    graph->SetFillColor( 38 );
+}
+
+void PlotBarChart::plotOn(Plot*) {
+    std::string opts = "B SAME";
+    graph->Draw( opts.c_str() );
+}
+
+RangeM PlotBarChart::xRange() const {
+    RangeM m = PlotGraph::xRange();
+    int    n = graph->GetN();
+    if( m.is_initialized() && n > 1 ) {
+        double* xs = graph->GetX();
+        m->low -= 0.5 * abs( xs[1]   - xs[0]   );
+        m->hi  += 0.5 * abs( xs[n-1] - xs[n-2] );
+    }
+    return m;
+}
+
+RangeM PlotBarChart::yRange() const {
+    RangeM m = PlotGraph::yRange();
+    if( m.is_initialized() ) {
+        m->low = std::min( 0.0, m->low );
+    }
+    return m;
+}
+
+void PlotBarChart::setFillColor(int c) {
+    graph->SetFillColor( c );
+}
+
+// ================================================================ //
 // ==== Poly
 
 PlotPoly::PlotPoly(TPolyLine* g) :

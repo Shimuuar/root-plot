@@ -280,11 +280,22 @@ public:
     virtual void     setMarkerStyle(Plot::MarkerStyle);
     virtual void     setLineColor(int);
     virtual TObject* getRootObject();
-private:
+protected:
     int               color;
     Plot::LineStyle   line;
     Plot::MarkerStyle marker;
     boost::scoped_ptr<TGraph> graph;
+};
+
+// Decorator for bar charts
+class PlotBarChart : public PlotGraph {
+public:
+    PlotBarChart(TGraph* g);
+
+    virtual void     plotOn(Plot* cxt);
+    virtual RangeM   xRange() const;
+    virtual RangeM   yRange() const;
+    virtual void     setFillColor(int);
 };
 
 // Wrapper around ROOT polygons
