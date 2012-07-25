@@ -273,7 +273,8 @@ PlotHist::PlotHist(TH1* h) :
     m_scatter  ( false ),
     m_box      ( false ),
     m_nCont    ( -1    ),
-    m_color    ( false )
+    m_color    ( false ),
+    m_palette  ( false )
 {}
 
 void PlotHist::plotOn(Plot*) {
