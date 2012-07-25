@@ -7,6 +7,7 @@
 #include <TH1.h>
 #include <TH2.h>
 #include <TGraph.h>
+#include <TGraphErrors.h>
 #include <TCanvas.h>
 #include <TROOT.h>
 #include <TLegend.h>
@@ -393,26 +394,45 @@ void PlotGraph::setLineColor(int col) {
     graph->SetLineColor(col);
 }
 
+static void range_with_errors(int n, double* xs, double* dx, double& lo, double& hi) {
+    lo = xs[0] - dx[0];
+    hi = xs[0] + dx[0];
+    for(int i = 1; i < n; i++) {
+        lo = std::min( lo, xs[i] - dx[i] );
+        hi = std::max( lo, xs[i] + dx[i] );
+    }
+}
+
 RangeM PlotGraph::xRange() const {
+    double hi, lo;
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
-
-    double* xs    = graph->GetX();
-    double  hi    = *std::max_element(xs, xs+n);
-    double  lo    = *std::min_element(xs, xs+n);
+    TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
+    if( graphE ) {
+        range_with_errors( n, graphE->GetX(), graphE->GetEX(), lo, hi);
+    } else {
+        double* xs = graph->GetX();
+        hi         = *std::max_element(xs, xs+n);
+        lo         = *std::min_element(xs, xs+n);
+    }
     double  delta = 0.03 * (hi - lo);
     return boost::optional<Range>( Range(lo - delta, hi + delta) );
 }
 
 RangeM PlotGraph::yRange() const {
+    double hi, lo;
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
-
-    double* ys    = graph->GetY();
-    double  hi    = *std::max_element(ys, ys+n);
-    double  lo    = *std::min_element(ys, ys+n);
+    TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
+    if( graphE ) {
+        range_with_errors( n, graphE->GetY(), graphE->GetEY(), lo, hi);
+    } else {
+        double* ys = graph->GetY();
+        hi         = *std::max_element(ys, ys+n);
+        lo         = *std::min_element(ys, ys+n);
+    }
     double  delta = 0.03 * (hi - lo);
     return boost::optional<Range>( Range(lo - delta, hi + delta) );
 }

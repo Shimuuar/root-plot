@@ -9,6 +9,7 @@
 #include <boost/make_shared.hpp>
 
 #include <TGraph.h>
+#include <TGraphErrors.h>
 #include <TPolyLine.h>
 
 
@@ -79,7 +80,7 @@ struct AccumGraph::Private {
     }
     bool column_3(const std::string& str ) {
         double x, y, dy;
-        bool   ok = 2 == sscanf(str.c_str(), "%lf %lf %lf", &x, &y, &dy);
+        bool   ok = 3 == sscanf(str.c_str(), "%lf %lf %lf", &x, &y, &dy);
         if( ok ) {
             xs.push_back(  x  );
             ys.push_back(  y  );
@@ -89,7 +90,7 @@ struct AccumGraph::Private {
     }
     bool column_4(const std::string& str ) {
         double x, y, dx,dy;
-        bool   ok = 2 == sscanf(str.c_str(), "%lf %lf %lf %lf", &x, &y, &dx, &dy);
+        bool   ok = 4 == sscanf(str.c_str(), "%lf %lf %lf %lf", &x, &y, &dx, &dy);
         if( ok ) {
             xs.push_back(  x  );
             ys.push_back(  y  );
@@ -110,18 +111,30 @@ AccumGraph::~AccumGraph()
 bool AccumGraph::flush(Plot* plot) {
     size_t n;
     switch( p->mode ) {
-    // One column data
+    // 1 column data
     case Private::Col_1:
         n = p->ys.size();
         p->xs.resize( n );
         for( unsigned i = 0; i < n; i++ )
             p->xs[i] = i;
         // !! FALLTHROUGH !!
-    // Two column data
+    // 2 column data
     case Private::Col_2:
         plot->pushObject(
             boost::make_shared<PlotGraph>(
                 new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
+        return true;
+    // 3 column data
+    case Private::Col_3:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraphErrors( p->xs.size(), &(p->xs[0]), &(p->ys[0]), 0, &(p->dys[0])) ) );
+        return true;
+    // 4 column data
+    case Private::Col_4:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraphErrors( p->xs.size(), &(p->xs[0]), &(p->ys[0]), &(p->dxs[0]), &(p->dys[0])) ) );
         return true;
     // Ooops
     case Private::Unknown: ;
