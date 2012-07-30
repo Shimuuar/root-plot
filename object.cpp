@@ -276,7 +276,9 @@ PlotHist::PlotHist(TH1* h) :
     m_nCont    ( -1    ),
     m_color    ( false ),
     m_palette  ( false )
-{}
+{
+    h->SetStats( 0 );
+}
 
 void PlotHist::plotOn(Plot*) {
     std::string opt = "SAME";
