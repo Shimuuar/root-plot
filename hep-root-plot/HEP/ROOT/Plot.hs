@@ -258,4 +258,3 @@ forceConnect s addr
 -- | Ignore all exceptions
 ignore :: IO () -> IO ()
 ignore action = action `catch` (\(_ :: SomeException) -> return ())
-\us
