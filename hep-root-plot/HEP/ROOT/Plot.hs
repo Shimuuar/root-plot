@@ -51,6 +51,8 @@ module HEP.ROOT.Plot (
   , renderCommand
   , sendCommands
   , draws
+  , sendCommands_
+  , draws_
   ) where
 
 import Control.Arrow
@@ -214,12 +216,22 @@ legendLabel = cmd . LegendLabel
 -- | Send list of commands surrounded with silent on/off marks and leading clear command
 draws :: Cmd Command -> IO ()
 draws commands
-  = sendCommands $ [Set (Silent ON), Clear] ++ execWriter commands ++ [Set (Silent OFF)]
-
+  = sendCmd $ [Set (Silent ON), Clear] ++ execWriter commands ++ [Set (Silent OFF)]
 
 -- | Send list of command to rt-plot
-sendCommands :: [Command] -> IO ()
-sendCommands commands = do
+sendCommands :: Cmd Command -> IO ()
+sendCommands commands
+  = sendCmd $ execWriter commands
+
+draws_ :: Cmd Command -> IO ()
+draws_ = ignore . draws
+
+sendCommands_ :: Cmd Command -> IO ()
+sendCommands_ = ignore . sendCommands
+
+
+sendCmd :: [Command] -> IO ()
+sendCmd commands = do
   tmpdir <- catch (getEnv "TMPDIR") (\(_ :: SomeException) -> return "/tmp")
   uname  <- userName <$> (getUserEntryForID =<< getRealUserID)
   let sock = tmpdir ++ "/" ++ uname ++ "/rt-socket"
@@ -242,3 +254,8 @@ forceConnect s addr
       | show e == msg = threadDelay 100000 >> forceConnect s addr
       | otherwise     = throw e
     msg = "connect: resource exhausted (Resource temporarily unavailable)"
+
+-- | Ignore all exceptions
+ignore :: IO () -> IO ()
+ignore action = action `catch` (\(_ :: SomeException) -> return ())
+\us
