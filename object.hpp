@@ -196,9 +196,10 @@ public:
     // bool  first - Whether object is first on the plot or not.
     virtual void plotOn(Plot* cxt) = 0;
 
-    // X range for object
+    // X range for object. Object should return minimal range in which
+    // in could be fitted.
     virtual RangeM xRange() const = 0;
-    // Y range for object
+    // Y range for object. Same as X range.
     virtual RangeM yRange() const = 0;
 
     // Set color of line
