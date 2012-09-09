@@ -58,8 +58,10 @@ void Plot::clear() {
     m_title  = "";
     m_xLabel = boost::optional<std::string>();
     m_yLabel = boost::optional<std::string>();
-    m_xRange = boost::optional<Range>();
-    m_yRange = boost::optional<Range>();
+    m_xLow   = boost::optional<double>();
+    m_xHi    = boost::optional<double>();
+    m_yLow   = boost::optional<double>();
+    m_yHi    = boost::optional<double>();
     removeLegend();
     clearCanvas();
 }
@@ -193,23 +195,39 @@ void Plot::setHistPalette( bool p ) {
 }
 
 RangeM Plot::xRange() const {
-    if( m_xRange.is_initialized() )
-        return m_xRange;
-
+    // We have full range.
+    if( m_xLow.is_initialized() && m_xHi.is_initialized() )
+        return boost::optional<Range>( Range( m_xLow.get(), m_xHi.get() ) );
+    // Estimate range
     RangeM rng;
     for(Stack::const_iterator i = m_objStack.begin(); i != m_objStack.end(); ++i ) {
         rng = joinRange(rng, (*i)->xRange());
+    }
+    // Tweak range if needed
+    if( rng.is_initialized() ) {
+        if( m_xLow.is_initialized() )
+            rng->low = m_xLow.get();
+        if( m_xHi.is_initialized() )
+            rng->hi  = m_xHi.get();
     }
     return rng;
 }
 
 RangeM Plot::yRange() const {
-    if( m_yRange.is_initialized() )
-        return m_yRange;
-
+    // We have full range.
+    if( m_yLow.is_initialized() && m_yHi.is_initialized() )
+        return boost::optional<Range>( Range( m_yLow.get(), m_yHi.get() ) );
+    // Estimate range
     RangeM rng;
     for(Stack::const_iterator i = m_objStack.begin(); i != m_objStack.end(); ++i ) {
         rng = joinRange(rng, (*i)->yRange());
+    }
+    // Tweak range if needed
+    if( rng.is_initialized() ) {
+        if( m_yLow.is_initialized() )
+            rng->low = m_yLow.get();
+        if( m_yHi.is_initialized() )
+            rng->hi  = m_yHi.get();
     }
     return rng;
 }
@@ -217,10 +235,12 @@ RangeM Plot::yRange() const {
 void Plot::setRange(Axis axis, double a, double b) {
     switch( axis ) {
     case X:
-        m_xRange = Range(a,b);
+        m_xLow = a;
+        m_xHi  = b;
         return;
     case Y:
-        m_yRange = Range(a,b);
+        m_yLow = a;
+        m_yHi  = b;
         return;
     case Z:
         // FIXME: treat Z!
@@ -231,10 +251,12 @@ void Plot::setRange(Axis axis, double a, double b) {
 void Plot::setRange(Axis axis) {
     switch( axis ) {
     case X:
-        m_xRange.reset();
+        m_xLow.reset();
+        m_xHi. reset();
         return;
     case Y:
-        m_yRange.reset();
+        m_yLow.reset();
+        m_yHi. reset();
         return;
     case Z:
         // FIXME: treat Z!

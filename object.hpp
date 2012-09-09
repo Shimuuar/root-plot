@@ -169,8 +169,10 @@ private:
     TCanvas*                     m_canvas;    // Canvas to draw on
     Stack                        m_objStack;  // Stack of objects
     // Axis
-    boost::optional<Range>       m_xRange;    // X range
-    boost::optional<Range>       m_yRange;    // Y range
+    boost::optional<double>      m_xLow;      // X low range
+    boost::optional<double>      m_xHi;       // X hi range
+    boost::optional<double>      m_yLow;      // Y low range
+    boost::optional<double>      m_yHi;       // Y hi range
     boost::optional<std::string> m_xLabel;    // X axis label
     boost::optional<std::string> m_yLabel;    // Y axis label
     bool                         m_xLog;      // Log scale for X axis
