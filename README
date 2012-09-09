@@ -1,0 +1,31 @@
+
+  rt-plot
+  =======
+
+Wrapper for ROOT plots. It interprets simple programs and draws
+Program is read from standard input
+
+  Command line flags:
+  +++++++++++++++++++
+
+    -b - batch mode. Terminates after end of input.
+    -x - do not create window. Useful for batch creating of plots wisth standard
+         size. If window is created all plot size will be determined by window
+         size,
+    -v - verbose. Echo input to stdout.
+    -h - help on usage.
+
+
+
+  Language description
+  ++++++++++++++++++++
+
+Simple line oriented language is used. 
+
+> quit
+Exit program immediately
+
+> clear 
+Remove all plots
+> 
+
