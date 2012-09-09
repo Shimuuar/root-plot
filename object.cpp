@@ -7,6 +7,7 @@
 #include <TH1.h>
 #include <TH2.h>
 #include <TGraph.h>
+#include <TGraph2D.h>
 #include <TGraphErrors.h>
 #include <TCanvas.h>
 #include <TROOT.h>
@@ -440,6 +441,45 @@ RangeM PlotGraph::yRange() const {
 }
 
 TObject* PlotGraph::getRootObject() {
+    return &( *graph );
+}
+
+
+
+// ================================================================ //
+// ==== 2D graph
+
+PlotGraph2D::PlotGraph2D(TGraph2D* g) :
+    graph ( g )
+{}
+
+void PlotGraph2D::plotOn(Plot* cxt) {
+    // FIXME:
+}
+
+RangeM PlotGraph2D::xRange() const {
+    int n = graph->GetN();
+    if( n == 0 )
+        return boost::optional<Range>();
+    double* xs    = graph->GetX();
+    double  hi    = *std::max_element(xs, xs+n);
+    double  lo    = *std::min_element(xs, xs+n);
+    double  delta = 0.03 * (hi - lo);
+    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+}
+
+RangeM PlotGraph2D::yRange() const {
+    int n = graph->GetN();
+    if( n == 0 )
+        return boost::optional<Range>();
+    double* ys    = graph->GetY();
+    double  hi    = *std::max_element(ys, ys+n);
+    double  lo    = *std::min_element(ys, ys+n);
+    double  delta = 0.03 * (hi - lo);
+    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+}
+
+TObject* PlotGraph2D::getRootObject() {
     return &( *graph );
 }
 

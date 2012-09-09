@@ -39,6 +39,7 @@ class TObject;
 class TCanvas;
 class TLegend;
 class TGraph;
+class TGraph2D;
 class TPolyLine;
 class TH1;
 
@@ -285,6 +286,20 @@ protected:
     Plot::LineStyle   line;
     Plot::MarkerStyle marker;
     boost::scoped_ptr<TGraph> graph;
+};
+
+class PlotGraph2D : public PlotObject {
+public:
+    // Create 2D graph out of ROOT graph. Will take outnership of the
+    // copy.
+    PlotGraph2D(TGraph2D* g);
+
+    virtual void     plotOn(Plot* cxt);
+    virtual RangeM   xRange() const;
+    virtual RangeM   yRange() const;
+    virtual TObject* getRootObject();
+protected:
+    boost::scoped_ptr<TGraph2D> graph;
 };
 
 // Decorator for bar charts
