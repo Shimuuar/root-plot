@@ -62,12 +62,9 @@ parser.o : parser.l.cpp
 clean:
 	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h rt-plot 
 # Installation
-install : install-c install-haskell
-install-haskell:
-	cd hep-root-plot && cabal install --force-reinstalls
-install-c: all 
+install: all
 	mkdir -p ${INSTALLDIR}
 	install rt-plot    ${INSTALLDIR}
 	install rt-listen  ${INSTALLDIR}
 	install rt-cat     ${INSTALLDIR}
-	install rt-tree   ${INSTALLDIR}
+	install rt-tree    ${INSTALLDIR}
