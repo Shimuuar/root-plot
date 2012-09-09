@@ -419,8 +419,7 @@ RangeM PlotGraph::xRange() const {
         hi         = *std::max_element(xs, xs+n);
         lo         = *std::min_element(xs, xs+n);
     }
-    double  delta = 0.03 * (hi - lo);
-    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+    return boost::optional<Range>( Range(lo, hi) );
 }
 
 RangeM PlotGraph::yRange() const {
@@ -436,8 +435,7 @@ RangeM PlotGraph::yRange() const {
         hi         = *std::max_element(ys, ys+n);
         lo         = *std::min_element(ys, ys+n);
     }
-    double  delta = 0.03 * (hi - lo);
-    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+    return boost::optional<Range>( Range(lo, hi) );
 }
 
 TObject* PlotGraph::getRootObject() {
@@ -464,8 +462,7 @@ RangeM PlotGraph2D::xRange() const {
     double* xs    = graph->GetX();
     double  hi    = *std::max_element(xs, xs+n);
     double  lo    = *std::min_element(xs, xs+n);
-    double  delta = 0.03 * (hi - lo);
-    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+    return boost::optional<Range>( Range(lo, hi) );
 }
 
 RangeM PlotGraph2D::yRange() const {
@@ -475,8 +472,7 @@ RangeM PlotGraph2D::yRange() const {
     double* ys    = graph->GetY();
     double  hi    = *std::max_element(ys, ys+n);
     double  lo    = *std::min_element(ys, ys+n);
-    double  delta = 0.03 * (hi - lo);
-    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+    return boost::optional<Range>( Range(lo, hi) );
 }
 
 TObject* PlotGraph2D::getRootObject() {
@@ -561,8 +557,7 @@ RangeM PlotPoly::xRange() const {
     double* xs    = poly->GetX();
     double  hi    = *std::max_element(xs, xs+n);
     double  lo    = *std::min_element(xs, xs+n);
-    double  delta = 0.03 * (hi - lo);
-    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+    return boost::optional<Range>( Range(lo, hi) );
 }
 
 RangeM PlotPoly::yRange() const {
@@ -573,8 +568,7 @@ RangeM PlotPoly::yRange() const {
     double* ys   = poly->GetY();
     double hi    = *std::max_element(ys, ys+n);
     double lo    = *std::min_element(ys, ys+n);
-    double delta = 0.03 * (hi - lo);
-    return boost::optional<Range>( Range(lo - delta, hi + delta) );
+    return boost::optional<Range>( Range(lo, hi) );
 }
 
 TObject* PlotPoly::getRootObject() {
