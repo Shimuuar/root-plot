@@ -68,3 +68,4 @@ install: all
 	install rt-listen  ${INSTALLDIR}
 	install rt-cat     ${INSTALLDIR}
 	install rt-tree    ${INSTALLDIR}
+	install rt-shell   ${INSTALLDIR}

@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Shell for rt-plot
+
+if [ $# = 0 ]; then
+    exec rlwrap -S "rt-plot> " rt-shell noexec
+else
+    while read cmd; do
+	echo "$cmd" | rt-cat;
+    done
+fi
