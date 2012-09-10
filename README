@@ -1,6 +1,5 @@
 
-  rt-plot
-  =======
+#  rt-plot
 
 Wrapper for ROOT plots. It interprets simple programs and draws
 Program is read from standard input
@@ -17,15 +16,149 @@ Program is read from standard input
 
 
 
-  Language description
-  ++++++++++++++++++++
+##  Language description
 
-Simple line oriented language is used. 
+Program interprets simple line oriented language. Each line is a command which
+are executed in order. Commands either add object to plot or alter their state.
+In latter case state of object which have been added last is altered. Commands
+could contain keywords number literals and string literals enclosed in double
+quotes.
 
-> quit
+
+## List of commands
+
+> exit
+
 Exit program immediately
 
-> clear 
-Remove all plots
-> 
+> clear
 
+Remove all plots and all axis range adjustments.
+
+> save "file name"
+
+Save current plot to file
+
+
+
+### Plot
+
+> plot ...
+> add  ...
+
+Add object to the plot. plot clear plot before adding new object whereas add
+does not.
+
+>
+
+
+
+### Set options
+
+> set ...
+
+Set options for object added last. If object doesn't support particular option
+or there is no object at all. It's a noop.
+
+> set title "Plot title"
+
+Set plot title.
+
+> set [xaxis|yaxis|zaxis] ...
+
+Set option for X, Y or Z axis
+
+> set [xaxis|yaxis|zaxis] label -
+> set [xaxis|yaxis|zaxis] label "Label"
+
+Remove or set axis label
+
+> set [xaxis|yaxis|zaxis] log
+> set [xaxis|yaxis|zaxis] log on
+> set [xaxis|yaxis|zaxis] log off
+
+Set log scale for particular axis if no parameter or on is given. Or turn it off
+otherwise.
+
+> set [xaxis|yaxis|zaxis] range -
+> set [xaxis|yaxis|zaxis] range {real} {real}
+
+Set axis to automatically adjust range (default) or to custom range.
+
+> set line ...
+
+Set line drawing options
+
+> set line width {integer}
+
+Set width of the line. 0 means that no line is drawn at all.
+
+> set line color {color}
+
+Set color of the line
+
+> set line style "Style name"
+
+Set style of the line
+
+> set line marker "Marker style"
+
+Set optional marker for the line.
+
+> set fill {color}
+
+Set fill options.
+
+> set hist ...
+
+Set histogram specific options.
+
+> set hist text
+> set hist text on
+> set hist text off
+
+Set text display for histograms
+
+> set hist color
+> set hist color on
+> set hist color off
+
+Set color map display for histograms. Only applicable to 2D histograms.
+
+> set hist box
+> set hist box on
+> set hist box off
+
+Set box plot mode for histograms. Only applicable to 2D histograms.
+
+> set hist scatter
+> set hist scatter on
+> set hist scatter off
+
+Set scatterplot mode for histograms. Only applicable to 2D histograms.
+
+> set hist contour
+> set hist contour on
+> set hist contour off
+> set hist contour {integer}
+
+Set contour plot mode for histograms. Only applicable to 2D histograms.
+With integer parameter it enable mode and sets number of contours to N.
+Otherwise defaults to 10 when enabled.
+
+> set hist palette
+> set hist palette on
+> set hist palette off
+
+Draw palette for histogram. Only useful for histograms which use color map to
+display.
+
+> set silent
+> set silent on
+> set silent off
+
+Set silent mode on off. In silent mode updates are not drawn unless silent mode
+is disabled. It speed up drawing significantly.
+
+
+### Legend
