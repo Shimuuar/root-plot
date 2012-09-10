@@ -34,6 +34,8 @@ module HEP.ROOT.Plot (
   , noLabel
   , logScale
   , rangeAB
+  , rangeA
+  , rangeB
   , rangeAuto
     -- ** Histogram options
   , histText
@@ -163,7 +165,13 @@ logScale :: Toggle -> Cmd Axis
 logScale = cmd . LogScale
 
 rangeAB :: Double -> Double -> Cmd Axis
-rangeAB a b = cmd $ Range a b
+rangeAB a b = cmd $ Range (Just a) (Just b)
+
+rangeA :: Double -> Cmd Axis
+rangeA a = cmd $ Range (Just a) Nothing
+
+rangeB :: Double -> Cmd Axis
+rangeB b = cmd $ Range Nothing (Just b)
 
 rangeAuto :: Cmd Axis
 rangeAuto = cmd RangeAuto

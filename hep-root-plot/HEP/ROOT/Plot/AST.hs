@@ -97,7 +97,7 @@ data Axis
     -- | Set log scale
   | LogScale Toggle
     -- | Set range
-  | Range Double Double
+  | Range   (Maybe Double) (Maybe Double)
     -- | Set automatic range
   | RangeAuto
 
@@ -213,7 +213,7 @@ renderAxis :: Axis -> Builder
 renderAxis (Label str)  = co "label " <> strLit str
 renderAxis  NoLabel     = co "label -"
 renderAxis (LogScale t) = co "log "   <> toggle t
-renderAxis (Range a b)  = co "range " <> real a <> co " " <> real b
+renderAxis (Range a b)  = co "range " <> maybeReal a <> co " " <> maybeReal b where maybeReal = maybe (co "-") real
 renderAxis  RangeAuto   = co "range -"
 
 -- Histogram options
