@@ -134,7 +134,7 @@ public:
     // Y range for plot
     RangeM yRange() const;
     // Set range for axis
-    void setRange(Axis axis, double a, double b);
+    void setRange(Axis axis, boost::optional<double> a, boost::optional<double> b);
     // Set range for axis to auto scale
     void setRange(Axis axis);
 

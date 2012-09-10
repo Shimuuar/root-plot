@@ -232,7 +232,7 @@ RangeM Plot::yRange() const {
     return rng;
 }
 
-void Plot::setRange(Axis axis, double a, double b) {
+void Plot::setRange(Axis axis, boost::optional<double> a, boost::optional<double> b) {
     switch( axis ) {
     case X:
         m_xLow = a;

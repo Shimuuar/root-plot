@@ -257,8 +257,8 @@ setAxis
     {
         par.plot->setRange(
             Plot::Axis(par.axis),
-            getDouble( $3 ),
-            getDouble( $5 )
+            boost::optional<double>( getDouble( $3 )),
+            boost::optional<double>( getDouble( $5 ))
             );
     }
 
