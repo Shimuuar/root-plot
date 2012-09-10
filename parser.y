@@ -261,6 +261,23 @@ setAxis
             boost::optional<double>( getDouble( $5 ))
             );
     }
+  | KW_RANGE TOK_WS TOK_DASH TOK_WS double eol
+    {
+        par.plot->setRange(
+            Plot::Axis(par.axis),
+            boost::optional<double>(),
+            boost::optional<double>( getDouble( $5 ))
+            );
+    }
+  | KW_RANGE TOK_WS double TOK_WS TOK_DASH eol
+    {
+        par.plot->setRange(
+            Plot::Axis(par.axis),
+            boost::optional<double>( getDouble( $3 )),
+            boost::optional<double>()
+            );
+    }
+
 
 // Line options
 setLine
