@@ -195,7 +195,7 @@ void Plot::setHistPalette( bool p ) {
 }
 
 RangeM Plot::xRange() const {
-    // We have full range.
+    // We have full range. It's fixed and need not any tweaking
     if( m_xLow.is_initialized() && m_xHi.is_initialized() )
         return boost::optional<Range>( Range( m_xLow.get(), m_xHi.get() ) );
     // Estimate range
@@ -205,10 +205,17 @@ RangeM Plot::xRange() const {
     }
     // Tweak range if needed
     if( rng.is_initialized() ) {
-        if( m_xLow.is_initialized() )
+        double delta = rng->hi - rng->low;
+        if( m_xLow.is_initialized() ) {
             rng->low = m_xLow.get();
-        if( m_xHi.is_initialized() )
+        } else {
+            rng->low -= 0.03 * delta;
+        }
+        if( m_xHi.is_initialized() ) {
             rng->hi  = m_xHi.get();
+        } else {
+            rng->hi += 0.03 * delta;
+        }
     }
     return rng;
 }
@@ -224,10 +231,17 @@ RangeM Plot::yRange() const {
     }
     // Tweak range if needed
     if( rng.is_initialized() ) {
-        if( m_yLow.is_initialized() )
+        double delta = rng->hi - rng->low;
+        if( m_yLow.is_initialized() ) {
             rng->low = m_yLow.get();
-        if( m_yHi.is_initialized() )
+        } else {
+            rng->low -= 0.03 * delta;
+        }
+        if( m_yHi.is_initialized() ) {
             rng->hi  = m_yHi.get();
+        } else {
+            rng->hi += 0.03 * delta;
+        }
     }
     return rng;
 }
