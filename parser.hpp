@@ -25,8 +25,8 @@ typedef boost::variant<int, double, std::string> Token;
 // Parameters for bison parser
 struct ParseParam {
     ParseParam(Parser* par, Plot* p) :
-        parser(par),
-        plot  (p),
+        parser   (par),
+        plot     (p),
         clearPlot(false),
         axis     (0),
         onOff    (true)
