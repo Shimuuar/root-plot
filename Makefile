@@ -30,10 +30,10 @@ OBJS     = \
 	parser.o parser.l.o parser.y.o          \
 	RtPlot.o      RtPlot-cint.o             \
 	RtMainFrame.o RtMainFrame-cint.o
-
+EXE      = rt-plot rt-listen rt-cat
 
 ################################################################
-all : rt-plot rt-listen rt-cat
+all : ${EXE}
 
 rt-plot : ${OBJS}
 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
@@ -60,7 +60,7 @@ parser.o : parser.l.cpp
 
 
 clean:
-	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h rt-plot 
+	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h ${EXE}
 # Installation
 install: all
 	mkdir -p ${INSTALLDIR}
