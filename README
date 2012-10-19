@@ -18,11 +18,12 @@ Program is read from standard input
 
 ##  Language description
 
-Program interprets simple line oriented language. Each line is a command which
-are executed in order. Commands either add object to plot or alter their state.
-In latter case state of object which have been added last is altered. Commands
-could contain keywords number literals and string literals enclosed in double
-quotes.
+Program interprets simple line oriented language. Each line is a
+command which are executed in order. Commands either add object to
+plot or alter their state.  In latter case state of object which have
+been added last is altered. If command couldn't be executed it's
+ignored. Commands could contain keywords, number literals and string
+literals enclosed in double quotes.
 
 
 ## List of commands
@@ -46,10 +47,67 @@ Save current plot to file
 > plot ...
 > add  ...
 
-Add object to the plot. plot clear plot before adding new object whereas add
-does not.
+Add object to the plot. plot clear plot before adding new object
+whereas add does not. All plotting commands follow same pattern:
+plot/add command following by the plot type and information source.
+It's either file name or - in which case data is supplied in the
+stream. Data formats are specific to the plotters and should be
+terminated by '<<<' line. If program encounters <<< line in other
+contexts it's ignored. If data couldn't be parsed no plot is added.
 
->
+
+> histogram
+
+1D and 2D histogram in the format outputted by histogram-fill. For 1D
+BinI and BinD are supported and Bin2D for 2D histograms. Histograms
+support most of the options and all histogram specific ones.
+
+
+> graph
+
+Simple graph with optional error bars. Support all line and marker
+options. 1,2,3 and 4 column data is supported.
+
+  1. List of Y coordinates. X coordinates are [0,1 .. ]
+
+  2. X,Y pairs
+
+  3. X,Y,ΔY triples. Error are symmetrical.
+
+  4. X,Y,ΔX,ΔY quadruples. Both errors are symmetrical.
+
+> barchart
+
+Bar chart. Data format is two column data X,Y pairs.
+
+
+> poly
+
+Polygon. Line and fill options are supported. Data format is (X,Y)
+pairs and polygon is closed automatically.
+
+
+> vline [x]
+
+Vertical line at x. Its height is adjusted automatically so It covers
+whole plot. All line optional are supported.
+
+
+> hline [y]
+
+Horizontal line at y. Similar to vline.
+
+
+> vband [x1] [x2]
+
+Vertical band from x1 to x2. Its height is adjusted automatically so
+it covers whole plot. Line and fill options are supported.
+
+
+> hband [y1] [y2]
+
+Horizontal band from y1 to y2. Similar to vband.
+
 
 
 
