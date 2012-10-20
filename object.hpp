@@ -121,9 +121,9 @@ public:
     // Set line color for top object. Noop if stack is empty
     void setLineColor(int);
     // Set line style for top object. Noop if stack is empty
-    virtual void setLineStyle(Plot::LineStyle);
+    void setLineStyle(Plot::LineStyle);
     // Set marker style for top object. Noop if stack is empty
-    virtual void setMarkerStyle(Plot::MarkerStyle);
+    void setMarkerStyle(Plot::MarkerStyle);
     // Set fill color for top object. Noop if stack is empty
     void setFillColor(int);
     // Set line width for top object. Noop if stack is empty
