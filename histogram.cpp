@@ -30,7 +30,7 @@ T parseString(const std::string& str, const std::string& prefix)
     }
 }
 template<>
-void parseString<void>(const std::string& str, const std::string& prefix) 
+void parseString<void>(const std::string& str, const std::string& prefix)
 {
     std::string pref = str.substr(0, prefix.size());
     if( pref != prefix ) {
@@ -47,23 +47,17 @@ void parseString<void>(const std::string& str, const std::string& prefix)
 // Accumulator for histograms.
 class AccumHist : public LineAccum {
 public:
-    AccumHist();
-    virtual ~AccumHist();
-    virtual bool flush(Plot*);
-    virtual bool feedLine(const std::string& str);
-private:
-    class Private;
-    boost::scoped_ptr<Private> p;
-};
-
-class AccumHist::Private {
-public:
-    Private() :
+    AccumHist() :
         inHeader(true),
         ok(true)
     {}
-    std::string pop();
-    void        add(const std::string& s);
+    virtual ~AccumHist();
+    virtual bool flush(Plot*);
+    virtual bool feedLine(const std::string& str);
+
+private:
+    std::string pop();                     // Get string from header
+    void        add(const std::string& s); // Add string to header parser
 
     // Parse histogram
     void parseHistogram();
@@ -74,7 +68,6 @@ public:
     void parseBinInt(int& n, double& min, double& max);
     void parseBinF  (int& n, double& min, double& max);
     void parseBin1D (const std::string& name, int& n, double& min, double& max);
-    
 
     std::list<std::string> header;   // Header parser.
     bool                   inHeader; // Do we parse header.
@@ -83,7 +76,7 @@ public:
     int                    nDim;     // Number of dimensions 1 or 2
 };
 
-std::string AccumHist::Private::pop() {
+std::string AccumHist::pop() {
     if( header.empty() )
         throw ParseError("Header is too short");
     std::string s = header.front();
@@ -91,11 +84,11 @@ std::string AccumHist::Private::pop() {
     return s;
 }
 
-void AccumHist::Private::add(const std::string& s) {
+void AccumHist::add(const std::string& s) {
     header.push_back(s);
 }
 
-void AccumHist::Private::parseBinI  (int& n, double& min, double& max) {
+void AccumHist::parseBinI  (int& n, double& min, double& max) {
     int lo,hi;
     lo = parseString<int>(pop(), "# Low  = ");
     hi = parseString<int>(pop(), "# High = ");
@@ -103,7 +96,7 @@ void AccumHist::Private::parseBinI  (int& n, double& min, double& max) {
     min = lo - 0.5;
     max = hi + 0.5;
 }
-void AccumHist::Private::parseBinInt(int& n, double& min, double& max) {
+void AccumHist::parseBinInt(int& n, double& min, double& max) {
     int base,size;
     base = parseString<int>(pop(), "# Base = ");
     size = parseString<int>(pop(), "# Step = ");
@@ -111,7 +104,7 @@ void AccumHist::Private::parseBinInt(int& n, double& min, double& max) {
     min  = base;
     max  = base + n*size;
 }
-void AccumHist::Private::parseBinF  (int& n, double& min, double& max) {
+void AccumHist::parseBinF  (int& n, double& min, double& max) {
     double step;
     min  = parseString<double>(pop(), "# Base = ");
     step = parseString<double>(pop(), "# Step = ");
@@ -119,7 +112,7 @@ void AccumHist::Private::parseBinF  (int& n, double& min, double& max) {
     max = min + step*n;
 }
 
-void AccumHist::Private::parseBin1D(const std::string& name, int& n, double& min, double& max) {
+void AccumHist::parseBin1D(const std::string& name, int& n, double& min, double& max) {
     if( name == "# BinPermute" ) {
         pop();
         parseBin1D(pop(), n, min, max);
@@ -136,14 +129,14 @@ void AccumHist::Private::parseBin1D(const std::string& name, int& n, double& min
     }
 }
 
-void AccumHist::Private::parseHistogram1D(const std::string& bin) {
+void AccumHist::parseHistogram1D(const std::string& bin) {
     int    nx;
     double xMin, xMax;
     parseBin1D(bin, nx, xMin, xMax);
     hist = std::auto_ptr<TH1>( new TH1D("FOO", "", nx, xMin, xMax ) );
 }
 
-void AccumHist::Private::parseHistogram2D() {
+void AccumHist::parseHistogram2D() {
     int nx,ny;
     double xMin, xMax;
     double yMin, yMax;
@@ -157,7 +150,7 @@ void AccumHist::Private::parseHistogram2D() {
                                         ny, yMin, yMax) );
 }
 
-void AccumHist::Private::parseHistogram() {
+void AccumHist::parseHistogram() {
     if( pop() != "# Histogram" )
         throw ParseError("Not a histogram");
     parseString<void>(pop(), "# Underflows = ");
@@ -174,58 +167,51 @@ void AccumHist::Private::parseHistogram() {
 };
 
 
-
-// ----------------------------------------------------------------
-
-AccumHist::AccumHist() :
-    p( new AccumHist::Private )
-{}
-
 AccumHist::~AccumHist()
 {}
 
 bool AccumHist::feedLine(const std::string& str) {
-    if( !p->ok )
+    if( !ok )
         return false;
     try {
-        if( p->inHeader && str.size() > 0 && str[0] == '#' ) {
+        if( inHeader && str.size() > 0 && str[0] == '#' ) {
             // We are reading header
-            p->add( str );
+            add( str );
         } else {
             // We just finished reading header
-            if( p->inHeader ) {
-                p->parseHistogram();
-                p->inHeader = false;
+            if( inHeader ) {
+                parseHistogram();
+                inHeader = false;
             }
             // Read data
-            if( p->nDim == 1 ) {
+            if( nDim == 1 ) {
                 double x,y;
-                p->ok = 2 == sscanf(str.c_str(),"%lf %lf", &x, &y);
-                if( p->ok )
-                    p->hist->Fill(x,y);
+                ok = 2 == sscanf(str.c_str(),"%lf %lf", &x, &y);
+                if( ok )
+                    hist->Fill(x,y);
             } else {
                 double x,y,z;
-                p->ok = 3 == sscanf(str.c_str(), "(%lf,%lf) %lf", &x, &y, &z);
+                ok = 3 == sscanf(str.c_str(), "(%lf,%lf) %lf", &x, &y, &z);
                 // EVIL. Kludgely reinterpret pointer type.
-                TH2* h = dynamic_cast<TH2*>( p->hist.get() );
+                TH2* h = dynamic_cast<TH2*>( hist.get() );
                 if( h == 0 ) {
                     std::cerr << "rt-biplot: internal error. Histogram is not 2D\n";
                     return false;
                 }
-                if( p->ok )
+                if( ok )
                     h->Fill(x,y,z);
             }
         }
-        return p->ok;
+        return ok;
     } catch (const ParseError& err ) {
         std::cerr << "rt-plot: " << err.what() << std::endl;
-        return p->ok = false;
+        return ok = false;
     }
 }
 
 bool AccumHist::flush(Plot* plot) {
-    if( p->ok && p->hist.get() ) {
-        TH1* h = p->hist.release();
+    if( ok && hist.get() ) {
+        TH1* h = hist.release();
         plot->pushObject( boost::make_shared<PlotHist>( h ) );
         return true;
     }
