@@ -13,6 +13,7 @@
 #include <TPolyLine.h>
 
 
+namespace {
 // Accumulator for graphs
 class AccumGraph : public LineAccum {
 public:
@@ -46,20 +47,6 @@ public:
 // ================================================================
 // ==== Line accumulator
 // ================================================================
-
-bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
-    // Open file
-    std::ifstream in( fname.c_str() );
-    if( !in.good() )
-        return false;
-    // Read line-by line
-    std::string str;
-    while( !std::getline(in, str).eof() ) {
-        if( ! feedLine( str ) )
-            return false;
-    }
-    return flush( plot );
-}
 
 
 // ----------------------------------------------------------------
@@ -237,7 +224,7 @@ bool AccumBarchart::flush(Plot* plot) {
         return false;
     }
 }
-
+}
 
 
 // ================================================================ //
@@ -255,6 +242,20 @@ PLineAccum makeAccumPoly() {
 
 PLineAccum makeAccumBarchart() {
     return boost::make_shared<AccumBarchart>();
+}
+
+bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
+    // Open file
+    std::ifstream in( fname.c_str() );
+    if( !in.good() )
+        return false;
+    // Read line-by line
+    std::string str;
+    while( !std::getline(in, str).eof() ) {
+        if( ! feedLine( str ) )
+            return false;
+    }
+    return flush( plot );
 }
 
 Parser::Parser() 
