@@ -65,6 +65,8 @@ public:
 // it's possible to allocate.
 typedef boost::shared_ptr<LineAccum> PLineAccum;
 
+
+
 // Allocate accumulator for graphs
 PLineAccum makeAccumGraph();
 
@@ -81,7 +83,8 @@ PLineAccum makeAccumHist();
 
 // ================================================================
 
-// Line parser
+// Line parser. It's main parser class and it drops to the LineAccum
+// when needed.
 class Parser {
 public:
     // Construct parser
