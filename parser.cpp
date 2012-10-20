@@ -42,19 +42,6 @@ public:
     virtual bool flush(Plot*);
 };
 
-PLineAccum makeAccumGraph() {
-    return boost::shared_ptr<AccumGraph>( new AccumGraph() );
-}
-
-PLineAccum makeAccumPoly() {
-    return boost::shared_ptr<AccumGraph>( new AccumPoly() );
-}
-
-PLineAccum makeAccumBarchart() {
-    return boost::shared_ptr<AccumBarchart>( new AccumBarchart() );
-}
-
-
 
 // ================================================================
 // ==== Line accumulator
@@ -258,6 +245,17 @@ PLineAccum makeNullAccum() {
     return boost::make_shared<NullAccum>();
 }
 
+PLineAccum makeAccumGraph() {
+    return boost::make_shared<AccumGraph>();
+}
+
+PLineAccum makeAccumPoly() {
+    return boost::make_shared<AccumGraph>();
+}
+
+PLineAccum makeAccumBarchart() {
+    return boost::make_shared<AccumBarchart>();
+}
 
 Parser::Parser() 
 {
