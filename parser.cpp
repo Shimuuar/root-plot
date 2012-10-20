@@ -24,128 +24,92 @@ public:
     virtual bool feedLine(const std::string& ) { return true; }
 };
 
+
 // ================================================================
 // Accumulator for graphs
 class AccumGraph : public LineAccum {
 public:
-    AccumGraph() :
-        mode(Unknown)
-    {}
     virtual ~AccumGraph();
     virtual bool flush(Plot*);
     virtual bool feedLine(const std::string& str);
 protected:
-    enum Mode {
-        Unknown,
-        Col_1,              // Y   (X implicit [0,1...])
-        Col_2,              // X,Y data
-        Col_3,              // X,Y,ΔY
-        Col_4               // X,Y,ΔX,ΔY
-    };
+    typedef std::vector< std::vector<double> > columns;
 
-    Mode mode;
-    std::vector<double> xs, ys, dxs, dys;
+    columns cols;
 
-    bool column_1(const std::string& str) {
-        double y;
-        bool   ok = 1 == sscanf(str.c_str(), "%lf", &y);
-        if( ok ) {
-            ys.push_back( y );
-        }
-        return ok;
-    }
-    bool column_2(const std::string& str ) {
-        double x, y;
-        bool   ok = 2 == sscanf(str.c_str(), "%lf %lf", &x, &y);
-        if( ok ) {
-            xs.push_back( x );
-            ys.push_back( y );
-        }
-        return ok;
-    }
-    bool column_3(const std::string& str ) {
-        double x, y, dy;
-        bool   ok = 3 == sscanf(str.c_str(), "%lf %lf %lf", &x, &y, &dy);
-        if( ok ) {
-            xs.push_back(  x  );
-            ys.push_back(  y  );
-            dys.push_back( dy );
-        }
-        return ok;
-    }
-    bool column_4(const std::string& str ) {
-        double x, y, dx,dy;
-        bool   ok = 4 == sscanf(str.c_str(), "%lf %lf %lf %lf", &x, &y, &dx, &dy);
-        if( ok ) {
-            xs.push_back(  x  );
-            ys.push_back(  y  );
-            dxs.push_back( dx );
-            dys.push_back( dy );
-        }
-        return ok;
-    }
+    size_t  colSize()     { return cols[0].size();  }
+    double* colPtr(int i) { return &( cols[i][0] ); }
 };
 
 AccumGraph::~AccumGraph()
 {}
 
 bool AccumGraph::flush(Plot* plot) {
-    size_t n;
-    switch( mode ) {
-    // 1 column data
-    case Col_1:
-        n = ys.size();
+    switch ( cols.size() ) {
+    case 1: {
+        size_t n = colSize();
+        std::vector<double> xs;
         xs.resize( n );
         for( unsigned i = 0; i < n; i++ )
             xs[i] = i;
-        // !! FALLTHROUGH !!
-    // 2 column data
-    case Col_2:
         plot->pushObject(
             boost::make_shared<PlotGraph>(
-                new TGraph( xs.size(), &(xs[0]), &(ys[0])) ) );
+                new TGraph( n, &(xs[0]), colPtr(0) ) ) );
         return true;
-    // 3 column data
-    case Col_3:
-        plot->pushObject(
-            boost::make_shared<PlotGraph>(
-                new TGraphErrors( xs.size(), &(xs[0]), &(ys[0]), 0, &(dys[0])) ) );
-        return true;
-    // 4 column data
-    case Col_4:
-        plot->pushObject(
-            boost::make_shared<PlotGraph>(
-                new TGraphErrors( xs.size(), &(xs[0]), &(ys[0]), &(dxs[0]), &(dys[0])) ) );
-        return true;
-    // Ooops
-    case Unknown: ;
     }
-    return false;
+    case 2:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraph( colSize(), colPtr(0), colPtr(1) ) ) );
+        return true;
+    case 3:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraphErrors( colSize(), colPtr(0), colPtr(1), 0, colPtr(2)) ) );
+        return true;
+    case 4:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraphErrors( colSize(), colPtr(0), colPtr(1), colPtr(2), colPtr(3)) ) );
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool AccumGraph::feedLine(const std::string& str) {
-    switch( mode ) {
-    // One column data
-    case Col_1:
-        return column_1(str);
-    // Two column data
-    case Col_2:
-        return column_2(str);
-    // Three column data
-    case Col_3:
-        return column_3(str);
-    // Four column data
-    case Col_4:
-        return column_4(str);
-    // Decide type of data
-    case Unknown:
-             if ( column_4(str) ) { mode = Col_4; }
-        else if ( column_3(str) ) { mode = Col_3; }
-        else if ( column_2(str) ) { mode = Col_2; }
-        else if ( column_1(str) ) { mode = Col_1; }
-        return mode != Unknown;
-    };
-    return false; // Unreachable
+    // Lexing buffer line
+    std::vector<int> offs;
+    std::string s = str;
+    // Skip initial whitespaces;
+    unsigned i = 0;
+    while( i < s.length() && isspace(s[i]) )
+        i++;
+    // Start lexing
+    bool wordEnded = true;
+    for(; i < s.length(); i++) {
+        if( isspace( s[i] ) ) {
+            wordEnded = true;
+            s[i] = '0';
+        } else if (wordEnded) {
+            offs.push_back( i );
+        }
+    }
+    // Resize columns array if needed
+    if( cols.size() == 0 ) {
+        cols.resize( offs.size() );
+    }
+    if( cols.size() != offs.size() ) {
+        return false;
+    }
+    // Read every number
+    for( unsigned j = 0; j < offs.size(); j++) {
+        double x;
+        if( 1 != sscanf( s.c_str() + offs[j], "%lf", &x ) )
+            return false;
+        cols[j].push_back( x );
+    }
+    return true;
 }
 
 
@@ -174,17 +138,19 @@ AccumPoly::~AccumPoly()
 {}
 
 bool AccumPoly::flush(Plot* plot) {
-    switch( mode ) {
-    case Col_2:
-        // Close outline manually
-        if( ys.size() == 0 )
+    switch ( cols.size() ) {
+    case 2: {
+        if( colSize() == 0 )
             return false;
+        std::vector<double>& xs = cols[0];
+        std::vector<double>& ys = cols[1];
         xs.push_back( xs[0] );
         ys.push_back( ys[0] );
         plot->pushObject(
             boost::make_shared<PlotPoly>(
                 new TPolyLine( xs.size(), &(xs[0]), &(ys[0])) ) );
         return true;
+    }
     default:
         return false;
     }
@@ -197,11 +163,11 @@ AccumBarchart::~AccumBarchart()
 {}
 
 bool AccumBarchart::flush(Plot* plot) {
-    switch( mode ) {
-    case Col_2:
+    switch( cols.size() ) {
+    case 2:
         plot->pushObject(
             boost::make_shared<PlotBarChart>(
-                new TGraph( xs.size(), &(xs[0]), &(ys[0])) ) );
+                new TGraph( colSize(), colPtr(0), colPtr(1) ) ) );
         return true;
     default:
         return false;
@@ -241,7 +207,7 @@ bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
     return flush( plot );
 }
 
-Parser::Parser() 
+Parser::Parser()
 {
 }
 
