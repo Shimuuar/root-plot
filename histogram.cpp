@@ -9,6 +9,9 @@
 #include <TH1.h>
 #include <TH2.h>
 
+
+namespace {
+
 // ================================================================
 // == Utils
 // ================================================================
@@ -38,9 +41,8 @@ void parseString<void>(const std::string& str, const std::string& prefix)
 
 
 // ================================================================
-// Implementation of AccumHist
+// Histogram accumulation
 // ================================================================
-
 
 // Accumulator for histograms.
 class AccumHist : public LineAccum {
@@ -53,10 +55,6 @@ private:
     class Private;
     boost::scoped_ptr<Private> p;
 };
-
-PLineAccum makeAccumHist() {
-    return boost::shared_ptr<AccumHist>( new AccumHist() );
-}
 
 class AccumHist::Private {
 public:
@@ -232,4 +230,10 @@ bool AccumHist::flush(Plot* plot) {
         return true;
     }
     return false;
+}
+}//namespace
+
+// ================================================================
+PLineAccum makeAccumHist() {
+    return boost::shared_ptr<AccumHist>( new AccumHist() );
 }
