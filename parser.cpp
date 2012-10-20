@@ -13,6 +13,48 @@
 #include <TPolyLine.h>
 
 
+// Accumulator for graphs
+class AccumGraph : public LineAccum {
+public:
+    AccumGraph();
+    virtual ~AccumGraph();
+    virtual bool flush(Plot*);
+    virtual bool feedLine(const std::string& str);
+protected:
+    class Private;
+    boost::scoped_ptr<Private> p;
+};
+
+// Accumulator for barchart
+class AccumBarchart : public AccumGraph {
+public:
+    AccumBarchart();
+    virtual ~AccumBarchart();
+    virtual bool flush(Plot*);
+};
+
+
+// Accumulator for polygons
+class AccumPoly : public AccumGraph {
+public:
+    AccumPoly();
+    virtual ~AccumPoly();
+    virtual bool flush(Plot*);
+};
+
+PLineAccum makeAccumGraph() {
+    return boost::shared_ptr<AccumGraph>( new AccumGraph() );
+}
+
+PLineAccum makeAccumPoly() {
+    return boost::shared_ptr<AccumGraph>( new AccumPoly() );
+}
+
+PLineAccum makeAccumBarchart() {
+    return boost::shared_ptr<AccumBarchart>( new AccumBarchart() );
+}
+
+
 
 // ================================================================
 // ==== Line accumulator

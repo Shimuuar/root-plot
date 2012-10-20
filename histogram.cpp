@@ -41,6 +41,23 @@ void parseString<void>(const std::string& str, const std::string& prefix)
 // Implementation of AccumHist
 // ================================================================
 
+
+// Accumulator for histograms.
+class AccumHist : public LineAccum {
+public:
+    AccumHist();
+    virtual ~AccumHist();
+    virtual bool flush(Plot*);
+    virtual bool feedLine(const std::string& str);
+private:
+    class Private;
+    boost::scoped_ptr<Private> p;
+};
+
+PLineAccum makeAccumHist() {
+    return boost::shared_ptr<AccumHist>( new AccumHist() );
+}
+
 class AccumHist::Private {
 public:
     Private() :

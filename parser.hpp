@@ -61,45 +61,22 @@ public:
     bool readFromFile(const std::string& fname, Plot* plot);
 };
 
-// Accumulator for graphs
-class AccumGraph : public LineAccum {
-public:
-    AccumGraph();
-    virtual ~AccumGraph();
-    virtual bool flush(Plot*);
-    virtual bool feedLine(const std::string& str);
-protected:
-    class Private;
-    boost::scoped_ptr<Private> p;
-};
+// Pointer to the line accumulator. It's always used in shared_ptr so
+// it's possible to allocate.
+typedef boost::shared_ptr<LineAccum> PLineAccum;
 
-// Accumulator for polygons
-class AccumPoly : public AccumGraph {
-public:
-    AccumPoly();
-    virtual ~AccumPoly();
-    virtual bool flush(Plot*);
-};
+// Allocate accumulator for graphs
+PLineAccum makeAccumGraph();
 
-// Accumulator for barchart
-class AccumBarchart : public AccumGraph {
-public:
-    AccumBarchart();
-    virtual ~AccumBarchart();
-    virtual bool flush(Plot*);
-};
+// Allocate accumulator for polygons
+PLineAccum makeAccumPoly();
 
-// Accumulator for histograms.
-class AccumHist : public LineAccum {
-public:
-    AccumHist();
-    virtual ~AccumHist();
-    virtual bool flush(Plot*);
-    virtual bool feedLine(const std::string& str);
-private:
-    class Private;
-    boost::scoped_ptr<Private> p;
-};
+// Allocate accumulator for barchart
+PLineAccum makeAccumBarchart();
+
+// Allocate accumulator for polygons
+PLineAccum makeAccumHist();
+
 
 
 // ================================================================
@@ -112,15 +89,8 @@ public:
 
     // Feed line to the parser
     void feedLine(Plot* plot, const std::string& str);
-    // Templated setter for accmulator
-    template<typename T>
-    void accumulate() { accum = boost::shared_ptr<T>( new T() ); }
-    // Read data from file
-    template<typename T>
-    void readFromFile(const std::string& str, Plot* plot) {
-        T acc;
-        acc.readFromFile(str, plot);
-    }
+    // Templated setter for accumulator
+    void accumulate(PLineAccum a) { accum = a; }
 private:
     // Pointer to current accumulator
     boost::shared_ptr<LineAccum> accum;
