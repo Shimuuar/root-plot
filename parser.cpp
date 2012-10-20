@@ -14,43 +14,8 @@
 
 
 namespace {
-// Accumulator for graphs
-class AccumGraph : public LineAccum {
-public:
-    AccumGraph();
-    virtual ~AccumGraph();
-    virtual bool flush(Plot*);
-    virtual bool feedLine(const std::string& str);
-protected:
-    class Private;
-    boost::scoped_ptr<Private> p;
-};
-
-// Accumulator for barchart
-class AccumBarchart : public AccumGraph {
-public:
-    AccumBarchart();
-    virtual ~AccumBarchart();
-    virtual bool flush(Plot*);
-};
-
-
-// Accumulator for polygons
-class AccumPoly : public AccumGraph {
-public:
-    AccumPoly();
-    virtual ~AccumPoly();
-    virtual bool flush(Plot*);
-};
-
 
 // ================================================================
-// ==== Line accumulator
-// ================================================================
-
-
-// ----------------------------------------------------------------
-
 // Accumulator which does nothing
 class NullAccum : public LineAccum {
 public:
@@ -59,12 +24,17 @@ public:
     virtual bool feedLine(const std::string& ) { return true; }
 };
 
-// ----------------------------------------------------------------
-
-struct AccumGraph::Private {
-    Private() :
-        mode( Unknown )
+// ================================================================
+// Accumulator for graphs
+class AccumGraph : public LineAccum {
+public:
+    AccumGraph() :
+        mode(Unknown)
     {}
+    virtual ~AccumGraph();
+    virtual bool flush(Plot*);
+    virtual bool feedLine(const std::string& str);
+protected:
     enum Mode {
         Unknown,
         Col_1,              // Y   (X implicit [0,1...])
@@ -116,72 +86,85 @@ struct AccumGraph::Private {
     }
 };
 
-AccumGraph::AccumGraph() :
-    p( new AccumGraph::Private )
-{}
-
 AccumGraph::~AccumGraph()
 {}
 
 bool AccumGraph::flush(Plot* plot) {
     size_t n;
-    switch( p->mode ) {
+    switch( mode ) {
     // 1 column data
-    case Private::Col_1:
-        n = p->ys.size();
-        p->xs.resize( n );
+    case Col_1:
+        n = ys.size();
+        xs.resize( n );
         for( unsigned i = 0; i < n; i++ )
-            p->xs[i] = i;
+            xs[i] = i;
         // !! FALLTHROUGH !!
     // 2 column data
-    case Private::Col_2:
+    case Col_2:
         plot->pushObject(
             boost::make_shared<PlotGraph>(
-                new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
+                new TGraph( xs.size(), &(xs[0]), &(ys[0])) ) );
         return true;
     // 3 column data
-    case Private::Col_3:
+    case Col_3:
         plot->pushObject(
             boost::make_shared<PlotGraph>(
-                new TGraphErrors( p->xs.size(), &(p->xs[0]), &(p->ys[0]), 0, &(p->dys[0])) ) );
+                new TGraphErrors( xs.size(), &(xs[0]), &(ys[0]), 0, &(dys[0])) ) );
         return true;
     // 4 column data
-    case Private::Col_4:
+    case Col_4:
         plot->pushObject(
             boost::make_shared<PlotGraph>(
-                new TGraphErrors( p->xs.size(), &(p->xs[0]), &(p->ys[0]), &(p->dxs[0]), &(p->dys[0])) ) );
+                new TGraphErrors( xs.size(), &(xs[0]), &(ys[0]), &(dxs[0]), &(dys[0])) ) );
         return true;
     // Ooops
-    case Private::Unknown: ;
+    case Unknown: ;
     }
     return false;
 }
 
 bool AccumGraph::feedLine(const std::string& str) {
-    switch( p->mode ) {
+    switch( mode ) {
     // One column data
-    case Private::Col_1:
-        return p->column_1(str);
+    case Col_1:
+        return column_1(str);
     // Two column data
-    case Private::Col_2:
-        return p->column_2(str);
+    case Col_2:
+        return column_2(str);
     // Three column data
-    case Private::Col_3:
-        return p->column_3(str);
+    case Col_3:
+        return column_3(str);
     // Four column data
-    case Private::Col_4:
-        return p->column_4(str);
+    case Col_4:
+        return column_4(str);
     // Decide type of data
-    case Private::Unknown:
-             if ( p->column_4(str) ) { p->mode = Private::Col_4; }
-        else if ( p->column_3(str) ) { p->mode = Private::Col_3; }
-        else if ( p->column_2(str) ) { p->mode = Private::Col_2; }
-        else if ( p->column_1(str) ) { p->mode = Private::Col_1; }
-        return p->mode != Private::Unknown;
+    case Unknown:
+             if ( column_4(str) ) { mode = Col_4; }
+        else if ( column_3(str) ) { mode = Col_3; }
+        else if ( column_2(str) ) { mode = Col_2; }
+        else if ( column_1(str) ) { mode = Col_1; }
+        return mode != Unknown;
     };
     return false; // Unreachable
 }
 
+
+// Accumulator for barchart
+class AccumBarchart : public AccumGraph {
+public:
+    AccumBarchart();
+    virtual ~AccumBarchart();
+    virtual bool flush(Plot*);
+};
+
+
+// Accumulator for polygons
+class AccumPoly : public AccumGraph {
+public:
+    AccumPoly();
+    virtual ~AccumPoly();
+    virtual bool flush(Plot*);
+};
 
 
 AccumPoly::AccumPoly()
@@ -191,16 +174,16 @@ AccumPoly::~AccumPoly()
 {}
 
 bool AccumPoly::flush(Plot* plot) {
-    switch( p->mode ) {
-    case Private::Col_2:
+    switch( mode ) {
+    case Col_2:
         // Close outline manually
-        if( p->ys.size() == 0 )
+        if( ys.size() == 0 )
             return false;
-        p->xs.push_back( p->xs[0] );
-        p->ys.push_back( p->ys[0] );
+        xs.push_back( xs[0] );
+        ys.push_back( ys[0] );
         plot->pushObject(
             boost::make_shared<PlotPoly>(
-                new TPolyLine( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
+                new TPolyLine( xs.size(), &(xs[0]), &(ys[0])) ) );
         return true;
     default:
         return false;
@@ -214,11 +197,11 @@ AccumBarchart::~AccumBarchart()
 {}
 
 bool AccumBarchart::flush(Plot* plot) {
-    switch( p->mode ) {
-    case Private::Col_2:
+    switch( mode ) {
+    case Col_2:
         plot->pushObject(
             boost::make_shared<PlotBarChart>(
-                new TGraph( p->xs.size(), &(p->xs[0]), &(p->ys[0])) ) );
+                new TGraph( xs.size(), &(xs[0]), &(ys[0])) ) );
         return true;
     default:
         return false;
