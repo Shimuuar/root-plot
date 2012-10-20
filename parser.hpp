@@ -79,7 +79,8 @@ PLineAccum makeAccumBarchart();
 // Allocate accumulator for polygons
 PLineAccum makeAccumHist();
 
-
+// Allocate null accumulator. It does nothing
+PLineAccum makeNullAccum();
 
 // ================================================================
 

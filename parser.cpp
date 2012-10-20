@@ -85,7 +85,6 @@ public:
     virtual bool feedLine(const std::string& ) { return true; }
 };
 
-
 // ----------------------------------------------------------------
 
 struct AccumGraph::Private {
@@ -255,10 +254,14 @@ bool AccumBarchart::flush(Plot* plot) {
 
 
 // ================================================================ //
+PLineAccum makeNullAccum() {
+    return boost::make_shared<NullAccum>();
+}
+
+
 Parser::Parser() 
 {
 }
-
 
 void Parser::feedLine(Plot* plot, const std::string& str) {
     if( accum ) {
@@ -278,7 +281,7 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
             // Push one line to accumulator
             if( !accum->feedLine(str) ) {
                 std::cerr << "rt-plot: cannot parse inline data dropping to null parser\n";
-                accum = boost::make_shared<NullAccum>();
+                accum = makeNullAccum();
             }
         }
     } else {
