@@ -107,9 +107,13 @@ double* AccumGraph::getCol(int i) {
 }
 
 bool AccumGraph::feedLine(const std::string& str) {
+    // Lex header if heeded
+    if( cols.size() == 0 && noHeader() && str.size() > 0 && str[0] == '#' ) {
+        // FIXME: parse it!
+    }
     // Lexing buffer line
     std::vector<int> offs;
-    std::string s = str;
+    std::string s = str;    
     // Skip initial whitespaces;
     unsigned i = 0;
     while( i < s.length() && isspace(s[i]) )
