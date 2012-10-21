@@ -45,38 +45,6 @@ protected:
 AccumGraph::~AccumGraph()
 {}
 
-bool AccumGraph::flush(Plot* plot) {
-    switch ( cols.size() ) {
-    case 1: {
-        size_t n = colSize();
-        std::vector<double> xs;
-        xs.resize( n );
-        for( unsigned i = 0; i < n; i++ )
-            xs[i] = i;
-        plot->pushObject(
-            boost::make_shared<PlotGraph>(
-                new TGraph( n, &(xs[0]), colPtr(0) ) ) );
-        return true;
-    }
-    case 2:
-        plot->pushObject(
-            boost::make_shared<PlotGraph>(
-                new TGraph( colSize(), colPtr(0), colPtr(1) ) ) );
-        return true;
-    case 3:
-        plot->pushObject(
-            boost::make_shared<PlotGraph>(
-                new TGraphErrors( colSize(), colPtr(0), colPtr(1), 0, colPtr(2)) ) );
-        return true;
-    case 4:
-        plot->pushObject(
-            boost::make_shared<PlotGraph>(
-                new TGraphErrors( colSize(), colPtr(0), colPtr(1), colPtr(2), colPtr(3)) ) );
-        return true;
-    default:
-        return false;
-    }
-}
 
 bool AccumGraph::feedLine(const std::string& str) {
     // Lexing buffer line
@@ -113,27 +81,70 @@ bool AccumGraph::feedLine(const std::string& str) {
     return true;
 }
 
+bool AccumGraph::flush(Plot* plot) {
+    switch ( cols.size() ) {
+    case 1: {
+        size_t n = colSize();
+        std::vector<double> xs;
+        xs.resize( n );
+        for( unsigned i = 0; i < n; i++ )
+            xs[i] = i;
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraph( n, &(xs[0]), colPtr(0) ) ) );
+        return true;
+    }
+    case 2:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraph( colSize(), colPtr(0), colPtr(1) ) ) );
+        return true;
+    case 3:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraphErrors( colSize(), colPtr(0), colPtr(1), 0, colPtr(2)) ) );
+        return true;
+    case 4:
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                new TGraphErrors( colSize(), colPtr(0), colPtr(1), colPtr(2), colPtr(3)) ) );
+        return true;
+    default:
+        return false;
+    }
+}
 
+
+// ================================================================    
 // Accumulator for barchart
 class AccumBarchart : public AccumGraph {
 public:
-    AccumBarchart();
     virtual ~AccumBarchart();
     virtual bool flush(Plot*);
 };
 
+AccumBarchart::~AccumBarchart()
+{}
 
+bool AccumBarchart::flush(Plot* plot) {
+    switch( cols.size() ) {
+    case 2:
+        plot->pushObject(
+            boost::make_shared<PlotBarChart>(
+                new TGraph( colSize(), colPtr(0), colPtr(1) ) ) );
+        return true;
+    default:
+        return false;
+    }
+}
+
+// ================================================================    
 // Accumulator for polygons
 class AccumPoly : public AccumGraph {
 public:
-    AccumPoly();
     virtual ~AccumPoly();
     virtual bool flush(Plot*);
 };
-
-
-AccumPoly::AccumPoly()
-{}
 
 AccumPoly::~AccumPoly()
 {}
@@ -157,24 +168,7 @@ bool AccumPoly::flush(Plot* plot) {
     }
 }
 
-AccumBarchart::AccumBarchart()
-{}
-
-AccumBarchart::~AccumBarchart()
-{}
-
-bool AccumBarchart::flush(Plot* plot) {
-    switch( cols.size() ) {
-    case 2:
-        plot->pushObject(
-            boost::make_shared<PlotBarChart>(
-                new TGraph( colSize(), colPtr(0), colPtr(1) ) ) );
-        return true;
-    default:
-        return false;
-    }
-}
-}
+} // namespace
 
 
 // ================================================================ //
