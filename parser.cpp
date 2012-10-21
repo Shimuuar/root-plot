@@ -33,9 +33,10 @@ public:
     virtual bool flush(Plot*);
     virtual bool feedLine(const std::string& str);
 protected:
-    typedef std::vector< std::vector<double> > columns;
+    typedef std::vector<double> Column;
+    typedef std::vector<Column> ColList;
 
-    columns cols;
+    ColList cols;
 
     size_t  colSize()     { return cols[0].size();  }
     double* colPtr(int i) { return &( cols[i][0] ); }
