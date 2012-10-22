@@ -48,7 +48,7 @@ DumbLexer::DumbLexer(const std::string& str) :
     for(; i < s.length(); i++) {
         if( isspace( s[i] ) ) {
             wordEnded = true;
-            s[i] = '0';
+            s[i] = '\0';
         } else if (wordEnded) {
             offs.push_back( i );
             wordEnded = false;
