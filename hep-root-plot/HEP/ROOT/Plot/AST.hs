@@ -43,6 +43,8 @@ data Command =
 data Plot where
   -- Simple graph
   Graph     :: [(Double,Double)] -> Plot
+  -- Graph with errors
+  GraphErr  :: [(Double,(Double,Double))] -> Plot
   -- Sequence of points
   Graph1    :: [Double]          -> Plot
   -- Barchart
@@ -173,6 +175,10 @@ renderPlot :: Plot -> Builder
 renderPlot (Graph vals)
   =  co "graph -\n"
   <> linesBS (map pair vals)
+  <> co "<<<\n"
+renderPlot (GraphErr vals)
+  =  co "graph -\n"
+  <> linesBS (map pairE vals)
   <> co "<<<\n"
 renderPlot (Graph1 ys )
   =  co "graph -\n"
@@ -317,3 +323,7 @@ linesBS = mconcat . map (<> co "\n")
 pair :: (ShowBS a, ShowBS b) => (a,b) -> Builder
 pair (a,b) = serialize a <> co "\t" <> serialize b
 {-# INLINE pair #-}
+
+pairE :: (ShowBS a, ShowBS b, ShowBS c) => (a,(b,c)) -> Builder
+pairE (a,(b,c)) = serialize a <> co "\t" <> serialize b <> co "\t" <> serialize c
+{-# INLINE pairE #-}
