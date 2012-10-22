@@ -7,6 +7,7 @@ module HEP.ROOT.Plot (
     Cmd
   , Command
   , Plot(..)
+  , ErrorStyle(..)
   , Color(..)
   , Toggle(..)
     -- * Commands

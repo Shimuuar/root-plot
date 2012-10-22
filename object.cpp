@@ -501,6 +501,7 @@ RangeM PlotGraph::yRange() const {
     TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
     if( graphE ) {
         range_with_errors( n, graphE->GetY(), graphE->GetEY(), lo, hi);
+        std::cout << lo << ' ' << hi << std::endl ;
     } else {
         double* ys = graph->GetY();
         hi         = *std::max_element(ys, ys+n);
