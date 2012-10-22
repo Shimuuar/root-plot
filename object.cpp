@@ -399,7 +399,10 @@ PlotGraph::PlotGraph(TGraph* g) :
     marker( Plot::NoMarker   ),
     errs  ( Plot::Crosshairs ),
     graph ( g )
-{}
+{
+    // Set sane default color
+    graph->SetFillColor( 20 );
+}
 
 void PlotGraph::plotOn(Plot*) {
     std::string opts = " SAME";
@@ -423,7 +426,7 @@ void PlotGraph::plotOn(Plot*) {
     switch( errs ) {
     case Plot::NoErrors:
         // If we don't want to draw any errors
-        graph->Draw( (opts + "X").c_str() );
+        graph->Draw( ("X"+opts).c_str() );
         break;
     case Plot::Crosshairs:
         // No special treatment needed
@@ -432,11 +435,11 @@ void PlotGraph::plotOn(Plot*) {
     case Plot::ErrorBand:
         // This case is truly special. ROOT doesn't draw central line
         // so we need to create a separate plot for that
-        graph->Draw( (opts + "3").c_str() );
-        clone.reset(
-            graph->DrawClone( (opts + "X").c_str() ) );
+        graph->Draw( "3 SAME" );
+        if( graph->GetLineWidth() > 0 )            
+            graph->Draw( ("X"+opts).c_str() );            
+        break;
     }
-    graph->Draw( opts.c_str() );
 }
 
 void PlotGraph::setLineWidth(int width) {
