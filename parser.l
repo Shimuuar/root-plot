@@ -41,6 +41,9 @@ hband       { return KW_HBAND;    }
 set         { return KW_SET;    }
 silent      { return KW_SILENT; }
 title       { return KW_TITLE;  }
+error       { return KW_ERROR;  }
+cross       { return KW_CROSS;  }
+band        { return KW_BAND;   }
 
 xaxis       { return KW_XAXIS;  }
 yaxis       { return KW_YAXIS;  }

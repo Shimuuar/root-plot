@@ -123,6 +123,9 @@ void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
 %token KW_SET
 %token KW_SILENT
 %token KW_TITLE
+%token KW_ERROR
+%token KW_CROSS
+%token KW_BAND
 
 %token KW_LINE
 %token KW_COLOR
@@ -234,9 +237,12 @@ set
   : KW_LINE   TOK_WS setLine
   | KW_FILL   TOK_WS setFill
   | KW_HIST   TOK_WS setHist
-  | KW_SILENT TOK_WS KW_ON   eol   { par.plot->setSilent( true  ); }
-  | KW_SILENT TOK_WS KW_OFF  eol   { par.plot->setSilent( false ); }
-  | KW_TITLE  TOK_WS TOK_STR eol   { par.plot->setTitle( boost::get<std::string>( $3 ) ); }
+  | KW_SILENT TOK_WS KW_ON    eol { par.plot->setSilent( true  ); }
+  | KW_SILENT TOK_WS KW_OFF   eol { par.plot->setSilent( false ); }
+  | KW_TITLE  TOK_WS TOK_STR  eol { par.plot->setTitle( boost::get<std::string>( $3 ) ); }
+  | KW_ERROR  TOK_WS TOK_DASH eol { par.plot->setErrorStyle( Plot::NoErrors   ); }
+  | KW_ERROR  TOK_WS KW_CROSS eol { par.plot->setErrorStyle( Plot::Crosshairs ); }
+  | KW_ERROR  TOK_WS KW_BAND  eol { par.plot->setErrorStyle( Plot::ErrorBand  ); }
   // Axes
   | KW_XAXIS  { par.axis = Plot::X; } TOK_WS setAxis
   | KW_YAXIS  { par.axis = Plot::Y; } TOK_WS setAxis
