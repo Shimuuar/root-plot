@@ -21,6 +21,8 @@ class DumbLexer {
 public:
     // Tokenize input string
     DumbLexer(const std::string& str);
+    // Convert every letter to lowercase
+    void lowerCase();
     // Number of tokens
     int nTokens() { return offs.size(); }
     // Get token as real number
@@ -52,6 +54,11 @@ DumbLexer::DumbLexer(const std::string& str) :
             wordEnded = false;
         }
     }    
+}
+
+void DumbLexer::lowerCase() {
+    for( unsigned i = 0; i < s.size(); i++)
+        s[i] = tolower( s[i] );
 }
 
 bool DumbLexer::tokDouble(int i, double&x ) {
@@ -159,6 +166,24 @@ double* AccumGraph::getCol(int i) {
 
 bool AccumGraph::parseHeader(const std::string& str) {
     assert(str.size() > 0 && str[0] == '#');
+    DumbLexer lex( str.substr(1) );
+    lex.lowerCase();
+    // Check 
+    for( int i = 0; i < lex.nTokens(); i++) {
+        std::string s = lex.tokStr(i);
+        // X
+        if( s == "x"   ) i_x   = i;
+        else if( s == "dx"  ) i_dx  = i;
+        else if( s == "udx" ) i_udx = i;
+        else if( s == "ldx" ) i_ldx = i;
+        // Y
+        else if( s == "y"   ) i_y   = i;
+        else if( s == "dy"  ) i_dy  = i;
+        else if( s == "udy" ) i_udy = i;
+        else if( s == "ldy" ) i_ldy = i;
+        else return false;
+    }
+    return true;
 }
 
 bool AccumGraph::feedLine(const std::string& str) {
