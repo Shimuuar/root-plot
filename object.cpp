@@ -473,7 +473,7 @@ static void range_with_errors(int n, double* xs, double* dx, double& lo, double&
     hi = xs[0] + dx[0];
     for(int i = 1; i < n; i++) {
         lo = std::min( lo, xs[i] - dx[i] );
-        hi = std::max( lo, xs[i] + dx[i] );
+        hi = std::max( hi, xs[i] + dx[i] );
     }
 }
 
@@ -501,7 +501,6 @@ RangeM PlotGraph::yRange() const {
     TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
     if( graphE ) {
         range_with_errors( n, graphE->GetY(), graphE->GetEY(), lo, hi);
-        std::cout << lo << ' ' << hi << std::endl ;
     } else {
         double* ys = graph->GetY();
         hi         = *std::max_element(ys, ys+n);
