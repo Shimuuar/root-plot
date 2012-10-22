@@ -10,6 +10,7 @@ module HEP.ROOT.Plot.AST (
   , HistOpt(..)
   , Axis(..)
   , Legend(..)
+  , ErrorStyle(..)
   , Color(..)
   , Toggle(..)
     -- * Rendering commands
@@ -79,6 +80,8 @@ data Option =
   | MarkerStyle String
     -- | Fill color (with enum)
   | FillColor  Color
+    -- | Style of error bars
+  | ErrorStyle ErrorStyle
     -- | Histogram options
   | HistOpt    HistOpt
     -- | X axis
@@ -126,6 +129,11 @@ data Legend =
     -- | Add label to the item
   | LegendLabel String
 
+data ErrorStyle
+  = NoError
+  | Crosshairs
+  | ErrorBand
+
 -- | Toggle options on and off
 data Toggle = ON
             | OFF
@@ -162,11 +170,11 @@ renderCommand (Legend l) = return $ co "legend " <> renderLegend l   <> co "\n"
 
 -- plot subcommand
 renderPlot :: Plot -> Builder
-renderPlot (Graph vals) 
+renderPlot (Graph vals)
   =  co "graph -\n"
   <> linesBS (map pair vals)
   <> co "<<<\n"
-renderPlot (Graph1 ys ) 
+renderPlot (Graph1 ys )
   =  co "graph -\n"
   <> linesBS (map real ys)
   <> co "<<<\n"
@@ -203,6 +211,7 @@ renderOption (LineColor   c) = co "line color "  <> renderColor c
 renderOption (LineStyle   s) = co "line style "  <> strLit s
 renderOption (MarkerStyle s) = co "line marker " <> strLit s
 renderOption (FillColor   c) = co "fill color "  <> renderColor c
+renderOption (ErrorStyle  e) = co "error "       <> renderError e
 renderOption (HistOpt o )    = co "hist "  <> renderHistOpt o
 renderOption (XAxis   a )    = co "xaxis " <> renderAxis a
 renderOption (YAxis   a )    = co "yaxis " <> renderAxis a
@@ -215,6 +224,12 @@ renderAxis  NoLabel     = co "label -"
 renderAxis (LogScale t) = co "log "   <> toggle t
 renderAxis (Range a b)  = co "range " <> maybeReal a <> co " " <> maybeReal b where maybeReal = maybe (co "-") real
 renderAxis  RangeAuto   = co "range -"
+
+-- Error
+renderError :: ErrorStyle -> Builder
+renderError NoError    = co "-"
+renderError Crosshairs = co "cross"
+renderError ErrorBand  = co "band"
 
 -- Histogram options
 renderHistOpt :: HistOpt -> Builder
