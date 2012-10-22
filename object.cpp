@@ -432,7 +432,7 @@ void PlotGraph::plotOn(Plot*) {
     case Plot::ErrorBand:
         // This case is truly special. ROOT doesn't draw central line
         // so we need to create a separate plot for that
-        graph->Draw( (opts + "4").c_str() );
+        graph->Draw( (opts + "3").c_str() );
         clone.reset(
             graph->DrawClone( (opts + "X").c_str() ) );
     }
