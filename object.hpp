@@ -83,6 +83,12 @@ public:
         MarkerO    = 4,
         MarkerX    = 5,
     };
+    // How error bars should be draws
+    enum ErrorsStyle {
+        NoErrors,
+        Crosshairs,
+        ErrorBand
+    };
 
     // Convert int to color. Values which are out of range are
     // converted to black.
@@ -124,6 +130,8 @@ public:
     void setLineStyle(Plot::LineStyle);
     // Set marker style for top object. Noop if stack is empty
     void setMarkerStyle(Plot::MarkerStyle);
+    // Set error style
+    void setErrorStyle(Plot::ErrorsStyle);
     // Set fill color for top object. Noop if stack is empty
     void setFillColor(int);
     // Set line width for top object. Noop if stack is empty
@@ -210,6 +218,8 @@ public:
     virtual void setLineStyle(Plot::LineStyle) {}
     // Set marker style
     virtual void setMarkerStyle(Plot::MarkerStyle) {}
+    // Set error style
+    virtual void setErrorStyle(Plot::ErrorsStyle) {}
     // Set width of line
     virtual void setLineWidth(int width)   {UNUSED(width);}
     // Set fill color
@@ -282,13 +292,17 @@ public:
     virtual void     setLineWidth(int width);
     virtual void     setLineStyle(Plot::LineStyle);
     virtual void     setMarkerStyle(Plot::MarkerStyle);
+    virtual void     setErrorStyle(Plot::ErrorsStyle);
     virtual void     setLineColor(int);
+    virtual void     setFillColor(int);
     virtual TObject* getRootObject();
 protected:
     int               color;
     Plot::LineStyle   line;
     Plot::MarkerStyle marker;
-    boost::scoped_ptr<TGraph> graph;
+    Plot::ErrorsStyle errs;
+    boost::scoped_ptr<TGraph>  graph;
+    boost::shared_ptr<TObject> clone;
 };
 
 class PlotGraph2D : public PlotObject {

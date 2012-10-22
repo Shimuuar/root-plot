@@ -164,6 +164,11 @@ void Plot::setMarkerStyle(Plot::MarkerStyle m) {
         m_objStack.back()->setMarkerStyle( m );
 }
 
+void Plot::setErrorStyle(Plot::ErrorsStyle m) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setErrorStyle( m );
+}
+
 void Plot::setHistText( bool txt ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistText( txt );
@@ -389,9 +394,10 @@ TObject* PlotHist::getRootObject() {
 // ==== Graph
 
 PlotGraph::PlotGraph(TGraph* g) :
-    color ( Plot::BLACK     ),
-    line  ( Plot::SolidLine ),
-    marker( Plot::NoMarker  ),
+    color ( Plot::BLACK      ),
+    line  ( Plot::SolidLine  ),
+    marker( Plot::NoMarker   ),
+    errs  ( Plot::Crosshairs ),
     graph ( g )
 {}
 
@@ -413,6 +419,23 @@ void PlotGraph::plotOn(Plot*) {
         graph->SetMarkerStyle( marker );
         graph->SetMarkerColor( color  );
     }
+    // Draw errors differently
+    switch( errs ) {
+    case Plot::NoErrors:
+        // If we don't want to draw any errors
+        graph->Draw( (opts + "X").c_str() );
+        break;
+    case Plot::Crosshairs:
+        // No special treatment needed
+        graph->Draw( opts.c_str() );
+        break;
+    case Plot::ErrorBand:
+        // This case is truly special. ROOT doesn't draw central line
+        // so we need to create a separate plot for that
+        graph->Draw( (opts + "4").c_str() );
+        clone.reset(
+            graph->DrawClone( (opts + "X").c_str() ) );
+    }
     graph->Draw( opts.c_str() );
 }
 
@@ -428,9 +451,18 @@ void PlotGraph::setMarkerStyle(Plot::MarkerStyle m) {
     marker = m;
 }
 
+void PlotGraph::setErrorStyle(Plot::ErrorsStyle e) {
+    errs = e;
+}
+
 void PlotGraph::setLineColor(int col) {
     color = col;
     graph->SetLineColor(col);
+}
+
+void PlotGraph::setFillColor(int col) {
+    color = col;
+    graph->SetFillColor(col);
 }
 
 static void range_with_errors(int n, double* xs, double* dx, double& lo, double& hi) {
