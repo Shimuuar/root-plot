@@ -3,6 +3,7 @@
 #include "object.hpp"
 #include "exceptions.hpp"
 
+#include <assert.h>
 #include <ctype.h>
 #include <sstream>
 #include <fstream>
@@ -14,6 +15,53 @@
 
 
 namespace {
+
+// Simple lexer for strings
+class DumbLexer {
+public:
+    // Tokenize input string
+    DumbLexer(const std::string& str);
+    // Number of tokens
+    int nTokens() { return offs.size(); }
+    // Get token as real number
+    bool tokDouble(int i, double &x);
+    // Get token as string
+    std::string tokStr(int i);
+private:
+    // Copy of input string with all spaces replaced with 0
+    std::string s;
+    // Offsets to tokens
+    std::vector<int> offs;
+};
+
+DumbLexer::DumbLexer(const std::string& str) :
+    s(str)
+{
+    // Skip initial whitespaces;
+    unsigned i = 0;
+    while( i < s.length() && isspace(s[i]) )
+        i++;
+    // Start lexing
+    bool wordEnded = true;
+    for(; i < s.length(); i++) {
+        if( isspace( s[i] ) ) {
+            wordEnded = true;
+            s[i] = '0';
+        } else if (wordEnded) {
+            offs.push_back( i );
+            wordEnded = false;
+        }
+    }    
+}
+
+bool DumbLexer::tokDouble(int i, double&x ) {
+    return 1 == sscanf( s.c_str() + offs[i], "%lf", &x );
+}
+
+std::string DumbLexer::tokStr(int i) {
+    return s.c_str() + offs[i];
+}
+
 
 // ================================================================
 // Accumulator which does nothing
@@ -36,6 +84,9 @@ public:
 protected:
     typedef std::vector<double> Column;
     typedef std::vector<Column> ColList;
+
+    // Parse header and set column accordingly
+    bool parseHeader(const std::string& s);
 
     // Data columns
     ColList cols;
@@ -106,42 +157,29 @@ double* AccumGraph::getCol(int i) {
         return &(cols[i][0]);
 }
 
+bool AccumGraph::parseHeader(const std::string& str) {
+    assert(str.size() > 0 && str[0] == '#');
+}
+
 bool AccumGraph::feedLine(const std::string& str) {
-    // Lex header if heeded
-    if( cols.size() == 0 && noHeader() && str.size() > 0 && str[0] == '#' ) {
-        // FIXME: parse it!
+    // Parse header if heeded
+    if( cols.size() == 0 && str.size() > 0 && str[0] == '#' && noHeader() ) {
+        return parseHeader(str);
     }
-    // Lexing buffer line
-    std::vector<int> offs;
-    std::string s = str;    
-    // Skip initial whitespaces;
-    unsigned i = 0;
-    while( i < s.length() && isspace(s[i]) )
-        i++;
-    // Start lexing
-    bool wordEnded = true;
-    for(; i < s.length(); i++) {
-        if( isspace( s[i] ) ) {
-            wordEnded = true;
-            s[i] = '0';
-        } else if (wordEnded) {
-            offs.push_back( i );
-            wordEnded = false;
-        }
-    }
+    DumbLexer lex( str );
     // Resize columns array if needed
     if( cols.size() == 0 ) {
-        cols.resize( offs.size() );
+        cols.resize( lex.nTokens() );
     }
-    if( cols.size() != offs.size() ) {
+    if( cols.size() != lex.nTokens() ) {
         return false;
     }
     // Read every number
-    for( unsigned j = 0; j < offs.size(); j++) {
+    for( int i = 0; i < lex.nTokens(); i++) {
         double x;
-        if( 1 != sscanf( s.c_str() + offs[j], "%lf", &x ) )
+        if( ! lex.tokDouble(i,x) )
             return false;
-        cols[j].push_back( x );
+        cols[i].push_back( x );
     }
     return true;
 }
