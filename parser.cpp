@@ -24,7 +24,7 @@ public:
     // Convert every letter to lowercase
     void lowerCase();
     // Number of tokens
-    int nTokens() { return offs.size(); }
+    unsigned nTokens() { return offs.size(); }
     // Get token as real number
     bool tokDouble(int i, double &x);
     // Get token as string
@@ -169,7 +169,7 @@ bool AccumGraph::parseHeader(const std::string& str) {
     DumbLexer lex( str.substr(1) );
     lex.lowerCase();
     // Check 
-    for( int i = 0; i < lex.nTokens(); i++) {
+    for( unsigned i = 0; i < lex.nTokens(); i++) {
         std::string s = lex.tokStr(i);
         // X
         if( s == "x"   ) i_x   = i;
@@ -200,7 +200,7 @@ bool AccumGraph::feedLine(const std::string& str) {
         return false;
     }
     // Read every number
-    for( int i = 0; i < lex.nTokens(); i++) {
+    for( unsigned i = 0; i < lex.nTokens(); i++) {
         double x;
         if( ! lex.tokDouble(i,x) )
             return false;
