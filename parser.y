@@ -310,6 +310,8 @@ setFill
     { par.plot->setFillColor( boost::get<int>($3) ); }
   | KW_COLOR TOK_WS TOK_STR eol
     { par.plot->setFillColor( strToColor( boost::get<std::string>( $3 ) ) ); }
+  | KW_STYLE TOK_WS TOK_INT eol
+    { par.plot->setFillStyle( boost::get<int>( $3 ) ); }
 
 // Histogram options
 setHist

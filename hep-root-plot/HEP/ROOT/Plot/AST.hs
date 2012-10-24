@@ -82,6 +82,8 @@ data Option =
   | MarkerStyle String
     -- | Fill color (with enum)
   | FillColor  Color
+    -- | Fill style
+  | FillStyle  Int
     -- | Style of error bars
   | ErrorStyle ErrorStyle
     -- | Histogram options
@@ -217,6 +219,7 @@ renderOption (LineColor   c) = co "line color "  <> renderColor c
 renderOption (LineStyle   s) = co "line style "  <> strLit s
 renderOption (MarkerStyle s) = co "line marker " <> strLit s
 renderOption (FillColor   c) = co "fill color "  <> renderColor c
+renderOption (FillStyle   c) = co "fill style "  <> int c
 renderOption (ErrorStyle  e) = co "error "       <> renderError e
 renderOption (HistOpt o )    = co "hist "  <> renderHistOpt o
 renderOption (XAxis   a )    = co "xaxis " <> renderAxis a

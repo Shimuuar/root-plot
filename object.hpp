@@ -134,6 +134,12 @@ public:
     void setErrorStyle(Plot::ErrorsStyle);
     // Set fill color for top object. Noop if stack is empty
     void setFillColor(int);
+    // Set fill style for top object. Style number is chosen as ROOT
+    //   * Negative - no filling.
+    //   * 0        - solid (default).
+    //   * 1-999    - Pattern using ROOT encoding.
+    // Noop if stack is empty
+    void setFillStyle(int);
     // Set line width for top object. Noop if stack is empty
     void setLineWidth(int width);
 
@@ -224,6 +230,9 @@ public:
     virtual void setLineWidth(int width)   {UNUSED(width);}
     // Set fill color
     virtual void setFillColor(int) {}
+    // Set fill style. It accepts ROOT fill style. Conversions are
+    // handled by Plot::setFillStyle.
+    virtual void setFillStyle(int) {}
 
     // Set text drawing histograms
     virtual void setHistText   ( bool txt )  {UNUSED(txt);}
@@ -257,6 +266,7 @@ public:
     virtual void     setLineWidth(int width);
     virtual void     setLineColor(int);
     virtual void     setFillColor(int);
+    virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
 
     virtual void setHistText( bool txt )     { m_text    = txt;  }
@@ -295,6 +305,7 @@ public:
     virtual void     setErrorStyle(Plot::ErrorsStyle);
     virtual void     setLineColor(int);
     virtual void     setFillColor(int);
+    virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
 protected:
     int               color;
@@ -328,6 +339,7 @@ public:
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setFillColor(int);
+    virtual void     setFillStyle(int);
 };
 
 // Wrapper around ROOT polygons
@@ -343,6 +355,7 @@ public:
     virtual void     setLineWidth(int width);
     virtual void     setLineColor(int);
     virtual void     setFillColor(int);
+    virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
 private:
     int width;
@@ -388,7 +401,8 @@ public:
         x2   (x1_ < x2 ? x2_ : x1_),
         width( 0     ),
         color( Plot::BLACK ),
-        fill ( 20    )
+        fill ( 20    ),
+        fillStyle( 1001 )
     {}
 
     virtual ~PlotBand() {}
@@ -396,12 +410,13 @@ public:
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setFillColor(int);
+    virtual void   setFillStyle(int);
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(int);
 private:
     Plot::Line orientation;
     double     x1,x2;
-    int        width, color, fill;
+    int        width, color, fill, fillStyle;
 
     boost::shared_ptr<TPolyLine> poly;
 };

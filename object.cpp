@@ -149,6 +149,20 @@ void Plot::setFillColor(int color) {
         m_objStack.back()->setFillColor(color);
 }
 
+void Plot::setFillStyle(int s) {
+    // Convert to ROOT encoding
+    int style;
+    if( s < 0 ) {
+        style = 0;
+    } else if( s == 0 ) {
+        style = 1001;
+    } else {
+        style = 3000 + (s % 1000);
+    }
+    if( !m_objStack.empty() )
+        m_objStack.back()->setFillStyle(style);
+}
+
 void Plot::setLineWidth(int width) {
     if( !m_objStack.empty() )
         m_objStack.back()->setLineWidth(width);
@@ -357,6 +371,10 @@ void PlotHist::setFillColor(int col) {
     hist->SetFillColor(col);
 }
 
+void PlotHist::setFillStyle(int col) {
+    hist->SetFillStyle(col);
+}
+
 RangeM PlotHist::xRange() const {
     return boost::optional<Range>(
         Range(
@@ -466,6 +484,10 @@ void PlotGraph::setLineColor(int col) {
 void PlotGraph::setFillColor(int col) {
     color = col;
     graph->SetFillColor(col);
+}
+
+void PlotGraph::setFillStyle(int col) {
+    graph->SetFillStyle(col);
 }
 
 static void range_with_errors(int n, double* xs, double* dx, double& lo, double& hi) {
@@ -589,6 +611,10 @@ void PlotBarChart::setFillColor(int c) {
     graph->SetFillColor( c );
 }
 
+void PlotBarChart::setFillStyle(int c) {
+    graph->SetFillStyle( c );
+}
+
 // ================================================================ //
 // ==== Poly
 
@@ -618,6 +644,10 @@ void PlotPoly::setLineColor(int col) {
 
 void PlotPoly::setFillColor(int col) {
     poly->SetFillColor(col);
+}
+
+void PlotPoly::setFillStyle(int col) {
+    poly->SetFillStyle(col);
 }
 
 RangeM PlotPoly::xRange() const {
@@ -718,10 +748,10 @@ void PlotBand::plotOn(Plot* cxt) {
         double xs[4] = {lo,hi,hi,lo};
         poly = boost::shared_ptr<TPolyLine>( new TPolyLine(4, xs, ys, "") );
     }
-    poly->SetFillColor( fill  );
-    poly->SetFillStyle( 1001  );
-    poly->SetLineWidth( width );
-    poly->SetLineColor( color );
+    poly->SetFillColor( fill      );
+    poly->SetFillStyle( fillStyle );
+    poly->SetLineWidth( width     );
+    poly->SetLineColor( color     );
     poly->Draw("F");
     if( width > 0 )
         poly->Draw("");
@@ -729,6 +759,10 @@ void PlotBand::plotOn(Plot* cxt) {
 
 void PlotBand::setFillColor(int col) {
     fill = col;
+}
+
+void PlotBand::setFillStyle(int col) {
+    fillStyle = col;
 }
 
 void PlotBand::setLineWidth(int w) {
