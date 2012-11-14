@@ -36,6 +36,9 @@ module HEP.ROOT.Plot (
   , xaxis
   , yaxis
   , zaxis
+  , grid
+  , gridX
+  , gridY
     -- ** Axis
   , label
   , noLabel
@@ -181,6 +184,15 @@ yaxis = cmds YAxis
 
 zaxis :: Cmd Axis -> Cmd Option
 zaxis = cmds ZAxis
+
+grid :: Toggle -> Cmd Option
+grid = cmd . Grid
+
+gridX :: Toggle -> Cmd Option
+gridX = cmd . GridX
+
+gridY :: Toggle -> Cmd Option
+gridY = cmd . GridY
 
 ----------------------------------------------------------------
 -- Axis

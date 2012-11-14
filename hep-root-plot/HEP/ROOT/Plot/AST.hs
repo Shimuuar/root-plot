@@ -90,6 +90,10 @@ data Option =
   | YAxis Axis
     -- | Z axis
   | ZAxis Axis
+    -- | Grid on or off
+  | Grid  Toggle
+  | GridX Toggle
+  | GridY Toggle
 
 -- | Axis parameters
 data Axis
@@ -214,6 +218,9 @@ renderOption (HistOpt o )    = co "hist "  <> renderHistOpt o
 renderOption (XAxis   a )    = co "xaxis " <> renderAxis a
 renderOption (YAxis   a )    = co "yaxis " <> renderAxis a
 renderOption (ZAxis   a )    = co "zaxis " <> renderAxis a
+renderOption (Grid    t )    = co "grid "   <> toggle t
+renderOption (GridX   t )    = co "grid x " <> toggle t
+renderOption (GridY   t )    = co "grid y " <> toggle t
 
 -- Axis
 renderAxis :: Axis -> Builder
