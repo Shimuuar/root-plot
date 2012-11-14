@@ -54,6 +54,7 @@ void Plot::clearCanvas() {
 
 void Plot::clear() {
     m_objStack.resize(0);
+    m_gridX  = m_gridY = false;
     m_xLog   = m_yLog = m_zLog = false;
     m_title  = "";
     m_xLabel = boost::optional<std::string>();
@@ -71,6 +72,7 @@ void Plot::draw(bool force) {
         return;
     // Remove everything from canvas
     clearCanvas();
+    m_canvas->SetGrid( m_gridX, m_gridY );
 
     // Set ranges for graph
     double xs[2] = {0, 1};
@@ -121,6 +123,14 @@ void Plot::save(const std::string& fname) {
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
     // plot->plotOn(this);
+}
+
+void Plot::setGrid(Axis axis, bool flag) {
+    switch( axis ) {
+    case X: m_gridX = flag; break;
+    case Y: m_gridY = flag; break;
+    default:;
+    }
 }
 
 void Plot::setLabel(Axis axis, const std::string& label) {

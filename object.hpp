@@ -121,6 +121,8 @@ public:
     void setLabel(Axis axis, const std::string& label);
     // Set log scale
     void setLogScale(Axis axis, bool l);
+    // Set grid
+    void setGrid(Axis ax, bool flag);
 
     // Push object on the top of stack;
     void pushObject(boost::shared_ptr<PlotObject> plot);
@@ -183,6 +185,8 @@ private:
     TCanvas*                     m_canvas;    // Canvas to draw on
     Stack                        m_objStack;  // Stack of objects
     // Axis
+    bool                         m_gridX;     // Grid along X
+    bool                         m_gridY;     // Grid along Y
     boost::optional<double>      m_xLow;      // X low range
     boost::optional<double>      m_xHi;       // X hi range
     boost::optional<double>      m_yLow;      // Y low range

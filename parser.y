@@ -146,6 +146,10 @@ void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
 %token KW_LABEL
 %token KW_RANGE
 
+%token KW_GRID
+%token KW_X
+%token KW_Y
+
  // PLOT
 %token KW_ADD
 %token KW_PLOT
@@ -243,6 +247,18 @@ set
   | KW_ERROR  TOK_WS TOK_DASH eol { par.plot->setErrorStyle( Plot::NoErrors   ); }
   | KW_ERROR  TOK_WS KW_CROSS eol { par.plot->setErrorStyle( Plot::Crosshairs ); }
   | KW_ERROR  TOK_WS KW_BAND  eol { par.plot->setErrorStyle( Plot::ErrorBand  ); }
+  // Grid
+  | KW_GRID                 eol { par.plot->setGrid(Plot::X, true);  par.plot->setGrid( Plot::Y, true);  }
+  | KW_GRID   TOK_WS KW_ON  eol { par.plot->setGrid(Plot::X, true);  par.plot->setGrid( Plot::Y, true);  }
+  | KW_GRID   TOK_WS KW_OFF eol { par.plot->setGrid(Plot::X, false); par.plot->setGrid( Plot::Y, false); }
+  // X
+  | KW_GRID TOK_WS KW_X               eol { par.plot->setGrid(Plot::X, true);  }
+  | KW_GRID TOK_WS KW_X TOK_WS KW_ON  eol { par.plot->setGrid(Plot::X, true);  }
+  | KW_GRID TOK_WS KW_X TOK_WS KW_OFF eol { par.plot->setGrid(Plot::X, false); }
+  // Y
+  | KW_GRID TOK_WS KW_Y               eol { par.plot->setGrid(Plot::Y, true);  }
+  | KW_GRID TOK_WS KW_Y TOK_WS KW_ON  eol { par.plot->setGrid(Plot::Y, true);  }
+  | KW_GRID TOK_WS KW_Y TOK_WS KW_OFF eol { par.plot->setGrid(Plot::Y, false); }
   // Axes
   | KW_XAXIS  { par.axis = Plot::X; } TOK_WS setAxis
   | KW_YAXIS  { par.axis = Plot::Y; } TOK_WS setAxis

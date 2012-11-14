@@ -62,6 +62,9 @@ text        { return KW_TEXT;    }
 box         { return KW_BOX;     }
 contour     { return KW_CONTOUR; }
 palette     { return KW_PALETTE; }
+grid        { return KW_GRID;    }
+x           { return KW_X;       }
+y           { return KW_Y;       }
 
  /* Literals */
 {int}       { *yylval = boost::lexical_cast<int>   ( yytext ); return TOK_INT;    }
