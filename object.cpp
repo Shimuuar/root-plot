@@ -77,7 +77,7 @@ void Plot::draw(bool force) {
     // Set ranges for graph
     double xs[2] = {0, 1};
     double ys[2] = {0, 1};
-    
+
     RangeM rngX = xRange();
     if( rngX.is_initialized() ) {
         xs[0] = rngX->low;
@@ -93,17 +93,17 @@ void Plot::draw(bool force) {
     // required because ROOT do not allow to resize axes arbitralily
     // and one have to set them correctly upfront.
     //
-    // On plus side axes are stored locally.    
+    // On plus side axes are stored locally.
     m_axisGraph = boost::make_shared<TGraph>(2,xs,ys);
     m_axisGraph->SetLineColor( Plot::WHITE );
     m_axisGraph->GetXaxis()->SetRangeUser( xs[0], xs[1] );
     m_axisGraph->GetYaxis()->SetRangeUser( ys[0], ys[1] );
-    if( !!m_xLabel ) 
+    if( !!m_xLabel )
         m_axisGraph->GetXaxis()->SetTitle( m_xLabel->c_str() );
     if( !!m_yLabel )
         m_axisGraph->GetYaxis()->SetTitle( m_yLabel->c_str() );
     m_axisGraph->SetTitle( m_title.c_str() );
-    m_axisGraph->Draw("AL");    
+    m_axisGraph->Draw("AL");
 
     // Draw all objects
     for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o) {
@@ -389,7 +389,7 @@ RangeM PlotHist::xRange() const {
     return boost::optional<Range>(
         Range(
             hist->GetXaxis()->GetXmin(),
-            hist->GetXaxis()->GetXmax() 
+            hist->GetXaxis()->GetXmax()
             ) );
 }
 
@@ -400,7 +400,7 @@ RangeM PlotHist::yRange() const {
         return boost::optional<Range>(
             Range(
                 hist->GetYaxis()->GetXmin(),
-                hist->GetYaxis()->GetXmax() 
+                hist->GetYaxis()->GetXmax()
                 ) );
     } else {
         // 1D histogram
@@ -464,8 +464,8 @@ void PlotGraph::plotOn(Plot*) {
         // This case is truly special. ROOT doesn't draw central line
         // so we need to create a separate plot for that
         graph->Draw( "3 SAME" );
-        if( graph->GetLineWidth() > 0 )            
-            graph->Draw( ("X"+opts).c_str() );            
+        if( graph->GetLineWidth() > 0 )
+            graph->Draw( ("X"+opts).c_str() );
         break;
     }
 }
