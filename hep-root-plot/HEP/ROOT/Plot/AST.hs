@@ -51,10 +51,6 @@ data Plot where
   Barchart  :: [(Double,Double)] -> Plot
   -- Polygon
   Polygon   :: [(Double,Double)] -> Plot
-  -- Plot function
-  Function  :: (Double,Double) -> (Double -> Double) -> Plot
-  -- Plot function using many points at same time
-  FunctionN :: Int -> (Double,Double) -> (Double -> Double) -> Plot
   -- Plot histogram
   Hist      :: Show (Histogram v bin a) => Histogram v bin a -> Plot
   -- Vertical line
@@ -194,13 +190,6 @@ renderPlot (Polygon vals)
   =  co "poly -\n"
   <> linesBS (map pair vals)
   <> co "<<<\n"
-renderPlot (Function    rng f)   =
-  renderPlot (FunctionN 128 rng f)
-renderPlot (FunctionN n (a,b) f) =
-  renderPlot $ Graph [ (x, f x)
-                     | i <- [0 .. n]
-                     , let x = a + (b - a) * fromIntegral i / fromIntegral n
-                     ]
 renderPlot (Hist  h   )
   =  co "hist -\n"
   <> fromString (show h)

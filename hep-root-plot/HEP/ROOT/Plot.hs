@@ -18,6 +18,10 @@ module HEP.ROOT.Plot (
   , add
   , plot
   , set
+    -- ** Plots
+  , function
+  , functionN
+  , ifunction
     -- ** Set
   , silent
   , title
@@ -114,6 +118,24 @@ plot = cmd . Plot
 
 set :: Cmd Option -> Cmd Command
 set = cmds Set
+
+
+
+----------------------------------------------------------------
+-- Plots
+----------------------------------------------------------------
+
+function :: (Double,Double) -> (Double -> Double) -> Plot
+function = functionN 256
+
+functionN :: Int -> (Double,Double) -> (Double -> Double) -> Plot
+functionN n (a,b) f = Graph [ (x,f x)
+                            | i <- [0 .. n]
+                            , let x = a + (b - a) * fromIntegral i / fromIntegral n
+                            ]
+
+ifunction :: (Int,Int) -> (Int -> Double) -> Plot
+ifunction (a,b) f = Graph [ (fromIntegral x, f x) | x <- [a .. b]]
 
 
 ----------------------------------------------------------------
