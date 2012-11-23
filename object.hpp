@@ -107,6 +107,8 @@ public:
     void draw(bool force = false);
     // Try to save plot into file
     void save(const std::string& str);
+    // Try to save topmost object into file
+    void saveObj(const std::string& str);
 
     // ======================================== //
     // Object manipulations

@@ -120,6 +120,14 @@ void Plot::save(const std::string& fname) {
     m_canvas->SaveAs(fname.c_str(), "Landscape");
 }
 
+void Plot::saveObj(const std::string& fname) {
+    if( !m_objStack.empty() ) {
+        TObject* o = m_objStack.back()->getRootObject();
+        if( o )
+            o->SaveAs(fname.c_str(), "Landscape");
+    }
+}
+
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
     // plot->plotOn(this);

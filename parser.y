@@ -117,6 +117,7 @@ void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
 %token KW_OFF
 %token KW_EXIT
 %token KW_SAVE
+%token KW_OBJECT
 %token KW_LEGEND
 
  // SET
@@ -174,6 +175,8 @@ line // Top level statement
   | KW_CLEAR eol                { par.plot->clear(); }
   | KW_EXIT  eol                { gApplication->Terminate(); }
   | KW_SAVE  TOK_WS TOK_STR eol { par.plot->save( boost::get<std::string>($3) ); }
+  | KW_SAVE  TOK_WS KW_OBJECT TOK_WS TOK_STR eol
+      { par.plot->saveObj( boost::get<std::string>( $5 ) ); }
   | KW_SET   TOK_WS set
   /* Plot commands */
   | KW_ADD   { par.clearPlot = false; } TOK_WS plot
