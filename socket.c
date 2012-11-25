@@ -6,7 +6,9 @@
 #include <string.h>
 
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
+#include <sys/un.h>
 
 #include <pwd.h>
 #include <unistd.h>
@@ -14,7 +16,7 @@
 
 
 // Find default path to the socket. Value is allocated on the heap
-char* default_socket() {
+char* rt_default_socket() {
     const  char   *tmpdir;
     char          *dir;
     struct stat    st;
@@ -49,4 +51,27 @@ char* default_socket() {
     mkdir(dir, 0700);           // Create directory
     strcat(dir, "/rt-socket");
     return dir;
+}
+
+
+int rt_connect(char* path) {
+    int len,s;
+    struct sockaddr_un remote;
+
+    // Get path to socket
+    if( path == NULL )
+        path = rt_default_socket();
+    // Create socket
+    if( (s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        return -1;
+    }
+    // Connect
+    remote.sun_family = AF_UNIX;
+    strcpy(remote.sun_path, path);
+    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
+    if (connect(s, (struct sockaddr*)&remote, len) == -1) {
+        close( s );
+        return -1;
+    }
+    return s;
 }

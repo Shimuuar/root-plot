@@ -74,7 +74,7 @@ int main(int argc, char** argv)
         }
     }
     if( !sock_path )
-        sock_path = default_socket();
+        sock_path = rt_default_socket();
 
     
     // Create socket
