@@ -12,6 +12,8 @@ endif
 
 
 INSTALLDIR=${HOME}/opt/bin
+LIBDIR    =${HOME}/opt/lib
+
 ################################################################
 # Strict aliasing is turned off since it triggers warning for
 # boost::optional. It maybe unjustified but it's better to be on safe
@@ -31,16 +33,21 @@ OBJS     = \
 	RtPlot.o      RtPlot-cint.o             \
 	RtMainFrame.o RtMainFrame-cint.o
 EXE      = rt-plot rt-listen rt-cat
+LIBS     = librt-plot.a
+
 
 ################################################################
 all : ${EXE}
 
+librt-plot.a : socket.o
+	ar -cvq $@ $^
+
 rt-plot : ${OBJS}
 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
-rt-listen: rt-listen.o socket.o
-	${C} ${CFLAGS} $^ -o $@
-rt-cat: rt-cat.o socket.o
-	${C} ${CFLAGS} $^ -o $@
+rt-listen: rt-listen.o  librt-plot.a
+	${C} ${CFLAGS}  $^ -o $@
+rt-cat: rt-cat.o librt-plot.a
+	${C} ${CFLAGS}  $^ -o $@
 
 # Add CINT classes.
 %-cint.h %-cint.cpp: %.hpp
@@ -60,12 +67,14 @@ parser.o : parser.l.cpp
 
 
 clean:
-	rm -rf *.o rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h ${EXE}
+	rm -rf *.o *.a rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h ${EXE}
 # Installation
 install: all
 	mkdir -p ${INSTALLDIR}
-	install rt-plot    ${INSTALLDIR}
-	install rt-listen  ${INSTALLDIR}
-	install rt-cat     ${INSTALLDIR}
-	install rt-tree    ${INSTALLDIR}
-	install rt-shell   ${INSTALLDIR}
+	mkdir -p ${LIBDIR}
+	install rt-plot      ${INSTALLDIR}
+	install rt-listen    ${INSTALLDIR}
+	install rt-cat       ${INSTALLDIR}
+	install rt-tree      ${INSTALLDIR}
+	install rt-shell     ${INSTALLDIR}
+	install librt-plot.a ${LIBDIR}
