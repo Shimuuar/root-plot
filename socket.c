@@ -15,8 +15,6 @@
 #include <unistd.h>
 
 
-
-// Find default path to the socket. Value is allocated on the heap
 char* rt_default_socket() {
     const  char   *tmpdir;
     char          *dir;
@@ -29,21 +27,15 @@ char* rt_default_socket() {
     if( !tmpdir )
         tmpdir = "/tmp";
     // Check that it is a directory
-    if( 0 != stat(tmpdir, &st) ) {
-        perror("rt-listen");
-        exit(1);
-    }
-    if( (st.st_mode & S_IFMT) != S_IFDIR ) {
-        fprintf(stderr, "rt-listen: TMPDIR is not a directory!\n");
-        exit(1);
-    }
+    if( 0 != stat(tmpdir, &st) )
+        return NULL;
+    if( (st.st_mode & S_IFMT) != S_IFDIR )
+        return NULL;
     // Get username
     uid = geteuid();
     pw  = getpwuid(uid);
-    if( !pw ) {
-        fprintf(stderr, "rt-listen: cannot find username\n");
-        exit(1);
-    }
+    if( !pw )
+        return NULL;
     // Fill default path
     dir = (char*)malloc(strlen(tmpdir) + 1 + strlen(pw->pw_name) + 10 + 1);
     strcpy(dir, tmpdir);
@@ -56,23 +48,29 @@ char* rt_default_socket() {
 
 
 int rt_connect(char* path) {
-    int len,s;
+    int   len,s;
+    char* to_free = NULL;
     struct sockaddr_un remote;
 
     // Get path to socket
-    if( path == NULL )
-        path = rt_default_socket();
+    if( NULL == path )
+        to_free = path = rt_default_socket();
+    if( NULL == path )
+        goto fail;
     // Create socket
-    if( (s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        return -1;
-    }
+    if( (s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+        goto fail;
     // Connect
     remote.sun_family = AF_UNIX;
     strcpy(remote.sun_path, path);
     len = strlen(remote.sun_path) + sizeof(remote.sun_family);
     if (connect(s, (struct sockaddr*)&remote, len) == -1) {
         close( s );
-        return -1;
+        goto fail;
     }
+    free(to_free);
     return s;
+fail:
+    free(to_free);
+    return -1;
 }
