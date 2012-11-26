@@ -1,6 +1,6 @@
 #define _XOPEN_SOURCE 500
 
-#include "socket.h"
+#include "rt-plot.h"
 
 #include <stdio.h>
 #include <stdlib.h>

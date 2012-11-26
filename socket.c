@@ -1,4 +1,5 @@
 #define _XOPEN_SOURCE 500
+#include "rt-plot.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -11,8 +11,10 @@ else
 endif 
 
 
-INSTALLDIR=${HOME}/opt/bin
-LIBDIR    =${HOME}/opt/lib
+INSTALLDIR=${HOME}/opt
+BINDIR    =${INSTALLDIR}/bin
+LIBDIR    =${INSTALLDIR}/lib
+INCLDIR   =${INSTALLDIR}/include
 
 ################################################################
 # Strict aliasing is turned off since it triggers warning for
@@ -70,11 +72,13 @@ clean:
 	rm -rf *.o *.a rt-biplot *-cint.cpp *-cint.h *.y.* *.l.* *.tab.h ${EXE}
 # Installation
 install: all
-	mkdir -p ${INSTALLDIR}
 	mkdir -p ${LIBDIR}
-	install rt-plot      ${INSTALLDIR}
-	install rt-listen    ${INSTALLDIR}
-	install rt-cat       ${INSTALLDIR}
-	install rt-tree      ${INSTALLDIR}
-	install rt-shell     ${INSTALLDIR}
+	mkdir -p ${BINDIR}
+	mkdir -p ${INCLDIR}
+	install rt-plot      ${BINDIR}
+	install rt-listen    ${BINDIR}
+	install rt-cat       ${BINDIR}
+	install rt-tree      ${BINDIR}
+	install rt-shell     ${BINDIR}
 	install librt-plot.a ${LIBDIR}
+	install rt-plot.h    ${INCLDIR}
