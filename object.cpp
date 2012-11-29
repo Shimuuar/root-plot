@@ -231,25 +231,34 @@ void Plot::setHistPalette( bool p ) {
         m_objStack.back()->setHistPalette( p );
 }
 
-RangeM Plot::xRange() const {
+static RangeM axisRange(boost::optional<double> low,
+                        boost::optional<double> hi,
+                        const Plot::Stack objs,
+                        Plot::Axis axis
+    )
+{
     // We have full range. It's fixed and need not any tweaking
-    if( m_xLow.is_initialized() && m_xHi.is_initialized() )
-        return boost::optional<Range>( Range( m_xLow.get(), m_xHi.get() ) );
+    if( low.is_initialized() && hi.is_initialized() )
+        return boost::optional<Range>( Range( low.get(), hi.get() ) );
     // Estimate range
     RangeM rng;
-    for(Stack::const_iterator i = m_objStack.begin(); i != m_objStack.end(); ++i ) {
-        rng = joinRange(rng, (*i)->xRange());
+    for(Plot::Stack::const_iterator i = objs.begin(); i != objs.end(); ++i ) {
+        switch( axis ) {
+        case Plot::X: rng = joinRange(rng, (*i)->xRange()); break;
+        case Plot::Y: rng = joinRange(rng, (*i)->yRange()); break;
+        // case Plot::Z: rng = joinRange(rnd, (*i)->zRange()); break;
+        }
     }
     // Tweak range if needed
     if( rng.is_initialized() ) {
         double delta = rng->hi - rng->low;
-        if( m_xLow.is_initialized() ) {
-            rng->low = m_xLow.get();
+        if( low.is_initialized() ) {
+            rng->low = low.get();
         } else {
             rng->low -= 0.03 * delta;
         }
-        if( m_xHi.is_initialized() ) {
-            rng->hi  = m_xHi.get();
+        if( hi.is_initialized() ) {
+            rng->hi  = hi.get();
         } else {
             rng->hi += 0.03 * delta;
         }
@@ -257,30 +266,12 @@ RangeM Plot::xRange() const {
     return rng;
 }
 
+RangeM Plot::xRange() const {
+    return axisRange( m_xLow, m_xHi, m_objStack, X );
+}
+
 RangeM Plot::yRange() const {
-    // We have full range.
-    if( m_yLow.is_initialized() && m_yHi.is_initialized() )
-        return boost::optional<Range>( Range( m_yLow.get(), m_yHi.get() ) );
-    // Estimate range
-    RangeM rng;
-    for(Stack::const_iterator i = m_objStack.begin(); i != m_objStack.end(); ++i ) {
-        rng = joinRange(rng, (*i)->yRange());
-    }
-    // Tweak range if needed
-    if( rng.is_initialized() ) {
-        double delta = rng->hi - rng->low;
-        if( m_yLow.is_initialized() ) {
-            rng->low = m_yLow.get();
-        } else {
-            rng->low -= 0.03 * delta;
-        }
-        if( m_yHi.is_initialized() ) {
-            rng->hi  = m_yHi.get();
-        } else {
-            rng->hi += 0.03 * delta;
-        }
-    }
-    return rng;
+    return axisRange( m_yLow, m_yHi, m_objStack, Y );
 }
 
 void Plot::setRange(Axis axis, boost::optional<double> a, boost::optional<double> b) {

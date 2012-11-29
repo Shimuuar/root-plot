@@ -89,6 +89,8 @@ public:
         Crosshairs,
         ErrorBand
     };
+    // Stack of objects
+    typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
     // Convert int to color. Values which are out of range are
     // converted to black.
@@ -180,8 +182,6 @@ public:
 private:
     // Remove everything from canvas
     void clearCanvas();
-
-    typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
     // Data
     TCanvas*                     m_canvas;    // Canvas to draw on
