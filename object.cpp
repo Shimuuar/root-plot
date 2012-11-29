@@ -328,6 +328,25 @@ void Plot::addPlotToLegend(const std::string& str) {
 }
 
 
+
+// ================================================================ //
+// ==== Plot object
+// ================================================================ //
+
+RangeM PlotObject::xRange() {
+    return boost::optional<Range>();
+}
+
+RangeM PlotObject::yRange() {
+    return boost::optional<Range>();
+}
+
+RangeM PlotObject::zRange() {
+    return boost::optional<Range>();
+}
+
+
+
 // ================================================================ //
 // ==== Histogram
 // ================================================================ //
@@ -721,14 +740,6 @@ void PlotLine::setLineWidth(int w) {
 
 void PlotLine::setLineColor(int col) {
     color = col;
-}
-
-RangeM PlotLine::xRange() const {
-    return boost::optional<Range>();
-}
-
-RangeM PlotLine::yRange() const {
-    return boost::optional<Range>();
 }
 
 

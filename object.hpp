@@ -220,9 +220,11 @@ public:
 
     // X range for object. Object should return minimal range in which
     // in could be fitted.
-    virtual RangeM xRange() const = 0;
+    virtual RangeM xRange();
     // Y range for object. Same as X range.
-    virtual RangeM yRange() const = 0;
+    virtual RangeM yRange();
+    // Z range for object. Same as X range.
+    virtual RangeM zRange();
 
     // Set color of line
     virtual void setLineColor(int) {}
@@ -383,8 +385,6 @@ public:
 
     virtual ~PlotLine() {}
     virtual void   plotOn(Plot* cxt);
-    virtual RangeM xRange() const;
-    virtual RangeM yRange() const;
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(int);
 private:
