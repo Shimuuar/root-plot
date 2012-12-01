@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ViewPatterns #-}
 -- | Additional combinators for plotter
 module HEP.ROOT.Plot.Extra (
@@ -5,9 +6,13 @@ module HEP.ROOT.Plot.Extra (
   , irectangle
   , lineRect
   , ilineRect
+    -- * Pretty plots
+  , addNiceHist
   ) where
 
 import HEP.ROOT.Plot
+import qualified Data.Histogram as H
+
 
 -- | Draw rectangle using polygon command
 rectangle :: Real a
@@ -50,3 +55,10 @@ ilineRect :: (Int,Int)         -- ^ X coordinates
 ilineRect (x1,x2) (y1,y2)
   = lineRect (fromIntegral x1 - 0.5 :: Double, fromIntegral x2 + 0.5)
              (fromIntegral y1 - 0.5 :: Double, fromIntegral y2 + 0.5)
+
+
+-- | Add nice 1D histogram
+addNiceHist :: (Show (H.Histogram bin v)) => H.Histogram bin v -> Cmd Command
+addNiceHist h = do
+  add $ Hist h
+  set $ fillColor (Col 20)
