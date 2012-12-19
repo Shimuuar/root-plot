@@ -377,8 +377,18 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
                 m_accum = makeNullAccum();
             }
         }
-    } else {
-        // We are parsing DSL
+    } else { // We are parsing DSL.
+        // Abort on comments
+        if( str.size() > 0 && str[0] == '#' )
+            return;
+        // Abort on empty lines
+        bool empty = true;
+        for( int i = 0; empty && i < str.size(); i++)
+            empty = isspace( str[i] );
+        if( empty )
+            return;
+        // Now we can lex.
+        std::cout << "STR: " << str << "|\n";
         YY_BUFFER_STATE state;
         state = yy_scan_string( str.c_str() );
         if( 0 != yyparse( ParseParam(this, plot) ) ) {
