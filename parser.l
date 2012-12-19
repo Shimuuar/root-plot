@@ -76,4 +76,6 @@ y           { return KW_Y;       }
 {strlit}    { *yylval = std::string( yytext+1, strlen(yytext+1) - 1 ); return TOK_STR; }
 -           { return TOK_DASH; }
 
+ /* Lexing error */
+.           { return TOK_BAD_LIT; }
 %%%

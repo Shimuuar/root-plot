@@ -110,6 +110,8 @@ void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
 %token TOK_INT
 %token TOK_DOUBLE
 %token TOK_DASH
+ // Bad literal. It's not present in any rules so it's automatically parse error.
+%token TOK_BAD_LIT
 
  // Keywords
 %token KW_CLEAR
