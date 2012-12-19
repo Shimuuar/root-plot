@@ -357,7 +357,7 @@ Parser::Parser()
 }
 
 void Parser::feedLine(Plot* plot, const std::string& str) {
-    if( accum ) {
+    if( m_accum ) {
         // Did we hit end of data marker?
         bool endOfData = str.size() >= 3
                       && str[0] == '<' && str[1] == '<' && str[2] == '<';
@@ -366,15 +366,15 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
 
         if( endOfData ) {
             // Flush and delete accumulator
-            if( ! accum->flush( plot ) ) {
+            if( ! m_accum->flush( plot ) ) {
                 std::cerr << "rt-plot: cannot add inline data to the plot";
             }
-            accum.reset();
+            m_accum.reset();
         } else {
             // Push one line to accumulator
-            if( !accum->feedLine(str) ) {
+            if( !m_accum->feedLine(str) ) {
                 std::cerr << "rt-plot: cannot parse inline data dropping to null parser\n";
-                accum = makeNullAccum();
+                m_accum = makeNullAccum();
             }
         }
     } else {
@@ -389,6 +389,6 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
     }
 
     // Redraw everything
-    if( !accum )
+    if( !m_accum )
         plot->draw();
 }

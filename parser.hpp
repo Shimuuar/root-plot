@@ -94,10 +94,10 @@ public:
     // Feed line to the parser
     void feedLine(Plot* plot, const std::string& str);
     // Templated setter for accumulator
-    void accumulate(PLineAccum a) { accum = a; }
+    void accumulate(PLineAccum a) { m_accum = a; }
 private:
     // Pointer to current accumulator
-    boost::shared_ptr<LineAccum> accum;
+    boost::shared_ptr<LineAccum> m_accum;
 };
 
 #endif /* RT_ROOT_PARSER__HPP__ */
