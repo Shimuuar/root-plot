@@ -246,7 +246,7 @@ static RangeM axisRange(boost::optional<double> low,
         switch( axis ) {
         case Plot::X: rng = joinRange(rng, (*i)->xRange()); break;
         case Plot::Y: rng = joinRange(rng, (*i)->yRange()); break;
-        // case Plot::Z: rng = joinRange(rnd, (*i)->zRange()); break;
+        case Plot::Z: rng = joinRange(rng, (*i)->zRange()); break;
         }
     }
     // Tweak range if needed
