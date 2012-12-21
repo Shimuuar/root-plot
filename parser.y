@@ -84,12 +84,14 @@ static double getDouble(const Token& tok) {
     return boost::apply_visitor(GetDoubleVisitor(), tok);
 }
 
+// Set parser for inline data
 void setParserStdin(PLineAccum acc, ParseParam& par) {
     if( par.clearPlot )
         par.plot->clear();
     par.parser->accumulate( acc );
 }
 
+// Set parser for data
 void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
     if( par.clearPlot )
         par.plot->clear();   
