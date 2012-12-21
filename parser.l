@@ -63,6 +63,7 @@ text        { return KW_TEXT;    }
 box         { return KW_BOX;     }
 contour     { return KW_CONTOUR; }
 palette     { return KW_PALETTE; }
+scatter     { return KW_SCATTER; }
 grid        { return KW_GRID;    }
 x           { return KW_X;       }
 y           { return KW_Y;       }
