@@ -47,6 +47,8 @@ data Plot where
   GraphErr  :: [(Double,(Double,Double))] -> Plot
   -- Sequence of points
   Graph1    :: [Double]          -> Plot
+  -- Sequence of points for 2D plot
+  Graph2D   :: [(Double,Double,Double)] -> Plot
   -- Barchart
   Barchart  :: [(Double,Double)] -> Plot
   -- Polygon
@@ -186,6 +188,10 @@ renderPlot (Graph1 ys )
   =  co "graph -\n"
   <> linesBS (map real ys)
   <> co "<<<\n"
+renderPlot (Graph2D ys )
+  =  co "graph2D -\n"
+  <> linesBS (map triple ys)
+  <> co "<<<\n"
 renderPlot (Barchart vals)
   =  co "barchart -\n"
   <> linesBS (map pair vals)
@@ -322,6 +328,10 @@ linesBS = mconcat . map (<> co "\n")
 pair :: (ShowBS a, ShowBS b) => (a,b) -> Builder
 pair (a,b) = serialize a <> co "\t" <> serialize b
 {-# INLINE pair #-}
+
+triple :: (ShowBS a, ShowBS b, ShowBS c) => (a,b,c) -> Builder
+triple (a,b,c) = serialize a <> co "\t" <> serialize b <> co "\t" <> serialize c
+{-# INLINE triple #-}
 
 pairE :: (ShowBS a, ShowBS b, ShowBS c) => (a,(b,c)) -> Builder
 pairE (a,(b,c)) = serialize a <> co "\t" <> serialize b <> co "\t" <> serialize c
