@@ -388,7 +388,6 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
         if( empty )
             return;
         // Now we can lex.
-        std::cout << "STR: " << str << "|\n";
         YY_BUFFER_STATE state;
         state = yy_scan_string( str.c_str() );
         if( 0 != yyparse( ParseParam(this, plot) ) ) {
