@@ -220,11 +220,11 @@ public:
 
     // X range for object. Object should return minimal range in which
     // in could be fitted.
-    virtual RangeM xRange();
+    virtual RangeM xRange() const;
     // Y range for object. Same as X range.
-    virtual RangeM yRange();
+    virtual RangeM yRange() const;
     // Z range for object. Same as X range.
-    virtual RangeM zRange();
+    virtual RangeM zRange() const;
 
     // Set color of line
     virtual void setLineColor(int) {}

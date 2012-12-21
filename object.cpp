@@ -333,15 +333,15 @@ void Plot::addPlotToLegend(const std::string& str) {
 // ==== Plot object
 // ================================================================ //
 
-RangeM PlotObject::xRange() {
+RangeM PlotObject::xRange() const {
     return boost::optional<Range>();
 }
 
-RangeM PlotObject::yRange() {
+RangeM PlotObject::yRange() const {
     return boost::optional<Range>();
 }
 
-RangeM PlotObject::zRange() {
+RangeM PlotObject::zRange() const {
     return boost::optional<Range>();
 }
 
