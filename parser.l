@@ -78,4 +78,13 @@ y           { return KW_Y;       }
 
  /* Lexing error */
 .           { return TOK_BAD_LIT; }
+<<EOF>>     {
+    // Ensure that EOF matches only once
+    static int once = 0;
+    if( (once = !once) )
+        return TOK_EOF;
+    else
+        return 0;
+  }
 %%%
+

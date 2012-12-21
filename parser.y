@@ -112,6 +112,8 @@ void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
 %token TOK_INT
 %token TOK_DOUBLE
 %token TOK_DASH
+ // Special token end of input
+%token TOK_EOF
  // Bad literal. It's not present in any rules so it's automatically parse error.
 %token TOK_BAD_LIT
 
@@ -355,8 +357,8 @@ setHist
 
 // End of line
 eol
-  : /* empty */
-  | TOK_WS
+  : TOK_EOF
+  | TOK_WS  TOK_EOF
   ;
 // Double valued token. Value sould be retrieved using getDouble
 double
