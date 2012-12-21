@@ -365,6 +365,6 @@ double
 // ON/OFF end of line switch
 onOff
   : eol               { par.onOff = true;  }
-  | TOK_WS KW_ON eol  { par.onOff = true;  }
+  | TOK_WS KW_ON  eol { par.onOff = true;  }
   | TOK_WS KW_OFF eol { par.onOff = false; }
 %%
