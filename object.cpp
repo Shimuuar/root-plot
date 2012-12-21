@@ -130,7 +130,6 @@ void Plot::saveObj(const std::string& fname) {
 
 void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
-    // plot->plotOn(this);
 }
 
 void Plot::setGrid(Axis axis, bool flag) {
