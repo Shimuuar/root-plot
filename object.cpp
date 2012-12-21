@@ -572,7 +572,8 @@ PlotGraph2D::PlotGraph2D(TGraph2D* g) :
 {}
 
 void PlotGraph2D::plotOn(Plot* cxt) {
-    // FIXME:
+    std::string opts = " SAME";
+    graph->Draw( opts.c_str() );
 }
 
 RangeM PlotGraph2D::xRange() const {
