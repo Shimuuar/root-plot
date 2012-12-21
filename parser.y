@@ -162,6 +162,7 @@ void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
 %token KW_PLOT
 %token KW_HIST
 %token KW_GRAPH
+%token KW_GRAPH2D
 %token KW_BARCHART
 %token KW_POLY
 %token KW_VLINE
@@ -193,6 +194,7 @@ line // Top level statement
 
 plot // Plotting command
   : KW_GRAPH    TOK_WS plot_graph
+  | KW_GRAPH2D  TOK_WS plot_graph2D
   | KW_BARCHART TOK_WS plot_barchart
   | KW_POLY     TOK_WS plot_poly
   | KW_HIST     TOK_WS plot_hist
@@ -215,6 +217,10 @@ plot // Plotting command
 plot_graph
   : TOK_DASH eol { setParserStdin( makeAccumGraph(), par     ); }
   | TOK_STR  eol { setParserFile ( makeAccumGraph(), par, $1 ); }
+// Plot 2D graph
+plot_graph2D
+  : TOK_DASH eol { setParserStdin( makeAccumGraph2D(), par     ); }
+  | TOK_STR  eol { setParserFile ( makeAccumGraph2D(), par, $1 ); }
 // Barchart
 plot_barchart
   : TOK_DASH eol { setParserStdin( makeAccumBarchart(), par     ); }

@@ -70,6 +70,9 @@ typedef boost::shared_ptr<LineAccum> PLineAccum;
 // Allocate accumulator for graphs
 PLineAccum makeAccumGraph();
 
+// Allocate accumulator for 2D graphs
+PLineAccum makeAccumGraph2D();
+
 // Allocate accumulator for polygons
 PLineAccum makeAccumPoly();
 
@@ -81,6 +84,8 @@ PLineAccum makeAccumHist();
 
 // Allocate null accumulator. It does nothing
 PLineAccum makeNullAccum();
+
+
 
 // ================================================================
 

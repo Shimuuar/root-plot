@@ -32,6 +32,7 @@ plot        { return KW_PLOT;     }
 add         { return KW_ADD;      }
 hist        { return KW_HIST;     }
 graph       { return KW_GRAPH;    }
+graph2D     { return KW_GRAPH2D;  }
 barchart    { return KW_BARCHART; }
 poly        { return KW_POLY;     }
 vline       { return KW_VLINE;    }

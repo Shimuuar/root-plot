@@ -10,6 +10,7 @@
 #include <boost/make_shared.hpp>
 
 #include <TGraph.h>
+#include <TGraph2D.h>
 #include <TGraphErrors.h>
 #include <TPolyLine.h>
 
@@ -109,24 +110,27 @@ protected:
     int i_dy;     // Symmetric error for Y
     int i_udy;    // Upper error for Y
     int i_ldy;    // Lower error for Y
+    int i_z;      // Z
 
     bool noHeader();   // Ho header is given
     bool unusableData(); // Some indices are out of range
     // Getter for columns
-    double* getX();
-    double* getDX()  { return getCol( i_dx );  }
+    double* getX(bool useSurrogate = true);
+    double* getDX()  { return getCol( i_dx  ); }
     double* getUDX() { return getCol( i_udx ); }
     double* getLDX() { return getCol( i_ldx ); }
-    double* getY()   { return getCol( i_y );   }
-    double* getDY()  { return getCol( i_dy );  }
+    double* getY()   { return getCol( i_y   ); }
+    double* getDY()  { return getCol( i_dy  ); }
     double* getUDY() { return getCol( i_udy ); }
     double* getLDY() { return getCol( i_ldy ); }
+    double* getZ()   { return getCol( i_z   ); }
     double* getCol(int i);
 };
 
 AccumGraph::AccumGraph() :
     i_x(-1), i_dx(-1), i_udx(-1), i_ldx(-1),
-    i_y(-1), i_dy(-1), i_udy(-1), i_ldy(-1)
+    i_y(-1), i_dy(-1), i_udy(-1), i_ldy(-1),
+    i_z(-1)
 {}
 
 AccumGraph::~AccumGraph()
@@ -134,19 +138,21 @@ AccumGraph::~AccumGraph()
 
 bool AccumGraph::noHeader() {
     return i_x < 0 && i_dx < 0 && i_udx < 0 && i_ldx < 0 &&
-           i_y < 0 && i_dy < 0 && i_udy < 0 && i_ldy < 0;
+           i_y < 0 && i_dy < 0 && i_udy < 0 && i_ldy < 0 &&
+           i_z < 0;
 }
 
 bool AccumGraph::unusableData() {
     int n = cols.size();
     return i_x >= n || i_dx >= n || i_udx >= n || i_ldx >= n ||
            i_y >= n || i_dy >= n || i_udy >= n || i_ldy >= n ||
+           i_z >= n ||
            n == 0;
 }
 
-double* AccumGraph::getX() {
+double* AccumGraph::getX(bool useSurrogate) {
     double* x = getCol( i_x );
-    if( x == 0 ) {
+    if( x == 0  &&  useSurrogate ) {
         size_t n = colSize();
         surrogateX.resize( n );
         for(unsigned i = 0; i < n; i++)
@@ -254,6 +260,47 @@ bool AccumGraph::flush(Plot* plot) {
 
 
 // ================================================================
+// Accumulator for 2D graphs
+class AccumGraph2D : public AccumGraph {
+public:
+    virtual ~AccumGraph2D();
+    virtual bool flush(Plot*);
+};
+
+AccumGraph2D::~AccumGraph2D()
+{}
+
+bool AccumGraph2D::flush(Plot* plot) {
+    // Use default column number if none have been given
+    if( noHeader() ) {
+        switch( cols.size() ) {
+        case 3:
+            i_x = 0;
+            i_y = 1;
+            i_z = 2;
+            break;
+        }
+    }
+    // Check that indices are OK
+    if( unusableData() )
+        return false;
+    // Get columns
+    double *x = getX(false);
+    double *y = getY();
+    double *z = getZ();
+    if( x && y && z ) {
+        plot->pushObject(
+            boost::make_shared<PlotGraph2D>(
+                new TGraph2D( colSize(), x, y, z ) ) );
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+// ================================================================
 // Accumulator for barchart
 class AccumBarchart : public AccumGraph {
 public:
@@ -328,6 +375,10 @@ PLineAccum makeNullAccum() {
 
 PLineAccum makeAccumGraph() {
     return boost::make_shared<AccumGraph>();
+}
+
+PLineAccum makeAccumGraph2D() {
+    return boost::make_shared<AccumGraph2D>();
 }
 
 PLineAccum makeAccumPoly() {
