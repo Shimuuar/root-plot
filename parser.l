@@ -38,6 +38,7 @@ barchart    { return KW_BARCHART; }
 poly        { return KW_POLY;     }
 vline       { return KW_VLINE;    }
 hline       { return KW_HLINE;    }
+abline      { return KW_ABLINE;   }
 vband       { return KW_VBAND;    }
 hband       { return KW_HBAND;    }
 

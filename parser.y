@@ -167,6 +167,7 @@ void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
 %token KW_POLY
 %token KW_VLINE
 %token KW_HLINE
+%token KW_ABLINE
 %token KW_VBAND
 %token KW_HBAND
 
@@ -203,6 +204,8 @@ plot // Plotting command
     { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Vertical,   getDouble($3) ) ); }
   | KW_HLINE TOK_WS double eol
     { par.plot->pushObject( boost::make_shared<PlotLine>( Plot::Horizontal, getDouble($3) ) ); }
+  | KW_ABLINE TOK_WS double TOK_WS double eol
+    { par.plot->pushObject( boost::make_shared<PlotLine>( getDouble($3), getDouble($5) ) ); }
     // Horizontal/vertical bands
   | KW_VBAND TOK_WS double TOK_WS double eol
     { par.plot->pushObject(

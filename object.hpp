@@ -375,21 +375,37 @@ private:
 // automatically
 class PlotLine : public PlotObject {
 public:
-    // Create vertical line at position x
+    // Create vertical/horizontal line at position x
     PlotLine(Plot::Line orientation_, double x_) :
+        abline( false ),
         orientation(orientation_),
         x(x_),
         color(Plot::BLACK),
         width(1)
     {}
-
+    // Create AB line with intercept b and slope k
+    PlotLine(double slope, double intrcpt) :
+        abline( true    ),
+        k     ( slope   ),
+        b     ( intrcpt ),
+        color(Plot::BLACK),
+        width(1)
+    {}
     virtual ~PlotLine() {}
     virtual void   plotOn(Plot* cxt);
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(int);
 private:
+    void plotVH(Plot* cxt);
+    void plotAB(Plot* cxt);
+    void doDraw();
+    // ABline
+    bool       abline;
+    double     k,b;
+    // Vertical/horizontal lines
     Plot::Line orientation;
     double     x;
+    // Drawing parameters
     int        color;
     int        width;
 

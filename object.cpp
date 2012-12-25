@@ -710,6 +710,29 @@ TObject* PlotPoly::getRootObject() {
 // ==== Line
 
 void PlotLine::plotOn(Plot* cxt) {
+    if( abline )
+        plotAB( cxt );
+    else
+        plotVH( cxt );
+}
+
+void PlotLine::plotAB(Plot* cxt) {
+    double xs[2];
+    double ys[2];
+    // Set coordinates
+    RangeM rng = cxt->xRange();
+    if( !rng )
+        return;
+    xs[0] = rng->low;
+    xs[1] = rng->hi;
+    ys[0] = k*xs[0] + b;
+    ys[1] = k*xs[1] + b;
+    // Draw
+    graph = boost::make_shared<TGraph>(2, xs, ys);
+    doDraw();
+}
+
+void PlotLine::plotVH(Plot* cxt) {
     // Fill arrays for graph
     double consts[2] = {x,x};
     double vars[2]   = {0,1};
@@ -729,6 +752,9 @@ void PlotLine::plotOn(Plot* cxt) {
     } else {
         graph = boost::make_shared<TGraph>(2, vars, consts);
     }
+}
+
+void PlotLine::doDraw() {
     graph->SetLineWidth( width );
     graph->SetLineColor( color );
     graph->Draw("SAME L");
