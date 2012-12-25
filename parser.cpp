@@ -352,14 +352,15 @@ AccumPoly::~AccumPoly()
 {}
 
 bool AccumPoly::flush(Plot* plot) {
-    int n = cols.size();
-    if( i_x < 0 || i_x >= n ||
-        i_y < 0 || i_y >= n || colSize() < 3)
-    {
+    // Check data
+    if( colSize < 3 )
         return false;
-    }
-    std::vector<double>& xs = cols[0];
-    std::vector<double>& ys = cols[1];
+    if( unusableData() || i_x < 0 || i_y < 0 )
+        return false;
+
+    // Build closed polygon
+    std::vector<double>& xs = cols[i_x];
+    std::vector<double>& ys = cols[i_y];
     xs.push_back( xs[0] );
     ys.push_back( ys[0] );
     plot->pushObject(
