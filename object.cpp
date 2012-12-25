@@ -571,7 +571,7 @@ PlotGraph2D::PlotGraph2D(TGraph2D* g) :
     graph ( g )
 {}
 
-void PlotGraph2D::plotOn(Plot* cxt) {
+void PlotGraph2D::plotOn(Plot*) {
     std::string opts = "SURF1";
     graph->Draw( opts.c_str() );
 }
