@@ -26,6 +26,7 @@ CXX      = g++
 CXXFLAGS = -g -O2 -fno-strict-aliasing  -Wall -Wextra `${ROOTCFG} --cflags`
 CFLAGS   = -g -O2 -Wall -Wextra -std=c99
 LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
+CLDFLAGS = -L. -lrt-plot
 PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp exceptions.hpp \
 	   RtMainFrame.hpp RtPlot.hpp
@@ -47,9 +48,9 @@ librt-plot.a : socket.o
 rt-plot : ${OBJS}
 	${CXX} ${CXXFLAGS} $^ -o $@ ${LDFLAGS}
 rt-listen: rt-listen.o  librt-plot.a
-	${C} ${CFLAGS}  $^ -o $@
+	${C} ${CFLAGS} $< -o $@ ${CLDFLAGS}
 rt-cat: rt-cat.o librt-plot.a
-	${C} ${CFLAGS}  $^ -o $@
+	${C} ${CFLAGS} $< -o $@ ${CLDFLAGS}
 
 # Add CINT classes.
 %-cint.h %-cint.cpp: %.hpp
