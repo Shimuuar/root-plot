@@ -316,6 +316,8 @@ bool AccumBarchart::flush(Plot* plot) {
     // Use default column number if none have been given
     if( noHeader() ) {
         switch( cols.size() ) {
+        case 1:
+            i_y  = 0;
         case 2:
             i_x  = 0;
             i_y  = 1;
