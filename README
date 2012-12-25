@@ -29,12 +29,13 @@ literals enclosed in double quotes.
 ## List of commands
 
 > exit
+> quit
 
 Exit program immediately
 
 > clear
 
-Remove all plots and all axis range adjustments.
+Remove all plots and reset all settings.
 
 > save "file name"
 
@@ -65,20 +66,36 @@ support most of the options and all histogram specific ones.
 
 > graph
 
-Simple graph with optional error bars. Support all line and marker
-options. 1,2,3 and 4 column data is supported.
+Simple graph with optional error bars. Support all line and marker options.
+
+Data format used by graph is shared by other plots. Data have optional header
+which tells what kind of data every column holds. It starts with `#' and column
+description are space separated. As general rule, if column no have meaning it's
+ignored. For example `graph' ignore Z coordinate.
+ 
+  + x,y,z   - X, Y or Z coordinate of point
+  + dx,dy   - symmetric errors
+  + ldx,ldy - lower part of asymmetric errors
+  + udx,udy - upper part of asymmetric errors
+  + _       - column is ignored
+
+If both symmetric and at least one asymmetric error is specified then asymmetric
+errors are used. If data for X coordinates is not specified then all surrogate
+values are used: 0, 1, etc.
+
+For common case it's possible to omit header. Then columns will have following
+meaning:
 
   1. List of Y coordinates. X coordinates are [0,1 .. ]
-
   2. X,Y pairs
-
   3. X,Y,ΔY triples. Error are symmetrical.
 
-  4. X,Y,ΔX,ΔY quadruples. Both errors are symmetrical.
 
 > barchart
 
-Bar chart. Data format is two column data X,Y pairs.
+Bar chart. Uses same data format as graph and accept X and Y coordinates. If X
+is not specified surrogate values [0,1..] are used.
+
 
 
 > poly
@@ -90,7 +107,8 @@ pairs and polygon is closed automatically.
 > vline [x]
 
 Vertical line at x. Its height is adjusted automatically so It covers
-whole plot. All line optional are supported.
+whole plot. All line options are supported. Lines do not participate in
+automatic range adjustment.
 
 
 > hline [y]
@@ -116,7 +134,7 @@ Horizontal band from y1 to y2. Similar to vband.
 > set ...
 
 Set options for object added last. If object doesn't support particular option
-or there is no object at all. It's a noop.
+or there is no object at all it's a noop.
 
 > set title "Plot title"
 
@@ -139,6 +157,8 @@ Set log scale for particular axis if no parameter or on is given. Or turn it off
 otherwise.
 
 > set [xaxis|yaxis|zaxis] range -
+> set [xaxis|yaxis|zaxis] range -      {real}
+> set [xaxis|yaxis|zaxis] range {real} -
 > set [xaxis|yaxis|zaxis] range {real} {real}
 
 Set axis to automatically adjust range (default) or to custom range.
