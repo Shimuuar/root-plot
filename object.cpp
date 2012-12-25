@@ -89,21 +89,17 @@ void Plot::draw(bool force) {
         ys[1] = rngY->hi;
     }
 
-    // Create invisible graph which holds axis for the plot. It's
-    // required because ROOT do not allow to resize axes arbitralily
-    // and one have to set them correctly upfront.
-    //
-    // On plus side axes are stored locally.
-    m_axisGraph = boost::make_shared<TGraph>(2,xs,ys);
-    m_axisGraph->SetLineColor( Plot::WHITE );
-    m_axisGraph->GetXaxis()->SetRangeUser( xs[0], xs[1] );
-    m_axisGraph->GetYaxis()->SetRangeUser( ys[0], ys[1] );
+    // Setting batch mode removes flicker when title is not set
+    m_canvas->SetBatch( true );
+    // Draw frame for the plots.
+    TH1* hist = m_canvas->DrawFrame( xs[0], ys[0], xs[1], ys[1] );
     if( !!m_xLabel )
-        m_axisGraph->GetXaxis()->SetTitle( m_xLabel->c_str() );
+        hist->GetXaxis()->SetTitle( m_xLabel->c_str() );
     if( !!m_yLabel )
-        m_axisGraph->GetYaxis()->SetTitle( m_yLabel->c_str() );
-    m_axisGraph->SetTitle( m_title.c_str() );
-    m_axisGraph->Draw("AL");
+        hist->GetYaxis()->SetTitle( m_yLabel->c_str() );
+    // Drawing title introduces flicker for some reason
+    if( m_title.size() > 0 )
+        hist->SetTitle( m_title.c_str() );
 
     // Draw all objects
     for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o) {
@@ -112,6 +108,8 @@ void Plot::draw(bool force) {
     // Draw legend
     if( m_legend )
         m_legend->Draw();
+    // Actually draw everything
+    m_canvas->SetBatch( false );
     m_canvas->Update();
 }
 

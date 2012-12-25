@@ -202,7 +202,6 @@ private:
     boost::shared_ptr<TLegend>   m_legend;    // Legend of the plot
     bool                         m_isSilent;  // Is silent mode on
     std::string                  m_title;     // Title of plot
-    boost::shared_ptr<TGraph>    m_axisGraph; // Graph which holds axis.
 };
 
 // Object which
