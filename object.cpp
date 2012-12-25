@@ -572,7 +572,7 @@ PlotGraph2D::PlotGraph2D(TGraph2D* g) :
 {}
 
 void PlotGraph2D::plotOn(Plot* cxt) {
-    std::string opts = " SAME CONT";
+    std::string opts = "SURF1";
     graph->Draw( opts.c_str() );
 }
 
