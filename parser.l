@@ -24,6 +24,7 @@ clear       { return KW_CLEAR;  }
 on          { return KW_ON;     }
 off         { return KW_OFF;    }
 exit        { return KW_EXIT;   }
+quit        { return KW_EXIT;   }
 save        { return KW_SAVE;   }
 object      { return KW_OBJECT; }
 legend      { return KW_LEGEND; }
