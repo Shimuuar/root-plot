@@ -25,7 +25,7 @@
 int main(int argc, char** argv)
 {
     int s, s2;
-    struct sockaddr_un local, remote;
+    struct sockaddr_un remote;
     char* sock_path = 0;
     char  buffer[BUF_SIZE];
 
@@ -49,28 +49,10 @@ int main(int argc, char** argv)
             exit(1);
         }
     }
-    if( !sock_path )
-        sock_path = rt_default_socket();
 
-    
-    // Create socket
-    if( (s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1 ) {
-        perror("socket");
-        exit(1);
-    }
-    // Bind socket
-    local.sun_family = AF_UNIX;
-    strcpy(local.sun_path, sock_path); // FIXME: buffer overrun!!!
-    unlink(local.sun_path);
-    
-    int len = strlen(local.sun_path) + sizeof(local.sun_family);
-    if (bind( s, (struct sockaddr *)&local, len) == -1) {
-        perror("bind");
-        exit(1);
-    }
-
-    if (listen(s, BACKLOG) == -1) {
-        perror("listen");
+    if( -1 == (s = rt_listen( sock_path, BACKLOG ) ) ) {
+        printf("NONNNN\n");
+        perror("rt-listen");
         exit(1);
     }
 
@@ -91,8 +73,7 @@ int main(int argc, char** argv)
                 exit(1);
             }
             // Write data to stdout
-            int nw = write(STDOUT_FILENO, buffer, n);
-            /* fprintf( stderr, "Bytes written %i of %i\n", nw, n); */
+            write(STDOUT_FILENO, buffer, n);
         }
         // Add line break
         write(STDOUT_FILENO, "\n", 1);

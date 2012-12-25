@@ -21,7 +21,7 @@ char* rt_default_socket() {
     struct stat    st;
     struct passwd *pw;
     uid_t          uid;
-    
+
     // Get temporary directory
     tmpdir = getenv("TMPDIR");
     if( !tmpdir )
@@ -72,5 +72,41 @@ int rt_connect(char* path) {
     return s;
 fail:
     free(to_free);
+    return -1;
+}
+
+
+int rt_listen(char* path, int maxConn) {
+    int   s;
+    struct sockaddr_un local;
+    char* to_free = NULL;
+    printf("rt_listen\n");
+    /* printf("%s\n", path);     */
+    // Get path to socket
+    if( NULL == path )
+        to_free = path = rt_default_socket();
+    if( NULL == path )
+        goto fail;
+
+    printf("%s\n", path);
+    // Create socket
+    if( (s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1 )
+        goto fail;
+    // Bind socket
+    local.sun_family = AF_UNIX;
+    strcpy(local.sun_path, path); // FIXME: buffer overrun!!!
+    unlink(local.sun_path);
+
+    int len = strlen(local.sun_path) + sizeof(local.sun_family);
+    if (bind( s, (struct sockaddr *)&local, len) == -1)
+        goto fail;
+
+    // Listen on socket
+    if (listen(s, maxConn) == -1)
+        goto fail;
+
+    return s;
+fail:
+    free( to_free );
     return -1;
 }

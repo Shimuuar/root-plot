@@ -11,4 +11,8 @@ char* rt_default_socket();
 // In case of failure -1 is returned
 int rt_connect(char* path);
 
+// Set socket to listen at. If path is NULL then default path is used.
+// Returns socket or -1 in case of failure.
+int rt_listen(char* path, int maxConn);
+
 #endif /* RT_ROOT_SOCKET__H__ */
