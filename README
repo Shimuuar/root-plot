@@ -116,6 +116,11 @@ automatic range adjustment.
 Horizontal line at y. Similar to vline.
 
 
+> abline [k] [b]
+
+Line with slope `k' and intercept `b'.
+
+
 > vband [x1] [x2]
 
 Vertical band from x1 to x2. Its height is adjusted automatically so
@@ -161,7 +166,8 @@ otherwise.
 > set [xaxis|yaxis|zaxis] range {real} -
 > set [xaxis|yaxis|zaxis] range {real} {real}
 
-Set axis to automatically adjust range (default) or to custom range.
+Set axis to automatically adjusted range (default) or to custom range. It's
+possible to set manually only upper or lower limit.
 
 > set line ...
 
