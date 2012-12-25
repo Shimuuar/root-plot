@@ -353,7 +353,7 @@ AccumPoly::~AccumPoly()
 
 bool AccumPoly::flush(Plot* plot) {
     // Check data
-    if( colSize < 3 )
+    if( colSize() < 3 )
         return false;
     if( unusableData() || i_x < 0 || i_y < 0 )
         return false;
