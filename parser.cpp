@@ -187,6 +187,7 @@ bool AccumGraph::parseHeader(const std::string& str) {
         else if( s == "dy"  ) i_dy  = i;
         else if( s == "udy" ) i_udy = i;
         else if( s == "ldy" ) i_ldy = i;
+        else if( s == "_"   ) return true;
         else return false;
     }
     return true;
