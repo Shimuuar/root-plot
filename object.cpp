@@ -750,6 +750,7 @@ void PlotLine::plotVH(Plot* cxt) {
     } else {
         graph = boost::make_shared<TGraph>(2, vars, consts);
     }
+    doDraw();
 }
 
 void PlotLine::doDraw() {
