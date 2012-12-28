@@ -44,6 +44,93 @@ void parseString<void>(const std::string& str, const std::string& prefix)
 // Histogram accumulation
 // ================================================================
 
+
+// Information about bins
+class BinInfo {
+public:
+    struct BinLog {};
+
+    // Normal linear bins
+    BinInfo(int n_, double min_, double max_);
+    // Logarithmic bins
+    BinInfo(int n, double min_, double max_, BinLog);
+
+    // Whether custom bins exists
+    bool haveBins() const { return bins.size() > 1; }
+
+    // Get number of bins
+    int     getN()    const;
+    double  getMin()  const { return min; }
+    double  getMax()  const { return max; }
+    double* getBins()       { return &bins[0]; }
+    //
+private:
+    int    n;
+    double min;
+    double max;
+    std::vector<double> bins;
+};
+
+typedef boost::shared_ptr<BinInfo> PBinInfo;
+
+BinInfo::BinInfo(int n_, double min_, double max_) :
+    n(n_), min(min_), max(max_)
+{
+    if( n < 0 || max < min )
+        throw ParseError("Bad linear bins");
+}
+
+BinInfo::BinInfo(int nLog, double xMin, double xMax, BinLog) :
+    bins(nLog + 1)
+{
+    if( nLog < 1 || xMin <= 0 || xMax <= 0 || xMax < xMin )
+        throw ParseError("Bad logarithmic bins");
+    //
+    double d = log(xMax / xMin) / nLog;
+    for( int i = 0; i <= nLog; i++ ) {
+        bins[i] = xMin * exp( d * i );
+    }
+}
+
+int BinInfo::getN() const {
+    if( haveBins() )
+        return bins.size() - 1;
+    else
+        return n;
+}
+
+TH1* allocHist1D( PBinInfo bin ) {
+    if( bin->haveBins() ) {
+        return new TH1D("FOO","", bin->getN(), bin->getBins());
+    } else {
+        return new TH1D("FOO","", bin->getN(), bin->getMin(), bin->getMax());
+    }
+}
+
+TH2* allocHist2D( PBinInfo bX, PBinInfo bY) {
+    //
+    if( bX->haveBins() && bY->haveBins() )
+        return new TH2D("FOO","",
+                        bX->getN(), bX->getBins(),
+                        bY->getN(), bY->getBins());
+    //
+    if( bX->haveBins() )
+        return new TH2D("FOO","",
+                        bX->getN(), bX->getBins(),
+                        bY->getN(), bY->getMin(), bY->getMax() );
+    //
+    if( bY->haveBins() )
+        return new TH2D("FOO","",
+                        bX->getN(), bX->getMin(), bX->getMax(),
+                        bY->getN(), bY->getBins());
+    //
+    return new TH2D("FOO","",
+                    bX->getN(), bX->getMin(), bX->getMax(),
+                    bY->getN(), bY->getMin(), bY->getMax() );
+}
+
+
+// ================================================================
 // Accumulator for histograms.
 class AccumHist : public LineAccum {
 public:
@@ -64,10 +151,11 @@ private:
     void parseHistogram1D(const std::string& bin);
     void parseHistogram2D();
     // Parse individual bin types
-    void parseBinI  (int& n, double& min, double& max);
-    void parseBinInt(int& n, double& min, double& max);
-    void parseBinF  (int& n, double& min, double& max);
-    void parseBin1D (const std::string& name, int& n, double& min, double& max);
+    PBinInfo parseBinI   ();
+    PBinInfo parseBinInt ();
+    PBinInfo parseBinF   ();
+    PBinInfo parseBinLogD();
+    PBinInfo parseBin1D (const std::string& name);
 
     std::list<std::string> header;   // Header parser.
     bool                   inHeader; // Do we parse header.
@@ -88,66 +176,66 @@ void AccumHist::add(const std::string& s) {
     header.push_back(s);
 }
 
-void AccumHist::parseBinI  (int& n, double& min, double& max) {
-    int lo,hi;
-    lo = parseString<int>(pop(), "# Low  = ");
-    hi = parseString<int>(pop(), "# High = ");
-    n   = hi - lo + 1;
-    min = lo - 0.5;
-    max = hi + 0.5;
-}
-void AccumHist::parseBinInt(int& n, double& min, double& max) {
-    int base,size;
-    base = parseString<int>(pop(), "# Base = ");
-    size = parseString<int>(pop(), "# Step = ");
-    n    = parseString<int>(pop(), "# Bins = ");
-    min  = base;
-    max  = base + n*size;
-}
-void AccumHist::parseBinF  (int& n, double& min, double& max) {
-    double step;
-    min  = parseString<double>(pop(), "# Base = ");
-    step = parseString<double>(pop(), "# Step = ");
-    n    = parseString<int>(pop(),    "# N    = ");
-    max = min + step*n;
+PBinInfo AccumHist::parseBinI() {
+    int lo = parseString<int>(pop(), "# Low  = ");
+    int hi = parseString<int>(pop(), "# High = ");
+    return boost::make_shared<BinInfo>(
+        (int)(hi - lo + 1),
+        lo - 0.5   ,
+        hi + 0.5   );
 }
 
-void AccumHist::parseBin1D(const std::string& name, int& n, double& min, double& max) {
-    if( name == "# BinPermute" ) {
-        pop();
-        parseBin1D(pop(), n, min, max);
-    } else if( name == "# BinI" ) {
-        parseBinI(n, min, max);
+PBinInfo AccumHist::parseBinInt() {
+    int base = parseString<int>(pop(), "# Base = ");
+    int size = parseString<int>(pop(), "# Step = ");
+    int n    = parseString<int>(pop(), "# Bins = ");
+    return boost::make_shared<BinInfo>(
+        n, base - 0.5*size, base + (n + 0.5) * size );
+}
+
+PBinInfo AccumHist::parseBinF() {
+    double min  = parseString<double>(pop(), "# Base = ");
+    double step = parseString<double>(pop(), "# Step = ");
+    int    n    = parseString<int>(pop(),    "# N    = ");
+    return boost::make_shared<BinInfo>(
+        n, min, min + step*n );
+}
+
+PBinInfo AccumHist::parseBinLogD() {
+    double lo = parseString<double>(pop(), "# Lo   = ");
+    int    n  = parseString<int>   (pop(), "# N    = ");
+    double hi = parseString<double>(pop(), "# Hi   = ");
+    return boost::make_shared<BinInfo>(
+        n, lo, hi, BinInfo::BinLog() );
+}
+
+PBinInfo AccumHist::parseBin1D(const std::string& name) {
+    if       ( name == "# BinI"   ) {
+        return parseBinI();
     } else if( name == "# BinInt" ) {
-        parseBinInt(n, min, max);
-    } else if( name == "# BinF" ) {
-        parseBinF(n, min, max);
-    } else if( name == "# BinD" ) {
-        parseBinF(n, min, max);
+        return parseBinInt();
+    } else if( name == "# BinF"   ) {
+        return parseBinF();
+    } else if( name == "# BinD"   ) {
+        return parseBinF();
+    } else if( name == "# LogBinD"   ) {
+        return parseBinLogD();
     } else {
         throw ParseError("unknown bin type '" + name + "'");
     }
 }
 
-void AccumHist::parseHistogram1D(const std::string& bin) {
-    int    nx;
-    double xMin, xMax;
-    parseBin1D(bin, nx, xMin, xMax);
-    hist = std::auto_ptr<TH1>( new TH1D("FOO", "", nx, xMin, xMax ) );
+void AccumHist::parseHistogram1D(const std::string& name) {
+    PBinInfo bin = parseBin1D(name);
+    hist = std::auto_ptr<TH1>( allocHist1D( bin ) );
 }
 
 void AccumHist::parseHistogram2D() {
-    int nx,ny;
-    double xMin, xMax;
-    double yMin, yMax;
     parseString<void>(pop(), "# X");
-    parseBin1D       (pop(), nx, xMin, xMax);
+    PBinInfo binX = parseBin1D(pop());
     parseString<void>(pop(), "# Y");
-    parseBin1D       (pop(), ny, yMin, yMax);
-    // Read histogram body
-    hist = std::auto_ptr<TH1>( new TH2D("FOO", "",
-                                        nx, xMin, xMax,
-                                        ny, yMin, yMax) );
+    PBinInfo binY = parseBin1D(pop());
+    hist = std::auto_ptr<TH1>( allocHist2D( binX, binY ) );
 }
 
 void AccumHist::parseHistogram() {
@@ -187,8 +275,11 @@ bool AccumHist::feedLine(const std::string& str) {
             if( nDim == 1 ) {
                 double x,y;
                 ok = 2 == sscanf(str.c_str(),"%lf %lf", &x, &y);
-                if( ok )
-                    hist->Fill(x,y);
+                if( ok ) {
+                    int    n = hist->FindBin( x );
+                    double w = hist->GetBinWidth( n );
+                    hist->SetBinContent( n, y / w );
+                }
             } else {
                 double x,y,z;
                 ok = 3 == sscanf(str.c_str(), "(%lf,%lf) %lf", &x, &y, &z);
@@ -199,6 +290,7 @@ bool AccumHist::feedLine(const std::string& str) {
                     return false;
                 }
                 if( ok )
+                    // FIXME: normalization
                     h->Fill(x,y,z);
             }
         }
