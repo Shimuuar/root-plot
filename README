@@ -158,8 +158,7 @@ Remove or set axis label
 > set [xaxis|yaxis|zaxis] log on
 > set [xaxis|yaxis|zaxis] log off
 
-Set log scale for particular axis if no parameter or on is given. Or turn it off
-otherwise.
+Turn log scale for given scale on/off. If no switch is given switches it on.
 
 > set [xaxis|yaxis|zaxis] range -
 > set [xaxis|yaxis|zaxis] range -      {real}
@@ -246,3 +245,30 @@ is disabled. It speed up drawing significantly.
 
 
 ### Legend
+
+
+## Constants
+
+### Colors
+
+Colors could be specified using either symbolic name or color number. Number
+have same meaning as they have in the ROOT. Accepted symbolic names are register
+independent. They are listed below:
+
+  - white
+  - black
+  - red
+  - green
+  - blue
+  - yellow
+  - magenta
+  - cyan
+  - forest
+  - violet
+
+
+
+### TODO
+
+line style
+marker style
