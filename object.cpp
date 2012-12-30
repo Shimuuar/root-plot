@@ -14,6 +14,13 @@
 #include <TLegend.h>
 #include <TPolyLine.h>
 
+static boost::optional<double> joinLogLow( boost::optional<double> a, boost::optional<double> b) {
+    if( ! a.is_initialized() )
+        return b;
+    if( ! b.is_initialized() )
+        return a;
+    return std::min( a.get(), b.get() );
+}
 
 static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
     if( ! r1.is_initialized() )
@@ -21,8 +28,16 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
     if( ! r2.is_initialized() )
         return r1;
     return Range( std::min(r1->low, r2->low) ,
-                  std::max(r1->hi,  r2->hi ) );
+                  std::max(r1->hi,  r2->hi ) ,
+                  joinLogLow( r1->logLow, r2->logLow ) );
 }
+
+void Range::padRange(double eps) {
+    double d = eps * (hi - low);
+    low -= d;
+    hi  += d;
+}
+
 
 // ================================================================ //
 // ==== Plot
@@ -80,12 +95,18 @@ void Plot::draw(bool force) {
 
     RangeM rngX = xRange();
     if( rngX.is_initialized() ) {
-        xs[0] = rngX->low;
+        if( m_xLog && rngX->logLow.is_initialized() )
+            xs[0] = rngX->logLow.get();
+        else
+            xs[0] = rngX->low;
         xs[1] = rngX->hi;
     }
     RangeM rngY = yRange();
     if( rngY.is_initialized() ) {
-        ys[0] = rngY->low;
+        if( m_yLog && rngY->logLow.is_initialized() )
+            ys[0] = rngY->logLow.get();
+        else
+            ys[0] = rngY->low;
         ys[1] = rngY->hi;
     }
 
@@ -248,17 +269,10 @@ static RangeM axisRange(boost::optional<double> low,
     }
     // Tweak range if needed
     if( rng.is_initialized() ) {
-        double delta = rng->hi - rng->low;
-        if( low.is_initialized() ) {
+        if( low.is_initialized() )
             rng->low = low.get();
-        } else {
-            rng->low -= 0.03 * delta;
-        }
-        if( hi.is_initialized() ) {
+        if( hi.is_initialized() )
             rng->hi  = hi.get();
-        } else {
-            rng->hi += 0.03 * delta;
-        }
     }
     return rng;
 }
@@ -401,30 +415,32 @@ void PlotHist::setFillStyle(int col) {
 }
 
 RangeM PlotHist::xRange() const {
-    return boost::optional<Range>(
-        Range(
-            hist->GetXaxis()->GetXmin(),
-            hist->GetXaxis()->GetXmax()
-            ) );
+    return Range( hist->GetXaxis()->GetXmin(),
+                  hist->GetXaxis()->GetXmax() );
 }
 
 RangeM PlotHist::yRange() const {
     TH2* h2d = dynamic_cast<TH2*>( &(*hist) );
     if( h2d ) {
         // 2D histogram
-        return boost::optional<Range>(
-            Range(
-                hist->GetYaxis()->GetXmin(),
-                hist->GetYaxis()->GetXmax()
-                ) );
+        return Range( hist->GetYaxis()->GetXmin(),
+                      hist->GetYaxis()->GetXmax() );
     } else {
         // 1D histogram
         int    n     = hist->GetNbinsX();
-        double yMax = 0;
-        for( int i = 1; i <= n; i++ )
-            yMax = std::max( yMax, hist->GetBinContent(i) );
-        return boost::optional<Range>(
-            Range( 0, 1.05 * yMax ) );
+        double yMax  = 0;
+        double yLLow = 1e308;
+        for( int i = 1; i <= n; i++ ) {
+            double bin = hist->GetBinContent(i);
+            yMax = std::max( yMax, bin );
+            if( bin > 0 )
+                yLLow = std::min( yLLow, bin );
+        }
+        yMax *= 1.05;
+        if( yLLow < 1e308 )
+            return Range( 0, yMax, yLLow / 3);
+        else
+            return Range( 0, yMax );
     }
 }
 
@@ -537,7 +553,9 @@ RangeM PlotGraph::xRange() const {
         hi         = *std::max_element(xs, xs+n);
         lo         = *std::min_element(xs, xs+n);
     }
-    return boost::optional<Range>( Range(lo, hi) );
+    Range r( lo, hi );
+    r.padRange( 0.03 );
+    return boost::optional<Range>( r );
 }
 
 RangeM PlotGraph::yRange() const {
@@ -553,7 +571,9 @@ RangeM PlotGraph::yRange() const {
         hi         = *std::max_element(ys, ys+n);
         lo         = *std::min_element(ys, ys+n);
     }
-    return boost::optional<Range>( Range(lo, hi) );
+    Range r( lo, hi );
+    r.padRange( 0.03 );
+    return boost::optional<Range>( r );
 }
 
 TObject* PlotGraph::getRootObject() {
@@ -682,9 +702,10 @@ RangeM PlotPoly::xRange() const {
         return boost::optional<Range>();
 
     double* xs    = poly->GetX();
-    double  hi    = *std::max_element(xs, xs+n);
-    double  lo    = *std::min_element(xs, xs+n);
-    return boost::optional<Range>( Range(lo, hi) );
+    Range r( *std::min_element(xs, xs+n),
+             *std::max_element(xs, xs+n) );
+    r.padRange( 0.03 );
+    return boost::optional<Range>( r );
 }
 
 RangeM PlotPoly::yRange() const {
@@ -693,9 +714,10 @@ RangeM PlotPoly::yRange() const {
         return boost::optional<Range>();
 
     double* ys   = poly->GetY();
-    double hi    = *std::max_element(ys, ys+n);
-    double lo    = *std::min_element(ys, ys+n);
-    return boost::optional<Range>( Range(lo, hi) );
+    Range r( *std::min_element(ys, ys+n),
+             *std::max_element(ys, ys+n) );
+    r.padRange( 0.03 );
+    return boost::optional<Range>( r );
 }
 
 TObject* PlotPoly::getRootObject() {

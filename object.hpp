@@ -23,8 +23,16 @@ struct Range {
     Range(double a, double b) :
         low(a), hi(b)
     {}
-    double low;
-    double hi;
+    Range(double a, double b, double loga) :
+        low(a), hi(b), logLow(loga)
+    {}
+    Range(double a, double b, boost::optional<double> loga) :
+        low(a), hi(b), logLow(loga)
+    {}
+    double low; // Low range
+    double hi;  // Hi range
+    boost::optional<double> logLow; // Optional low range for log scale
+    void padRange(double eps);
 };
 
 typedef boost::optional<Range> RangeM;
@@ -217,12 +225,11 @@ public:
     // bool  first - Whether object is first on the plot or not.
     virtual void plotOn(Plot* cxt) = 0;
 
-    // X range for object. Object should return minimal range in which
-    // in could be fitted.
+    // X range for object. Object should add any padding by itself.
     virtual RangeM xRange() const;
-    // Y range for object. Same as X range.
+    // Y range for object.
     virtual RangeM yRange() const;
-    // Z range for object. Same as X range.
+    // Z range for object.
     virtual RangeM zRange() const;
 
     // Set color of line
