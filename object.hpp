@@ -188,6 +188,12 @@ public:
     // Set palette of and off. Have effect iff color option is on.
     void setHistPalette( bool p );
 private:
+    // Layout of pads could be described by following data structure
+    //
+    // > Layout = Row    [(Double, Layout)]
+    // >        | Column [(Double, Layout)]
+    // >        | Pad    [PlotObject]
+
     // Remove everything from canvas
     void clearCanvas();
 
