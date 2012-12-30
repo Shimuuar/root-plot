@@ -15,6 +15,7 @@
 // ================================================================
 
 class Plot;
+class Pad;
 class Parser;
 
 // Token of the language
@@ -29,7 +30,8 @@ struct ParseParam {
         plot     (p),
         clearPlot(false),
         axis     (0),
-        onOff    (true)
+        onOff    (true),
+        pad(0)
     {}
     
     Parser*    parser;          // Pointer to parser
@@ -38,6 +40,11 @@ struct ParseParam {
     bool       clearPlot;       // Should we clear plot
     int        axis;            // Axis
     bool       onOff;           // ON/OFF flag
+
+    // Hack for dealing with 
+    Pad*       pad;             // Pointer to pad
+    // Sets pad to current pad and returns true if it's not null
+    bool operator()();
 };
 int yyparse(ParseParam);
 

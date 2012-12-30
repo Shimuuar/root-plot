@@ -44,9 +44,9 @@ void Range::padRange(double eps) {
 
 
 // ================================================================ //
-// ==== Plot
+// ==== Pad
 
-Plot::Plot(TCanvas* cnv) :
+Pad::Pad(TCanvas* cnv) :
     m_canvas(cnv),
     m_errorList(),
     m_xLog( false ),
@@ -58,7 +58,7 @@ Plot::Plot(TCanvas* cnv) :
 }
 
 // Remove everything from canvas
-void Plot::clearCanvas() {
+void Pad::clearCanvas() {
     // Delete extra canvases. They could appear when one creates slice
     TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
     for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
@@ -72,7 +72,7 @@ void Plot::clearCanvas() {
     m_canvas->SetLogz( m_zLog );
 }
 
-void Plot::clear() {
+void Pad::clear() {
     m_objStack.resize(0);
     m_errors.resize(0);
     m_gridX  = m_gridY = false;
@@ -88,7 +88,7 @@ void Plot::clear() {
     clearCanvas();
 }
 
-void Plot::draw(bool force) {
+void Pad::draw(bool force) {
     if( !force && m_isSilent )
         return;
     // Remove everything from canvas
@@ -153,16 +153,16 @@ void Plot::draw(bool force) {
     m_canvas->Update();
 }
 
-void Plot::reportError(const std::string& str) {
+void Pad::reportError(const std::string& str) {
     m_errors.push_back( str );
 }
 
-void Plot::save(const std::string& fname) {
+void Pad::save(const std::string& fname) {
     draw(true);
     m_canvas->SaveAs(fname.c_str(), "Landscape");
 }
 
-void Plot::saveObj(const std::string& fname) {
+void Pad::saveObj(const std::string& fname) {
     if( !m_objStack.empty() ) {
         TObject* o = m_objStack.back()->getRootObject();
         if( o )
@@ -170,45 +170,45 @@ void Plot::saveObj(const std::string& fname) {
     }
 }
 
-void Plot::pushObject(boost::shared_ptr<PlotObject> plot) {
+void Pad::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
 }
 
-void Plot::setGrid(Axis axis, bool flag) {
+void Pad::setGrid(Plot::Axis axis, bool flag) {
     switch( axis ) {
-    case X: m_gridX = flag; break;
-    case Y: m_gridY = flag; break;
+    case Plot::X: m_gridX = flag; break;
+    case Plot::Y: m_gridY = flag; break;
     default:;
     }
 }
 
-void Plot::setLabel(Axis axis, const std::string& label) {
+void Pad::setLabel(Plot::Axis axis, const std::string& label) {
     switch( axis ) {
-    case X: m_xLabel = label; break;
-    case Y: m_yLabel = label; break;
-    case Z: break;
+    case Plot::X: m_xLabel = label; break;
+    case Plot::Y: m_yLabel = label; break;
+    case Plot::Z: break;
     }
 }
 
-void Plot::setLogScale(Axis axis, bool l) {
+void Pad::setLogScale(Plot::Axis axis, bool l) {
     switch( axis ) {
-    case X: m_xLog = l; break;
-    case Y: m_yLog = l; break;
-    case Z: m_zLog = l; break;
+    case Plot::X: m_xLog = l; break;
+    case Plot::Y: m_yLog = l; break;
+    case Plot::Z: m_zLog = l; break;
     }
 }
 
-void Plot::setLineColor(int color) {
+void Pad::setLineColor(int color) {
     if( !m_objStack.empty() )
         m_objStack.back()->setLineColor(color);
 }
 
-void Plot::setFillColor(int color) {
+void Pad::setFillColor(int color) {
     if( !m_objStack.empty() )
         m_objStack.back()->setFillColor(color);
 }
 
-void Plot::setFillStyle(int s) {
+void Pad::setFillStyle(int s) {
     // Convert to ROOT encoding
     int style;
     if( s < 0 ) {
@@ -222,59 +222,59 @@ void Plot::setFillStyle(int s) {
         m_objStack.back()->setFillStyle(style);
 }
 
-void Plot::setLineWidth(int width) {
+void Pad::setLineWidth(int width) {
     if( !m_objStack.empty() )
         m_objStack.back()->setLineWidth(width);
 }
 
-void Plot::setLineStyle(Plot::LineStyle l) {
+void Pad::setLineStyle(Plot::LineStyle l) {
     if( !m_objStack.empty() )
         m_objStack.back()->setLineStyle( l );
 }
 
-void Plot::setMarkerStyle(Plot::MarkerStyle m) {
+void Pad::setMarkerStyle(Plot::MarkerStyle m) {
     if( !m_objStack.empty() )
         m_objStack.back()->setMarkerStyle( m );
 }
 
-void Plot::setErrorStyle(Plot::ErrorsStyle m) {
+void Pad::setErrorStyle(Plot::ErrorsStyle m) {
     if( !m_objStack.empty() )
         m_objStack.back()->setErrorStyle( m );
 }
 
-void Plot::setHistText( bool txt ) {
+void Pad::setHistText( bool txt ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistText( txt );
 }
 
-void Plot::setHistScatter( bool scat ) {
+void Pad::setHistScatter( bool scat ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistScatter( scat );
 }
 
-void Plot::setHistContour( int n ) {
+void Pad::setHistContour( int n ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistContour( n );
 }
 
-void Plot::setHistColor( bool c ) {
+void Pad::setHistColor( bool c ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistColor( c );
 }
 
-void Plot::setHistBox( bool c ) {
+void Pad::setHistBox( bool c ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistBox( c );
 }
 
-void Plot::setHistPalette( bool p ) {
+void Pad::setHistPalette( bool p ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistPalette( p );
 }
 
 static RangeM axisRange(boost::optional<double> low,
                         boost::optional<double> hi,
-                        const Plot::Stack objs,
+                        const Pad::Stack objs,
                         Plot::Axis axis
     )
 {
@@ -283,7 +283,7 @@ static RangeM axisRange(boost::optional<double> low,
         return boost::optional<Range>( Range( low.get(), hi.get() ) );
     // Estimate range
     RangeM rng;
-    for(Plot::Stack::const_iterator i = objs.begin(); i != objs.end(); ++i ) {
+    for(Pad::Stack::const_iterator i = objs.begin(); i != objs.end(); ++i ) {
         switch( axis ) {
         case Plot::X: rng = joinRange(rng, (*i)->xRange()); break;
         case Plot::Y: rng = joinRange(rng, (*i)->yRange()); break;
@@ -300,60 +300,60 @@ static RangeM axisRange(boost::optional<double> low,
     return rng;
 }
 
-RangeM Plot::xRange() const {
-    return axisRange( m_xLow, m_xHi, m_objStack, X );
+RangeM Pad::xRange() const {
+    return axisRange( m_xLow, m_xHi, m_objStack, Plot::X );
 }
 
-RangeM Plot::yRange() const {
-    return axisRange( m_yLow, m_yHi, m_objStack, Y );
+RangeM Pad::yRange() const {
+    return axisRange( m_yLow, m_yHi, m_objStack, Plot::Y );
 }
 
-void Plot::setRange(Axis axis, boost::optional<double> a, boost::optional<double> b) {
+void Pad::setRange(Plot::Axis axis, boost::optional<double> a, boost::optional<double> b) {
     switch( axis ) {
-    case X:
+    case Plot::X:
         m_xLow = a;
         m_xHi  = b;
         return;
-    case Y:
+    case Plot::Y:
         m_yLow = a;
         m_yHi  = b;
         return;
-    case Z:
+    case Plot::Z:
         // FIXME: treat Z!
         return;
     }
 }
 
-void Plot::setRange(Axis axis) {
+void Pad::setRange(Plot::Axis axis) {
     switch( axis ) {
-    case X:
+    case Plot::X:
         m_xLow.reset();
         m_xHi. reset();
         return;
-    case Y:
+    case Plot::Y:
         m_yLow.reset();
         m_yHi. reset();
         return;
-    case Z:
+    case Plot::Z:
         // FIXME: treat Z!
         return;
     }
 }
 
-void Plot::removeLegend() {
+void Pad::removeLegend() {
     m_legend.reset();
 }
 
-void Plot::addLegend(double x1, double y1, double x2, double y2) {
+void Pad::addLegend(double x1, double y1, double x2, double y2) {
     m_legend = boost::make_shared<TLegend>(x1, y1, x2, y2);
 }
 
-void Plot::addLegendString(const std::string& str) {
+void Pad::addLegendString(const std::string& str) {
     if( m_legend )
         m_legend->AddEntry(new TObject(), str.c_str(), "");
 }
 
-void Plot::addPlotToLegend(const std::string& str) {
+void Pad::addPlotToLegend(const std::string& str) {
     if( m_legend && !m_objStack.empty() ) {
         TObject* obj = m_objStack.back()->getRootObject();
         if( obj )
@@ -398,7 +398,7 @@ PlotHist::PlotHist(TH1* h) :
     h->SetStats( 0 );
 }
 
-void PlotHist::plotOn(Plot*) {
+void PlotHist::plotOn(Pad*) {
     std::string opt = "SAME";
     if( m_text )
         opt += " TEXT";
@@ -486,7 +486,7 @@ PlotGraph::PlotGraph(TGraph* g) :
     graph->SetFillColor( 20 );
 }
 
-void PlotGraph::plotOn(Plot*) {
+void PlotGraph::plotOn(Pad*) {
     std::string opts = " SAME";
     // Set line style
     switch( line ) {
@@ -612,7 +612,7 @@ PlotGraph2D::PlotGraph2D(TGraph2D* g) :
     graph ( g )
 {}
 
-void PlotGraph2D::plotOn(Plot*) {
+void PlotGraph2D::plotOn(Pad*) {
     std::string opts = "SURF1";
     graph->Draw( opts.c_str() );
 }
@@ -652,7 +652,7 @@ PlotBarChart::PlotBarChart( TGraph* g ) :
     graph->SetFillColor( 38 );
 }
 
-void PlotBarChart::plotOn(Plot*) {
+void PlotBarChart::plotOn(Pad*) {
     std::string opts = "B SAME";
     graph->Draw( opts.c_str() );
 }
@@ -694,7 +694,7 @@ PlotPoly::PlotPoly(TPolyLine* g) :
     setFillColor(20);
 }
 
-void PlotPoly::plotOn(Plot*) {
+void PlotPoly::plotOn(Pad*) {
     // std::string opts = "SAME";
     poly->Draw( "F" );
     if( width > 0 ) {
@@ -752,14 +752,14 @@ TObject* PlotPoly::getRootObject() {
 // ================================================================ //
 // ==== Line
 
-void PlotLine::plotOn(Plot* cxt) {
+void PlotLine::plotOn(Pad* cxt) {
     if( abline )
         plotAB( cxt );
     else
         plotVH( cxt );
 }
 
-void PlotLine::plotAB(Plot* cxt) {
+void PlotLine::plotAB(Pad* cxt) {
     double xs[2];
     double ys[2];
     // Set coordinates
@@ -775,7 +775,7 @@ void PlotLine::plotAB(Plot* cxt) {
     doDraw();
 }
 
-void PlotLine::plotVH(Plot* cxt) {
+void PlotLine::plotVH(Pad* cxt) {
     // Fill arrays for graph
     double consts[2] = {x,x};
     double vars[2]   = {0,1};
@@ -818,7 +818,7 @@ void PlotLine::setLineColor(int col) {
 // ==== Band
 
 
-void PlotBand::plotOn(Plot* cxt) {
+void PlotBand::plotOn(Pad* cxt) {
     // Determine range
     double lo = 0;
     double hi = 1;

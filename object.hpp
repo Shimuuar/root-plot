@@ -42,6 +42,7 @@ typedef boost::optional<Range> RangeM;
 // ================================================================ //
 
 class PlotObject;
+class Pad;
 
 class TObject;
 class TCanvas;
@@ -53,7 +54,39 @@ class TH1;
 class TPaveText;
 
 
-// Abstracts over ROOT's canvas.
+// Description of plot in general. It may contain several pads. Every
+// pad either contain row/column of other pads or plot. Data structure
+// could be described by following data structure:
+//
+// > Layout = Row    [(Double, Layout)]
+// >        | Column [(Double, Layout)]
+// >        | Pad    [PlotObject]
+// >        | Empty
+//
+// Object have invalid state. It's entered when invalid operation is
+// performed.
+//
+// By default all operation are performed on current pad. Possible
+// states and transitions are listed below. Any other operation will
+// bring plot into invalid state. Only way to clear invalid state is
+// to call clear.
+//
+//  * Initial state:
+//      Empty
+//  * Perform plotting operation:
+//      Empty → id
+//      Pad   → id
+//  * Add row/column:
+//      Empty → converts pad to Row/Column
+//  * Add pad
+//      Row/Column → Adds empty pad and makes it current
+//  * Pad completed
+//      Empty/Pad → moves one level up
+//  * Row/column completed
+//      Row/Column → moves one level up
+//
+//  NOTE. If we are at the root node attempt to move u will result in
+//  the invalid state.
 class Plot : public boost::noncopyable {
 public:
     // Allowed values of color
@@ -100,20 +133,61 @@ public:
         ErrorBand
     };
 
+    // Create layout with primary canvas.
+    Plot( TCanvas* );
+
+    // Report error to user.
+    void reportError(const std::string& str);  
+    // Reset everything
+    void clear();
+    // Draw everything
+    void draw();
+    // Set silent mode on/off. In silent mode canvas is not updated.
+    void setSilent(bool);
+    
+    // Make current pad into the row/column
+    void newRow( Plot::Line );
+    // Complete current row
+    void completeRow();
+    // Add new pad to the current row. Works only if pad doesn't
+    void addPad( double weight = 1 );
+    // Complete current pad
+    void completePad();
+   
+    // Get current plot. Returns NULL if is in the invalid state
+    // 
+    Pad* getCurrentPlot();
+    void pushObject( boost::shared_ptr<PlotObject> );
+private:
+    bool                     m_silent;  // Flag for silent mode
+    bool                     m_invalid; // Invalid state flag
+    std::vector<std::string> m_errors;  // List of errors
+    // boost::shared_ptr<TCanvas> m_canvas; // Master
+
+    // Layout data
+    class Layout;
+    Layout* data;
+};
+
+
+
+// Single plot on the canvas.
+class Pad : public boost::noncopyable {
+public:
     // Stack of objects
     typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
     // Convert int to color. Values which are out of range are
     // converted to black.
-    static Color toColor(int c) {
-        if( c < 0 || c > VIOLET )
-            return BLACK;
-        return Color(c);
+    static Plot::Color toColor(int c) {
+        if( c < 0 || c > Plot::VIOLET )
+            return Plot::BLACK;
+        return Plot::Color(c);
     }
 
     // Construct plot object which will draw on the canvas. Plot
     // object doesn't own canvas.
-    Plot(TCanvas* cnv);
+    Pad(TCanvas* cnv);
 
     // Draw everything. This is slow call since it first remove
     // everything from canvas and then redraws every element in stack
@@ -135,11 +209,11 @@ public:
     // Set silent mode on/off. In silent mode canvas is not updated.
     void setSilent(bool isSilent) { m_isSilent = isSilent; }
     // Set label for axis
-    void setLabel(Axis axis, const std::string& label);
+    void setLabel(Plot::Axis axis, const std::string& label);
     // Set log scale
-    void setLogScale(Axis axis, bool l);
+    void setLogScale(Plot::Axis axis, bool l);
     // Set grid
-    void setGrid(Axis ax, bool flag);
+    void setGrid(Plot::Axis ax, bool flag);
 
     // Push object on the top of stack;
     void pushObject(boost::shared_ptr<PlotObject> plot);
@@ -167,9 +241,9 @@ public:
     // Y range for plot
     RangeM yRange() const;
     // Set range for axis
-    void setRange(Axis axis, boost::optional<double> a, boost::optional<double> b);
+    void setRange(Plot::Axis axis, boost::optional<double> a, boost::optional<double> b);
     // Set range for axis to auto scale
-    void setRange(Axis axis);
+    void setRange(Plot::Axis axis);
 
     // Remove legend from plot. Noop if there is no legend
     void removeLegend();
@@ -193,12 +267,6 @@ public:
     // Set palette of and off. Have effect iff color option is on.
     void setHistPalette( bool p );
 private:
-    // Layout of pads could be described by following data structure
-    //
-    // > Layout = Row    [(Double, Layout)]
-    // >        | Column [(Double, Layout)]
-    // >        | Pad    [PlotObject]
-
     // Remove everything from canvas
     void clearCanvas();
 
@@ -225,6 +293,8 @@ private:
     std::string                  m_title;     // Title of plot
 };
 
+
+
 // Object which
 class PlotObject {
 public:
@@ -236,7 +306,7 @@ public:
     //
     // Plot* plot  - plot to draw on
     // bool  first - Whether object is first on the plot or not.
-    virtual void plotOn(Plot* cxt) = 0;
+    virtual void plotOn(Pad* cxt) = 0;
 
     // X range for object. Object should add any padding by itself.
     virtual RangeM xRange() const;
@@ -287,7 +357,7 @@ public:
     // copy.
     PlotHist(TH1* h);
 
-    virtual void     plotOn(Plot* cxt);
+    virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setLineWidth(int width);
@@ -323,7 +393,7 @@ public:
     // copy.
     PlotGraph(TGraph* g);
 
-    virtual void     plotOn(Plot* cxt);
+    virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setLineWidth(int width);
@@ -349,7 +419,7 @@ public:
     // copy.
     PlotGraph2D(TGraph2D* g);
 
-    virtual void     plotOn(Plot* cxt);
+    virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual TObject* getRootObject();
@@ -362,7 +432,7 @@ class PlotBarChart : public PlotGraph {
 public:
     PlotBarChart(TGraph* g);
 
-    virtual void     plotOn(Plot* cxt);
+    virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setFillColor(int);
@@ -376,7 +446,7 @@ public:
     // copy.
     PlotPoly(TPolyLine* g);
 
-    virtual void     plotOn(Plot* cxt);
+    virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual void     setLineWidth(int width);
@@ -411,12 +481,12 @@ public:
         width(1)
     {}
     virtual ~PlotLine() {}
-    virtual void   plotOn(Plot* cxt);
+    virtual void   plotOn(Pad* cxt);
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(int);
 private:
-    void plotVH(Plot* cxt);
-    void plotAB(Plot* cxt);
+    void plotVH(Pad* cxt);
+    void plotAB(Pad* cxt);
     void doDraw();
     // ABline
     bool       abline;
@@ -447,7 +517,7 @@ public:
     {}
 
     virtual ~PlotBand() {}
-    virtual void   plotOn(Plot* cxt);
+    virtual void   plotOn(Pad* cxt);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
     virtual void   setFillColor(int);

@@ -14,6 +14,9 @@
 #include <TGraphErrors.h>
 #include <TPolyLine.h>
 
+bool ParseParam::operator()(){
+    return (pad = plot->getCurrentPlot()) != 0;
+}
 
 namespace {
 
