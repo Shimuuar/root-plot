@@ -102,8 +102,8 @@ public:
         FOREST  = 8,
         VIOLET  = 9
     };
-    // Line orientation
-    enum Line {
+    // Orientation
+    enum Orientation {
         Vertical,
         Horizontal
     };
@@ -146,7 +146,7 @@ public:
     void setSilent(bool);
     
     // Make current pad into the row/column
-    void newRow( Plot::Line );
+    void newRow( Plot::Orientation );
     // Complete current row
     void completeRow();
     // Add new pad to the current row. Works only if pad doesn't
@@ -465,7 +465,7 @@ private:
 class PlotLine : public PlotObject {
 public:
     // Create vertical/horizontal line at position x
-    PlotLine(Plot::Line orientation_, double x_) :
+    PlotLine(Plot::Orientation orientation_, double x_) :
         abline( false ),
         orientation(orientation_),
         x(x_),
@@ -492,8 +492,8 @@ private:
     bool       abline;
     double     k,b;
     // Vertical/horizontal lines
-    Plot::Line orientation;
-    double     x;
+    Plot::Orientation orientation;
+    double            x;
     // Drawing parameters
     int        color;
     int        width;
@@ -506,7 +506,7 @@ private:
 class PlotBand : public PlotObject {
 public:
     // Create vertical line at position x
-    PlotBand(Plot::Line orientation_, double x1_, double x2_) :
+    PlotBand(Plot::Orientation orientation_, double x1_, double x2_) :
         orientation(orientation_),
         x1   (x1_ < x2 ? x1_ : x2_),
         x2   (x1_ < x2 ? x2_ : x1_),
@@ -525,9 +525,9 @@ public:
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(int);
 private:
-    Plot::Line orientation;
-    double     x1,x2;
-    int        width, color, fill, fillStyle;
+    Plot::Orientation orientation;
+    double            x1,x2;
+    int               width, color, fill, fillStyle;
 
     boost::shared_ptr<TPolyLine> poly;
 };
