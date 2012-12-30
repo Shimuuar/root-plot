@@ -447,6 +447,7 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
         state = yy_scan_string( str.c_str() );
         if( 0 != yyparse( ParseParam(this, plot) ) ) {
             std::cerr << "  in string: '" << str << "'\n";
+            plot->reportError( "Syntax error: " + str );
         }
         // Parse completed
         yy_delete_buffer( state );

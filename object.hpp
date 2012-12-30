@@ -50,6 +50,8 @@ class TGraph;
 class TGraph2D;
 class TPolyLine;
 class TH1;
+class TPaveText;
+
 
 // Abstracts over ROOT's canvas.
 class Plot : public boost::noncopyable {
@@ -97,6 +99,7 @@ public:
         Crosshairs,
         ErrorBand
     };
+
     // Stack of objects
     typedef std::vector< boost::shared_ptr<PlotObject> > Stack;
 
@@ -119,6 +122,8 @@ public:
     void save(const std::string& str);
     // Try to save topmost object into file
     void saveObj(const std::string& str);
+    // Report error to user
+    void reportError(const std::string& str);
 
     // ======================================== //
     // Object manipulations
@@ -200,6 +205,8 @@ private:
     // Data
     TCanvas*                     m_canvas;    // Canvas to draw on
     Stack                        m_objStack;  // Stack of objects
+    std::vector<std::string>     m_errors;    // List of the errors
+    boost::shared_ptr<TPaveText> m_errorList; // Pad for displaying errors
     // Axis
     bool                         m_gridX;     // Grid along X
     bool                         m_gridY;     // Grid along Y

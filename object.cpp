@@ -1,6 +1,7 @@
 
 #include "object.hpp"
 
+#include <cmath>
 #include <algorithm>
 #include <boost/make_shared.hpp>
 
@@ -13,6 +14,9 @@
 #include <TROOT.h>
 #include <TLegend.h>
 #include <TPolyLine.h>
+#include <TPaveText.h>
+
+
 
 static boost::optional<double> joinLogLow( boost::optional<double> a, boost::optional<double> b) {
     if( ! a.is_initialized() )
@@ -44,6 +48,7 @@ void Range::padRange(double eps) {
 
 Plot::Plot(TCanvas* cnv) :
     m_canvas(cnv),
+    m_errorList(),
     m_xLog( false ),
     m_yLog( false ),
     m_zLog( false ),
@@ -69,6 +74,7 @@ void Plot::clearCanvas() {
 
 void Plot::clear() {
     m_objStack.resize(0);
+    m_errors.resize(0);
     m_gridX  = m_gridY = false;
     m_xLog   = m_yLog = m_zLog = false;
     m_title  = "";
@@ -129,9 +135,26 @@ void Plot::draw(bool force) {
     // Draw legend
     if( m_legend )
         m_legend->Draw();
+    // Draw errors if there is any
+    if( m_errors.size() != 0 ) {
+        double yLo;
+        if( m_yLog )
+            yLo = sqrt( ys[0] * ys[1] );
+        else
+            yLo = 0.5 * (ys[1] + ys[0]);
+        m_errorList = boost::make_shared<TPaveText>( xs[0], ys[1], xs[1], yLo );
+        for( size_t i = 0; i < m_errors.size(); i++ ) {
+            m_errorList->AddText( m_errors[i].c_str() );
+        }
+        m_errorList->Draw();
+    }
     // Actually draw everything
     m_canvas->SetBatch( false );
     m_canvas->Update();
+}
+
+void Plot::reportError(const std::string& str) {
+    m_errors.push_back( str );
 }
 
 void Plot::save(const std::string& fname) {
