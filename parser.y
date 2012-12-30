@@ -10,6 +10,7 @@
 #include <boost/make_shared.hpp>
 
 
+using boost::get;
     
 void yyerror(ParseParam, const char* err) {
     std::cerr << "rt-plot: " << err << std::endl;
@@ -95,7 +96,7 @@ static void setParserStdin(PLineAccum acc, ParseParam& par) {
 static void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
     if( par.clearPlot )
         par.plot->clear();   
-    acc->readFromFile(boost::get<std::string>(tok), par.plot);
+    acc->readFromFile(get<std::string>(tok), par.plot);
 }
 
 // Set grid for both axes
@@ -191,9 +192,9 @@ line // Top level statement
   | KW_CLEAR eol                { par.plot->clear(); }
   | KW_EXIT  eol                { gApplication->Terminate(); }
   | KW_SAVE  TOK_WS TOK_STR eol
-      { if( par() ) par.pad->save( boost::get<std::string>($3) ); }
+      { if( par() ) par.pad->save( get<std::string>($3) ); }
   | KW_SAVE  TOK_WS KW_OBJECT TOK_WS TOK_STR eol
-      { if( par() ) par.pad->saveObj( boost::get<std::string>( $5 ) ); }
+      { if( par() ) par.pad->saveObj( get<std::string>( $5 ) ); }
   | KW_SET   TOK_WS set
   /* Plot commands */
   | KW_ADD   { par.clearPlot = false; } TOK_WS plot
@@ -260,9 +261,9 @@ legend
                 getDouble( $9 ) );
     }
   | KW_ADD TOK_WS TOK_STR eol
-    { if( par() ) par.pad->addPlotToLegend( boost::get<std::string>( $3 ) ); }
+    { if( par() ) par.pad->addPlotToLegend( get<std::string>( $3 ) ); }
   | KW_ADD TOK_WS KW_LABEL TOK_WS TOK_STR eol
-    { if( par() ) par.pad->addLegendString( boost::get<std::string>( $5 ) ); }
+    { if( par() ) par.pad->addLegendString( get<std::string>( $5 ) ); }
 
 
 set
@@ -271,7 +272,7 @@ set
   | KW_HIST   TOK_WS setHist
   | KW_SILENT TOK_WS KW_ON    eol { if( par() ) par.pad->setSilent( true  ); }
   | KW_SILENT TOK_WS KW_OFF   eol { if( par() ) par.pad->setSilent( false ); }
-  | KW_TITLE  TOK_WS TOK_STR  eol { if( par() ) par.pad->setTitle( boost::get<std::string>( $3 ) ); }
+  | KW_TITLE  TOK_WS TOK_STR  eol { if( par() ) par.pad->setTitle( get<std::string>( $3 ) ); }
   | KW_ERROR  TOK_WS TOK_DASH eol { if( par() ) par.pad->setErrorStyle( Plot::NoErrors   ); }
   | KW_ERROR  TOK_WS KW_CROSS eol { if( par() ) par.pad->setErrorStyle( Plot::Crosshairs ); }
   | KW_ERROR  TOK_WS KW_BAND  eol { if( par() ) par.pad->setErrorStyle( Plot::ErrorBand  ); }
@@ -296,7 +297,7 @@ setAxis
   : KW_LABEL TOK_WS TOK_DASH eol
     { if( par() ) par.pad->setLabel(Plot::Axis(par.axis), ""); }
   | KW_LABEL TOK_WS TOK_STR  eol
-    { if( par() ) par.pad->setLabel(Plot::Axis(par.axis), boost::get<std::string>( $3 )); }
+    { if( par() ) par.pad->setLabel(Plot::Axis(par.axis), get<std::string>( $3 )); }
   | KW_LOG   onOff
     { if( par() ) par.pad->setLogScale(Plot::Axis(par.axis), par.onOff ); }
   | KW_RANGE TOK_WS TOK_DASH eol
@@ -342,24 +343,24 @@ setAxis
 // Line options
 setLine
   : KW_WIDTH  TOK_WS TOK_INT eol
-    { if( par() ) par.pad->setLineWidth( boost::get<int>($3) ); }
+    { if( par() ) par.pad->setLineWidth( get<int>($3) ); }
   | KW_COLOR  TOK_WS TOK_INT eol
-    { if( par() ) par.pad->setLineColor( boost::get<int>($3) ); }
+    { if( par() ) par.pad->setLineColor( get<int>($3) ); }
   | KW_COLOR  TOK_WS TOK_STR eol
-    { if( par() ) par.pad->setLineColor( strToColor( boost::get<std::string>( $3 ) ) ); }
+    { if( par() ) par.pad->setLineColor( strToColor( get<std::string>( $3 ) ) ); }
   | KW_STYLE  TOK_WS TOK_STR eol
-    { if( par() ) par.pad->setLineStyle( strToLine( boost::get<std::string>( $3 ) ) ); }
+    { if( par() ) par.pad->setLineStyle( strToLine( get<std::string>( $3 ) ) ); }
   | KW_MARKER TOK_WS TOK_STR eol
-    { if( par() ) par.pad->setMarkerStyle( strToMarker( boost::get<std::string>( $3 ) ) ); }
+    { if( par() ) par.pad->setMarkerStyle( strToMarker( get<std::string>( $3 ) ) ); }
 
 // Fill options
 setFill
   : KW_COLOR TOK_WS TOK_INT eol
-    { if( par() ) par.pad->setFillColor( boost::get<int>($3) ); }
+    { if( par() ) par.pad->setFillColor( get<int>($3) ); }
   | KW_COLOR TOK_WS TOK_STR eol
-    { if( par() ) par.pad->setFillColor( strToColor( boost::get<std::string>( $3 ) ) ); }
+    { if( par() ) par.pad->setFillColor( strToColor( get<std::string>( $3 ) ) ); }
   | KW_STYLE TOK_WS TOK_INT eol
-    { if( par() ) par.pad->setFillStyle( boost::get<int>( $3 ) ); }
+    { if( par() ) par.pad->setFillStyle( get<int>( $3 ) ); }
 
 // Histogram options
 setHist
@@ -374,7 +375,7 @@ setHist
   | KW_CONTOUR onOff
     { if( par() ) par.pad->setHistContour( par.onOff ? 10 : -1 ); } // 10 is default number of contours
   | KW_CONTOUR TOK_WS TOK_INT eol
-    { if( par() ) par.pad->setHistContour( boost::get<int>( $3 ) ); }
+    { if( par() ) par.pad->setHistContour( get<int>( $3 ) ); }
   | KW_PALETTE onOff
     { if( par() ) par.pad->setHistPalette( par.onOff ); }
 
