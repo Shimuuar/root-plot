@@ -6,10 +6,8 @@
 #include "object.hpp"
 #include "parser.hpp"
 
-
-
 #include "RtPlot.hpp"
-//#include "reader.hpp"
+
 
 
 static const char* dummy_argv[] = {"rt-plot"};
