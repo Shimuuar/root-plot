@@ -134,6 +134,9 @@ static void setGrid(ParseParam& par, bool x, bool y) {
 %token KW_SAVE
 %token KW_OBJECT
 %token KW_LEGEND
+%token KW_PAD
+%token KW_ROW
+%token KW_COLUMN
 
  // SET
 %token KW_SET
@@ -169,6 +172,7 @@ static void setGrid(ParseParam& par, bool x, bool y) {
  // PLOT
 %token KW_ADD
 %token KW_PLOT
+%token KW_END
 %token KW_HIST
 %token KW_GRAPH
 %token KW_GRAPH2D
@@ -196,12 +200,23 @@ line // Top level statement
   | KW_SAVE  TOK_WS KW_OBJECT TOK_WS TOK_STR eol
       { if( par() ) par.pad->saveObj( get<std::string>( $5 ) ); }
   | KW_SET   TOK_WS set
-  /* Plot commands */
-  | KW_ADD   { par.clearPlot = false; } TOK_WS plot
+  /* Plot commands. Add is used to add rows/columns/pads as well */
+  | KW_ADD   { par.clearPlot = false; } TOK_WS addPlot
   | KW_PLOT  { par.clearPlot = true;  } TOK_WS plot
+  /* End row/column/pad commands  */
+  | KW_END TOK_WS KW_ROW    eol { par.plot->completeRow(); }
+  | KW_END TOK_WS KW_COLUMN eol { par.plot->completeRow(); }
+  | KW_END TOK_WS KW_PAD    eol { par.plot->completePad(); }
   /* Legend */
   | KW_LEGEND TOK_WS legend
   ;
+
+addPlot
+  : KW_ROW    eol            { par.plot->addRow( Plot::Horizontal ); }
+  | KW_COLUMN eol            { par.plot->addRow( Plot::Vertical   ); }
+  | KW_PAD               eol { par.plot->addPad( 1 );                }
+  | KW_PAD TOK_WS double eol { par.plot->addPad( getDouble( $3 ) );  }
+  | plot
 
 plot // Plotting command
   : KW_GRAPH    TOK_WS plot_graph

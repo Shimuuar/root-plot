@@ -28,9 +28,13 @@ quit        { return KW_EXIT;   }
 save        { return KW_SAVE;   }
 object      { return KW_OBJECT; }
 legend      { return KW_LEGEND; }
+pad         { return KW_PAD;    }
+row         { return KW_ROW;    }
+column      { return KW_COLUMN; }
 
 plot        { return KW_PLOT;     }
 add         { return KW_ADD;      }
+end         { return KW_END;      }
 hist        { return KW_HIST;     }
 graph       { return KW_GRAPH;    }
 graph2D     { return KW_GRAPH2D;  }

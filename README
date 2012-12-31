@@ -42,6 +42,33 @@ Remove all plots and reset all settings.
 Save current plot to file
 
 
+### Multiple pads
+
+It's possible to arrange plot in several pad. Every pad is independent from
+others. They are arranged in rows and columns. Every pad is either row/column of
+more pads or plot.
+
+In order to add row/column use
+
+> add row 
+> add column
+
+This command introduce row mode in which only pads could be added. It must be
+finished by
+
+> end row
+> end column
+
+In order to add new pad use. This command only valid in row/column mode.
+
+> add pad
+> add pad [weight]
+
+After that one could use normal drawing commands. Pad is terminated by command
+
+> end pad
+
+
 
 ### Plot
 
