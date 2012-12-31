@@ -169,12 +169,14 @@ private:
     void destroyLayout();
     class Layout;
     
-    bool                     m_silent;  // Flag for silent mode
-    std::vector<std::string> m_errors;  // List of errors
-    TCanvas*                 m_canvas;  // Main canvas. Not owned
+    bool                         m_silent;    // Flag for silent mode
+    std::vector<std::string>     m_errors;    // List of errors
+    boost::shared_ptr<TPad>      m_errorPad;  // TPad for reporting errors
+    boost::shared_ptr<TPaveText> m_errorText; // Text area to add errors
+    TCanvas*                     m_canvas;    // Main canvas. Not owned
     
-    Layout*                  m_layout;  // Pads layout
-    Layout*                  m_current; // Current pad. NULL indicates invalid state
+    Layout*  m_layout;  // Pads layout
+    Layout*  m_current; // Current pad. NULL indicates invalid state
 };
 
 
@@ -204,8 +206,6 @@ public:
     void save(const std::string& str);
     // Try to save topmost object into file
     void saveObj(const std::string& str);
-    // Report error to user
-    void reportError(const std::string& str);
 
     // ======================================== //
     // Object manipulations
@@ -279,8 +279,6 @@ private:
     // Data
     TPad*                        m_canvas;    // Canvas to draw on
     Stack                        m_objStack;  // Stack of objects
-    std::vector<std::string>     m_errors;    // List of the errors
-    boost::shared_ptr<TPaveText> m_errorList; // Pad for displaying errors
     // Axis
     bool                         m_gridX;     // Grid along X
     bool                         m_gridY;     // Grid along Y

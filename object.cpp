@@ -48,7 +48,6 @@ void Range::padRange(double eps) {
 
 Pad::Pad(TPad* cnv) :
     m_canvas(cnv),
-    m_errorList(),
     m_gridX( false ),
     m_gridY( false ),
     m_xLog( false ),
@@ -75,7 +74,6 @@ void Pad::clearCanvas() {
 
 void Pad::clear() {
     m_objStack.resize(0);
-    m_errors.resize(0);
     m_gridX  = m_gridY = false;
     m_xLog   = m_yLog = m_zLog = false;
     m_title  = "";
@@ -134,23 +132,6 @@ void Pad::draw() {
     // Draw legend
     if( m_legend )
         m_legend->Draw();
-    // Draw errors if there is any
-    if( m_errors.size() != 0 ) {
-        double yLo;
-        if( m_yLog )
-            yLo = sqrt( ys[0] * ys[1] );
-        else
-            yLo = 0.5 * (ys[1] + ys[0]);
-        m_errorList = boost::make_shared<TPaveText>( xs[0], ys[1], xs[1], yLo );
-        for( size_t i = 0; i < m_errors.size(); i++ ) {
-            m_errorList->AddText( m_errors[i].c_str() );
-        }
-        m_errorList->Draw();
-    }
-}
-
-void Pad::reportError(const std::string& str) {
-    m_errors.push_back( str );
 }
 
 void Pad::save(const std::string& fname) {

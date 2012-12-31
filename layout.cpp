@@ -4,8 +4,10 @@
 #include <assert.h>
 #include <vector>
 #include <boost/noncopyable.hpp>
+#include <boost/make_shared.hpp>
 
 #include <TCanvas.h>
+#include <TPaveText.h>
 
 
 
@@ -41,7 +43,7 @@ public:
     Layout(Layout* parent, TPad* pad);
     ~Layout();
 
-    // Revert to empty state. After that 
+    // Revert to empty state. After that
     void clear();
     // Draw everything
     void draw();
@@ -117,7 +119,7 @@ void Plot::Layout::dumpTree(int n) {
               << std::endl;
     for( size_t  i = 0; i < row.size(); i++) {
         row[i].pad->dumpTree(n + 4);
-    }    
+    }
 }
 
 void Plot::Layout::rebalanseRow() {
@@ -170,17 +172,30 @@ void Plot::draw() {
         m_canvas->Draw();
         m_canvas->Update();
     }
+    if( m_errors.size() > 0 ) {
+        m_canvas->cd();
+        m_errorPad  = boost::make_shared<TPad>( "Error PAD", "Errors", 0.1, 0.5, 0.9, 0.9 );
+        m_errorPad->SetFillColor( 4 );
+        m_errorPad->cd();
+        m_errorText = boost::make_shared<TPaveText>( 0, 0, 1, 1 );
+        for( size_t  i = 0; i < m_errors.size(); i++) {
+            m_errorText->AddText( m_errors[i].c_str() );
+        }
+        m_errorText->Draw();
+        m_canvas->cd();
+        m_errorPad->Draw();
+        m_errorPad->Update();
+    }
 }
 
 void Plot::reportError(const std::string& str) {
-    // FIXME
-    // data->plot->reportError( str );
+    m_errors.push_back( str );
 }
 
 void Plot::clear() {
     m_silent = false;
     m_errors.resize( 0 );
-    
+
     m_layout->clear();
     m_current = m_layout;
 }
