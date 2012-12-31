@@ -87,9 +87,7 @@ void Pad::clear() {
     clearCanvas();
 }
 
-void Pad::draw(bool force) {
-    if( !force )
-        return;
+void Pad::draw() {
     // Remove everything from canvas
     clearCanvas();
     m_canvas->SetGrid( m_gridX, m_gridY );
@@ -147,9 +145,6 @@ void Pad::draw(bool force) {
         }
         m_errorList->Draw();
     }
-    // Actually draw everything
-    // m_canvas->SetBatch( false );
-    // m_canvas->Update();
 }
 
 void Pad::reportError(const std::string& str) {
@@ -157,7 +152,8 @@ void Pad::reportError(const std::string& str) {
 }
 
 void Pad::save(const std::string& fname) {
-    draw(true);
+    // FIXME: saving
+    // draw(true);
     m_canvas->SaveAs(fname.c_str(), "Landscape");
 }
 
