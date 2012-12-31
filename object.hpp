@@ -45,6 +45,7 @@ class PlotObject;
 class Pad;
 
 class TObject;
+class TPad;
 class TCanvas;
 class TLegend;
 class TGraph;
@@ -154,19 +155,24 @@ public:
     // Complete current pad
     void completePad();
    
-    // Get current plot. Returns NULL if is in the invalid state
-    // 
+    // Get current plot. Semantic of this function if fairly
+    // subtle. It's interpreted as attempt to draw so it performs
+    // transition Empty→Pad
+    //
+    // Returns NULL if is in the invalid state
     Pad* getCurrentPlot();
     void pushObject( boost::shared_ptr<PlotObject> );
 private:
-    bool                     m_silent;  // Flag for silent mode
-    bool                     m_invalid; // Invalid state flag
-    std::vector<std::string> m_errors;  // List of errors
-    // boost::shared_ptr<TCanvas> m_canvas; // Master
-
-    // Layout data
+    // Free data from layout
+    void destroyLayout();
     class Layout;
-    Layout* data;
+    
+    bool                     m_silent;  // Flag for silent mode
+    std::vector<std::string> m_errors;  // List of errors
+    TCanvas*                 m_canvas;  // Main canvas. Not owned
+    
+    Layout*                  m_layout;  // Pads layout
+    Layout*                  m_current; // Current pad. NULL indicates invalid state
 };
 
 
@@ -187,7 +193,7 @@ public:
 
     // Construct plot object which will draw on the canvas. Plot
     // object doesn't own canvas.
-    Pad(TCanvas* cnv);
+    Pad(TPad* cnv);
 
     // Draw everything. This is slow call since it first remove
     // everything from canvas and then redraws every element in stack
@@ -271,7 +277,7 @@ private:
     void clearCanvas();
 
     // Data
-    TCanvas*                     m_canvas;    // Canvas to draw on
+    TPad*                        m_canvas;    // Canvas to draw on
     Stack                        m_objStack;  // Stack of objects
     std::vector<std::string>     m_errors;    // List of the errors
     boost::shared_ptr<TPaveText> m_errorList; // Pad for displaying errors

@@ -46,7 +46,7 @@ void Range::padRange(double eps) {
 // ================================================================ //
 // ==== Pad
 
-Pad::Pad(TCanvas* cnv) :
+Pad::Pad(TPad* cnv) :
     m_canvas(cnv),
     m_errorList(),
     m_xLog( false ),
@@ -60,11 +60,11 @@ Pad::Pad(TCanvas* cnv) :
 // Remove everything from canvas
 void Pad::clearCanvas() {
     // Delete extra canvases. They could appear when one creates slice
-    TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
-    for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
-        if( cnv != m_canvas )
-            delete cnv;
-    }
+    // TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
+    // for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
+    //     if( cnv != m_canvas )
+    //         delete cnv;
+    // }
     m_canvas->Clear();
     m_canvas->cd();
     m_canvas->SetLogx( m_xLog );
@@ -117,7 +117,7 @@ void Pad::draw(bool force) {
     }
 
     // Setting batch mode removes flicker when title is not set
-    m_canvas->SetBatch( true );
+    // m_canvas->SetBatch( true );
     // Draw frame for the plots.
     TH1* hist = m_canvas->DrawFrame( xs[0], ys[0], xs[1], ys[1] );
     if( !!m_xLabel )
@@ -149,8 +149,8 @@ void Pad::draw(bool force) {
         m_errorList->Draw();
     }
     // Actually draw everything
-    m_canvas->SetBatch( false );
-    m_canvas->Update();
+    // m_canvas->SetBatch( false );
+    // m_canvas->Update();
 }
 
 void Pad::reportError(const std::string& str) {
