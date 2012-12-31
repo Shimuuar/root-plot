@@ -7,7 +7,7 @@
 
 #include <TCanvas.h>
 
-#define UNIMPLEMENTED assert(false)
+
 
 // ================================================================
 // Layout tree
@@ -53,7 +53,8 @@ public:
     bool isPad  () { return state == PAD   && plot != 0 && row.size() == 0; }
     // Assert that structure is correct
     void assertValid();
-
+    // Dump tree
+    void dumpTree(int i = 0);
 
     // Pointer to the parent structure. Null for root node
     Plot::Layout*     parent;
@@ -100,11 +101,46 @@ void Plot::Layout::draw() {
     if( isPad() ) {
         plot->draw();
     } else if( isRow() ) {
-        // FIXME
+        for( size_t i = 0; i < row.size(); i++ ) {
+            rootPad->cd();
+            row[i].pad->rootPad->Draw();
+            row[i].pad->draw();
+        }
     }
 }
 
+void Plot::Layout::dumpTree(int n) {
+    std::string off( n, ' ');
+    std::cout << off << (void*)this
+              << " [ " << (void*)(parent) << " ] "
+              << (orientation == Plot::Horizontal ? "H" : "V")
+              << std::endl;
+    for( size_t  i = 0; i < row.size(); i++) {
+        row[i].pad->dumpTree(n + 4);
+    }    
+}
+
 void Plot::Layout::rebalanseRow() {
+    // Total weight
+    double sumW = 0;
+    for( size_t i = 0; i < row.size(); i++ )
+        sumW += row[i].weight;
+    // Change sizes
+    double off = 0;
+    for( size_t i = 0; i < row.size(); i++ ) {
+        double w = row[i].weight / sumW;
+        switch( orientation ) {
+        case Plot::Horizontal:
+            row[i].pad->rootPad->SetPad( off,   0,
+                                         off+w, 1 );
+            break;
+        case Plot::Vertical:
+            row[i].pad->rootPad->SetPad( 0, 1 - off - w,
+                                         1, 1 - off    );
+            break;
+        }
+        off += w;
+    }
 }
 
 void Plot::Layout::assertValid() {
@@ -129,9 +165,9 @@ void Plot::fatalError(const std::string& str ) {
 
 void Plot::draw() {
     if( !m_silent ) {
-        m_canvas->SetBatch( true );
         m_layout->draw();
-        m_canvas->SetBatch( false );
+        m_canvas->cd();
+        m_canvas->Draw();
         m_canvas->Update();
     }
 }
@@ -174,11 +210,15 @@ void Plot::completeRow() {
     //
     if( !m_current->isRow() ) {
         fatalError( "Cannot end row/column." );
-    } else if( m_current->parent == 0 ) {
-        fatalError( "Cannot end row/column - top level" );
+    // } else if( m_current->parent == 0 ) {
+    //     fatalError( "Cannot end row/column - top level" );
     } else {
+        // If top level pad is row/column and we ended it. There is
+        // nothing to be done after it. We silently enter invalid
+        // state
         m_current = m_current->parent;
-        m_current->assertValid();
+        if( m_current )
+            m_current->assertValid();
     }
 }
 
