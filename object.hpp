@@ -78,7 +78,8 @@ class TPaveText;
 //      Empty → id
 //      Pad   → id
 //  * Add row/column:
-//      Empty → converts pad to Row/Column
+//      Empty      → converts pad to Row/Column
+//      Row/Column → Add new pad as row/column
 //  * Add pad
 //      Row/Column → Adds empty pad and makes it current
 //  * Pad completed
@@ -147,7 +148,7 @@ public:
     void setSilent(bool);
     
     // Make current pad into the row/column
-    void addRow( Plot::Orientation );
+    void addRow( Plot::Orientation, double weight = 1);
     // Complete current row
     void completeRow();
     // Add new pad to the current row. Works only if pad doesn't

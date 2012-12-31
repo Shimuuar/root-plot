@@ -212,8 +212,10 @@ line // Top level statement
   ;
 
 addPlot
-  : KW_ROW    eol            { par.plot->addRow( Plot::Horizontal ); }
-  | KW_COLUMN eol            { par.plot->addRow( Plot::Vertical   ); }
+  : KW_ROW    eol               { par.plot->addRow( Plot::Horizontal                ); }
+  | KW_ROW    TOK_WS double eol { par.plot->addRow( Plot::Horizontal, getDouble($3) ); }
+  | KW_COLUMN eol               { par.plot->addRow( Plot::Vertical                  ); }
+  | KW_COLUMN TOK_WS double eol { par.plot->addRow( Plot::Vertical,   getDouble($3) ); }
   | KW_PAD               eol { par.plot->addPad( 1 );                }
   | KW_PAD TOK_WS double eol { par.plot->addPad( getDouble( $3 ) );  }
   | plot
