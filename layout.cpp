@@ -173,15 +173,18 @@ void Plot::draw() {
         m_canvas->Update();
     }
     if( m_errors.size() > 0 ) {
+        // [re]create pad for reporting errors
         m_canvas->cd();
         m_errorPad  = boost::make_shared<TPad>( "Error PAD", "Errors", 0.1, 0.5, 0.9, 0.9 );
         m_errorPad->SetFillColor( 4 );
         m_errorPad->cd();
-        m_errorText = boost::make_shared<TPaveText>( 0, 0, 1, 1 );
+        // Draw list of errors
+        TPaveText* errorText = new TPaveText( 0, 0, 1, 1 );
         for( size_t  i = 0; i < m_errors.size(); i++) {
-            m_errorText->AddText( m_errors[i].c_str() );
+            errorText->AddText( m_errors[i].c_str() );
         }
-        m_errorText->Draw();
+        errorText->Draw();
+        // Draw error pad
         m_canvas->cd();
         m_errorPad->Draw();
         m_errorPad->Update();
@@ -195,6 +198,7 @@ void Plot::reportError(const std::string& str) {
 void Plot::clear() {
     m_silent = false;
     m_errors.resize( 0 );
+    m_errorPad.reset();
 
     m_layout->clear();
     m_current = m_layout;

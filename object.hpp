@@ -172,7 +172,6 @@ private:
     bool                         m_silent;    // Flag for silent mode
     std::vector<std::string>     m_errors;    // List of errors
     boost::shared_ptr<TPad>      m_errorPad;  // TPad for reporting errors
-    boost::shared_ptr<TPaveText> m_errorText; // Text area to add errors
     TCanvas*                     m_canvas;    // Main canvas. Not owned
     
     Layout*  m_layout;  // Pads layout
