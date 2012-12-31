@@ -214,8 +214,6 @@ public:
     void clear();
     // Set title of the plot
     void setTitle(const std::string& title) { m_title = title; }
-    // Set silent mode on/off. In silent mode canvas is not updated.
-    void setSilent(bool isSilent) { m_isSilent = isSilent; }
     // Set label for axis
     void setLabel(Plot::Axis axis, const std::string& label);
     // Set log scale
@@ -297,7 +295,6 @@ private:
     bool                         m_zLog;      // Log scale for Z axis
     // Whole plot
     boost::shared_ptr<TLegend>   m_legend;    // Legend of the plot
-    bool                         m_isSilent;  // Is silent mode on
     std::string                  m_title;     // Title of plot
 };
 

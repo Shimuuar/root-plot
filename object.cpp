@@ -51,8 +51,7 @@ Pad::Pad(TPad* cnv) :
     m_errorList(),
     m_xLog( false ),
     m_yLog( false ),
-    m_zLog( false ),
-    m_isSilent(false)
+    m_zLog( false )
 {
     m_canvas->cd();
 }
@@ -89,7 +88,7 @@ void Pad::clear() {
 }
 
 void Pad::draw(bool force) {
-    if( !force && m_isSilent )
+    if( !force )
         return;
     // Remove everything from canvas
     clearCanvas();
