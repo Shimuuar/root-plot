@@ -147,7 +147,7 @@ public:
     void setSilent(bool);
     
     // Make current pad into the row/column
-    void newRow( Plot::Orientation );
+    void addRow( Plot::Orientation );
     // Complete current row
     void completeRow();
     // Add new pad to the current row. Works only if pad doesn't

@@ -153,7 +153,7 @@ void Plot::setSilent(bool s) {
     m_silent = s;
 }
 
-void Plot::newRow( Plot::Orientation o ) {
+void Plot::addRow( Plot::Orientation o ) {
     if( !m_current )
         return;
     m_current->assertValid();
