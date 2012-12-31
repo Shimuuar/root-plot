@@ -49,6 +49,8 @@ void Range::padRange(double eps) {
 Pad::Pad(TPad* cnv) :
     m_canvas(cnv),
     m_errorList(),
+    m_gridX( false ),
+    m_gridY( false ),
     m_xLog( false ),
     m_yLog( false ),
     m_zLog( false )
