@@ -270,8 +270,8 @@ set
   : KW_LINE   TOK_WS setLine
   | KW_FILL   TOK_WS setFill
   | KW_HIST   TOK_WS setHist
-  | KW_SILENT TOK_WS KW_ON    eol { if( par() ) par.pad->setSilent( true  ); }
-  | KW_SILENT TOK_WS KW_OFF   eol { if( par() ) par.pad->setSilent( false ); }
+  | KW_SILENT TOK_WS KW_ON    eol { par.plot->setSilent( true  ); }
+  | KW_SILENT TOK_WS KW_OFF   eol { par.plot->setSilent( false ); }
   | KW_TITLE  TOK_WS TOK_STR  eol { if( par() ) par.pad->setTitle( get<std::string>( $3 ) ); }
   | KW_ERROR  TOK_WS TOK_DASH eol { if( par() ) par.pad->setErrorStyle( Plot::NoErrors   ); }
   | KW_ERROR  TOK_WS KW_CROSS eol { if( par() ) par.pad->setErrorStyle( Plot::Crosshairs ); }
