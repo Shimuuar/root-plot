@@ -122,6 +122,11 @@ Plot::Plot( TCanvas* cnv ) :
     m_current( m_layout )
 {}
 
+void Plot::fatalError(const std::string& str ) {
+    m_current = 0;
+    m_errors.push_back( str );
+}
+
 void Plot::draw() {
     if( !m_silent ) {
         m_canvas->SetBatch( true );

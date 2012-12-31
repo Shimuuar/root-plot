@@ -163,6 +163,8 @@ public:
     Pad* getCurrentPlot();
     void pushObject( boost::shared_ptr<PlotObject> );
 private:
+    // Report fatal error
+    void fatalError(const std::string& str);
     // Free data from layout
     void destroyLayout();
     class Layout;
