@@ -210,8 +210,6 @@ void Plot::completeRow() {
     //
     if( !m_current->isRow() ) {
         fatalError( "Cannot end row/column." );
-    // } else if( m_current->parent == 0 ) {
-    //     fatalError( "Cannot end row/column - top level" );
     } else {
         // If top level pad is row/column and we ended it. There is
         // nothing to be done after it. We silently enter invalid
