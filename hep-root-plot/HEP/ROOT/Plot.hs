@@ -18,6 +18,13 @@ module HEP.ROOT.Plot (
   , add
   , plot
   , set
+  , addRow
+  , addColumn
+    -- ** Multiple pads
+  , addRowW
+  , addColumnW
+  , addPad
+  , addPadW
     -- ** Plots
   , function
   , functionN
@@ -121,6 +128,25 @@ plot = cmd . Plot
 
 set :: Cmd Option -> Cmd Command
 set = cmds Set
+
+addRow :: Cmd RowCmd -> Cmd Command
+addRow = cmd . AddRow . execWriter
+
+addColumn :: Cmd RowCmd -> Cmd Command
+addColumn = cmd . AddColumn . execWriter
+
+
+addRowW :: Double -> Cmd RowCmd -> Cmd RowCmd
+addRowW w = cmd . AddRowW w . execWriter
+
+addColumnW :: Double -> Cmd RowCmd -> Cmd RowCmd
+addColumnW w = cmd . AddColumnW w . execWriter
+
+addPad ::  Cmd Command -> Cmd RowCmd
+addPad = addPadW 1
+
+addPadW :: Double -> Cmd Command -> Cmd RowCmd
+addPadW w = cmd . AddPad w . execWriter
 
 
 

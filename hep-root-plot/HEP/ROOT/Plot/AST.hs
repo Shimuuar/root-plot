@@ -5,6 +5,7 @@
 module HEP.ROOT.Plot.AST (
     -- * AST
     Command(..)
+  , RowCmd(..)
   , Plot(..)
   , Option(..)
   , HistOpt(..)
@@ -17,6 +18,7 @@ module HEP.ROOT.Plot.AST (
   , renderCommand
   ) where
 
+import Control.Applicative ((<$>))
 import Data.Histogram.Generic (Histogram)
 import qualified Data.Histogram.Generic as H
 import qualified Data.Vector.Generic    as G
@@ -38,6 +40,13 @@ data Command =
   | Set    Option
   | Plot   Plot
   | Add    Plot
+  | AddRow    [RowCmd]
+  | AddColumn [RowCmd]
+
+data RowCmd
+  = AddPad     Double [Command]
+  | AddRowW    Double [RowCmd]
+  | AddColumnW Double [RowCmd]
 
 -- | Plot subcommand
 data Plot where
@@ -173,6 +182,34 @@ renderCommand (Set opt)  = return $ co "set  "   <> renderOption opt <> co "\n"
 renderCommand (Plot pl)  = return $ co "plot "   <> renderPlot pl    <> co "\n"
 renderCommand (Add  pl)  = return $ co "add  "   <> renderPlot pl    <> co "\n"
 renderCommand (Legend l) = return $ co "legend " <> renderLegend l   <> co "\n"
+renderCommand (AddRow rows) = do
+  bld <- mconcat <$> mapM renderRowCmd rows
+  return $  co "add row\n"
+         <> bld
+         <> co "end row\n"
+renderCommand (AddColumn cols) = do
+  bld <- mconcat <$> mapM renderRowCmd cols
+  return $  co "add column\n"
+         <> bld
+         <> co "end column\n"
+
+
+renderRowCmd :: RowCmd -> IO Builder
+renderRowCmd (AddPad w cmds) = do
+  bld <- mconcat <$> mapM renderCommand cmds
+  return $  co "add pad " <> real w <> co "\n"
+         <> bld
+         <> co "end pad\n"
+renderRowCmd (AddRowW w rows) = do
+  bld <- mconcat <$> mapM renderRowCmd rows
+  return $  co "add row " <> real w <> co "\n"
+         <> bld
+         <> co "end row\n"
+renderRowCmd (AddColumnW w columns) = do
+  bld <- mconcat <$> mapM renderRowCmd columns
+  return $  co "add column " <> real w <> co "\n"
+         <> bld
+         <> co "end column\n"
 
 -- plot subcommand
 renderPlot :: Plot -> Builder
