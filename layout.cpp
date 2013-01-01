@@ -262,14 +262,10 @@ void Plot::addPad( double weight ) {
 void Plot::completePad() {
     if( !m_current )
         return;
-    std::cout << "---\n";
-    m_layout->dumpTree();
-    std::cout << (void*)m_current << std::endl;
-
     m_current->assertValid();
+    //
     if( ! (m_current->isEmpty() || m_current->isPad()) ) {
         fatalError( "Cannot complete pad - not in pad mode" );
-        std::cout << "ERR\n";
     } else if( m_current->parent == 0 ) {
         fatalError( "Cannot complete pad - at top level" );
     } else {

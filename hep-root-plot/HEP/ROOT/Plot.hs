@@ -293,7 +293,7 @@ legendLabel = cmd . LegendLabel
 -- | Send list of commands surrounded with silent on/off marks and leading clear command
 draws :: Cmd Command -> IO ()
 draws commands
-  = sendCmd $ [Set (Silent ON), Clear] ++ execWriter commands ++ [Set (Silent OFF)]
+  = sendCmd $ [Clear, Set (Silent ON)] ++ execWriter commands ++ [Set (Silent OFF)]
 
 -- | Send list of command to rt-plot
 sendCommands :: Cmd Command -> IO ()
