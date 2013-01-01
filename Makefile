@@ -79,7 +79,6 @@ install: all
 	install rt-plot      ${BINDIR}
 	install rt-listen    ${BINDIR}
 	install rt-cat       ${BINDIR}
-	install rt-tree      ${BINDIR}
 	install rt-shell     ${BINDIR}
 	install librt-plot.a ${LIBDIR}
 	install rt-plot.h    ${INCLDIR}
