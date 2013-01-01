@@ -63,7 +63,8 @@ public:
     double  getMin()  const { return min; }
     double  getMax()  const { return max; }
     double* getBins()       { return &bins[0]; }
-    //
+    // Should bin content be normalized. True if bins are not equal
+    bool    shouldNormalize() const { return haveBins(); }
 private:
     int    n;
     double min;
@@ -161,6 +162,7 @@ private:
     bool                   inHeader; // Do we parse header.
     bool                   ok;       // Is accumulator in valid state.
     std::auto_ptr<TH1>     hist;     // Point to histogram being built. Initially null.
+    bool                   norm;     // Should histogram bins be normalized
     int                    nDim;     // Number of dimensions 1 or 2
 };
 
@@ -228,6 +230,7 @@ PBinInfo AccumHist::parseBin1D(const std::string& name) {
 void AccumHist::parseHistogram1D(const std::string& name) {
     PBinInfo bin = parseBin1D(name);
     hist = std::auto_ptr<TH1>( allocHist1D( bin ) );
+    norm = bin->shouldNormalize();
 }
 
 void AccumHist::parseHistogram2D() {
@@ -236,6 +239,7 @@ void AccumHist::parseHistogram2D() {
     parseString<void>(pop(), "# Y");
     PBinInfo binY = parseBin1D(pop());
     hist = std::auto_ptr<TH1>( allocHist2D( binX, binY ) );
+    norm = binX->shouldNormalize() || binY->shouldNormalize();
 }
 
 void AccumHist::parseHistogram() {
@@ -277,8 +281,12 @@ bool AccumHist::feedLine(const std::string& str) {
                 ok = 2 == sscanf(str.c_str(),"%lf %lf", &x, &y);
                 if( ok ) {
                     int    n = hist->FindBin( x );
-                    double w = hist->GetBinWidth( n );
-                    hist->SetBinContent( n, y / w );
+                    if( norm ) {
+                        double w = hist->GetBinWidth( n );
+                        hist->SetBinContent( n, y / w );
+                    } else {
+                        hist->SetBinContent( n, y );
+                    }
                 }
             } else {
                 double x,y,z;
@@ -289,9 +297,10 @@ bool AccumHist::feedLine(const std::string& str) {
                     std::cerr << "rt-biplot: internal error. Histogram is not 2D\n";
                     return false;
                 }
-                if( ok )
+                if( ok ) {
                     // FIXME: normalization
                     h->Fill(x,y,z);
+                }
             }
         }
         return ok;
