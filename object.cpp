@@ -555,6 +555,7 @@ RangeM PlotGraph::xRange() const {
         lo         = *std::min_element(xs, xs+n);
     }
     Range r( lo, hi );
+    r.logLow = r.low;
     r.padRange( 0.03 );
     return boost::optional<Range>( r );
 }
@@ -573,6 +574,7 @@ RangeM PlotGraph::yRange() const {
         lo         = *std::min_element(ys, ys+n);
     }
     Range r( lo, hi );
+    r.logLow = r.low;
     r.padRange( 0.03 );
     return boost::optional<Range>( r );
 }
