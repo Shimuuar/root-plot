@@ -31,7 +31,7 @@ PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp exceptions.hpp \
 	   RtMainFrame.hpp RtPlot.hpp
 OBJS     = \
-	main.o object.o reader.o histogram.o plot.o \
+	main.o object.o reader.o histogram.o plot.o pad.o\
 	parser.o parser.l.o parser.y.o          \
 	RtPlot.o      RtPlot-cint.o             \
 	RtMainFrame.o RtMainFrame-cint.o
