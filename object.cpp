@@ -59,12 +59,6 @@ Pad::Pad(TPad* cnv) :
 
 // Remove everything from canvas
 void Pad::clearCanvas() {
-    // Delete extra canvases. They could appear when one creates slice
-    // TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
-    // for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
-    //     if( cnv != m_canvas )
-    //         delete cnv;
-    // }
     m_canvas->Clear();
     m_canvas->cd();
     m_canvas->SetLogx( m_xLog );

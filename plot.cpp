@@ -6,6 +6,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/make_shared.hpp>
 
+#include <TROOT.h>
 #include <TCanvas.h>
 #include <TPaveText.h>
 
@@ -197,11 +198,18 @@ void Plot::reportError(const std::string& str) {
 
 void Plot::clear() {
     m_silent = false;
+    // Remove errors
     m_errors.resize( 0 );
     m_errorPad.reset();
-
+    // Delete all plots
     m_layout->clear();
     m_current = m_layout;
+    // Delete extra canvases. They could appear when one creates slice
+    TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
+    for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
+        if( cnv != m_canvas )
+            delete cnv;
+    }
 }
 
 void Plot::setSilent(bool s) {
