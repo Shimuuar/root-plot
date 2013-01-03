@@ -11,10 +11,8 @@
 #include <TGraph2D.h>
 #include <TGraphErrors.h>
 #include <TCanvas.h>
-#include <TROOT.h>
 #include <TLegend.h>
 #include <TPolyLine.h>
-#include <TPaveText.h>
 
 
 
