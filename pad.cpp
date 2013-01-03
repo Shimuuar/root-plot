@@ -15,6 +15,8 @@
 #include <TPolyLine.h>
 
 
+// ================================================================ //
+// ==== Helper functions for range
 
 static boost::optional<double> joinLogLow( boost::optional<double> a, boost::optional<double> b) {
     if( ! a.is_initialized() )
@@ -41,6 +43,90 @@ void Range::padRange(double eps) {
 }
 
 
+
+// ================================================================ //
+// ==== Legend
+
+struct Pad::Legend {
+    // Entry for the legend
+    struct Entry {
+        Entry() :
+            idx(-1)
+        {}
+        Entry(const std::string& s) :
+            idx(-1), str1(s)
+        {}
+        Entry(const std::string& s1, const std::string& s2) :
+            idx(-1), str1(s1), str2(s2)
+        {}
+        Entry(int i, const std::string& s) :
+            idx(i), str1(s)
+        {}
+        // ----------------------------------------
+        int         idx;        // Index in the vector of objects.
+        std::string str1;       // String
+        std::string str2;       // Second string
+    };
+
+    Legend();
+    // Remove everything from legend
+    void clear();
+    // Set coordinates
+    void setCoords(double x1, double y1, double x2, double y2);
+    // Add entry to legend
+    void addEntry(const Entry& e);
+    // Create nice legend
+    boost::shared_ptr<TPave> makeLegend(const Pad::Stack&);
+
+    bool               isInit;      // Is legend initialized
+    double             x1,x2,y1,y2; // Coordinates for legend/text box
+    std::vector<Entry> entries;     // Legend entries
+};
+
+Pad::Legend::Legend() {
+    clear();
+}
+
+void Pad::Legend::clear() {
+    isInit = false;
+    entries.resize( 0 );
+}
+
+void Pad::Legend::addEntry(const Entry& e) {
+    entries.push_back( e );
+}
+
+void Pad::Legend::setCoords(double x1_, double y1_, double x2_, double y2_) {
+    isInit = true;
+    x1 = x1_;
+    x2 = x2_;
+    y1 = y1_;
+    y2 = y2_;
+}
+
+boost::shared_ptr<TPave> Pad::Legend::makeLegend(const Pad::Stack& objs) {
+    if( !isInit )
+        return boost::shared_ptr<TPave>();
+    // Allocate TPave
+    boost::shared_ptr<TLegend> pave;
+    // For now we use 
+    pave = boost::make_shared<TLegend>(x1, y1, x2, y2);
+    for( size_t i = 0; i < entries.size(); i++) {
+        Entry& e = entries[i];
+        if( e.idx < 0 ) {
+            // Add entry without plot sample
+            pave->AddEntry( (TObject*)0, e.str1.c_str(), "");
+        } else {
+            assert( e.idx < (int)objs.size() && "Index must be in range" );
+            pave->AddEntry( objs[e.idx]->getRootObject(),
+                            e.str1.c_str() );
+        }
+    }
+    return pave;
+}
+
+
+
 // ================================================================ //
 // ==== Pad
 
@@ -50,10 +136,14 @@ Pad::Pad(TPad* cnv) :
     m_gridY( false ),
     m_xLog( false ),
     m_yLog( false ),
-    m_zLog( false )
+    m_zLog( false ),
+    m_legend( new Legend )
 {
     m_canvas->cd();
 }
+
+Pad::~Pad()
+{}
 
 // Remove everything from canvas
 void Pad::clearCanvas() {
@@ -122,8 +212,9 @@ void Pad::draw() {
         (*o)->plotOn( this );
     }
     // Draw legend
-    if( m_legend )
-        m_legend->Draw();
+    m_rootLegend = m_legend->makeLegend( m_objStack );
+    if( m_rootLegend )
+        m_rootLegend->Draw();
 }
 
 void Pad::pushObject(boost::shared_ptr<PlotObject> plot) {
@@ -297,22 +388,20 @@ void Pad::setRange(Plot::Axis axis) {
 }
 
 void Pad::removeLegend() {
-    m_legend.reset();
+    m_legend->clear();
+    m_rootLegend.reset();
 }
 
 void Pad::addLegend(double x1, double y1, double x2, double y2) {
-    m_legend = boost::make_shared<TLegend>(x1, y1, x2, y2);
+    m_legend->setCoords(x1,y1, x2,y2);
 }
 
 void Pad::addLegendString(const std::string& str) {
-    if( m_legend )
-        m_legend->AddEntry(new TObject(), str.c_str(), "");
+    m_legend->addEntry( Legend::Entry( str ) );
 }
 
 void Pad::addPlotToLegend(const std::string& str) {
-    if( m_legend && !m_objStack.empty() ) {
-        TObject* obj = m_objStack.back()->getRootObject();
-        if( obj )
-            m_legend->AddEntry(obj, str.c_str() );
+    if( !m_objStack.empty() ) {
+        m_legend->addEntry( Legend::Entry( m_objStack.size() - 1, str ) );
     }
 }

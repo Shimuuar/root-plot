@@ -47,7 +47,7 @@ class Pad;
 class TObject;
 class TPad;
 class TCanvas;
-class TLegend;
+class TPave;
 class TGraph;
 class TGraph2D;
 class TPolyLine;
@@ -203,6 +203,7 @@ public:
     // Construct plot object which will draw on the canvas. Plot
     // object doesn't own canvas.
     Pad(TPad* cnv);
+    ~Pad();
 
     // Draw everything. This is slow call since it first remove
     // everything from canvas and then redraws every element in stack
@@ -274,6 +275,9 @@ public:
     // Set palette of and off. Have effect iff color option is on.
     void setHistPalette( bool p );
 private:
+    // Class which contain description of legend
+    class Legend;
+
     // Remove everything from canvas
     void clearCanvas();
 
@@ -293,8 +297,9 @@ private:
     bool                         m_yLog;      // Log scale for Y axis
     bool                         m_zLog;      // Log scale for Z axis
     // Whole plot
-    boost::shared_ptr<TLegend>   m_legend;    // Legend of the plot
-    std::string                  m_title;     // Title of plot
+    boost::scoped_ptr<Legend>    m_legend;     // Legend for the plot
+    boost::shared_ptr<TPave>     m_rootLegend; // Legend of the plot
+    std::string                  m_title;      // Title of plot
 };
 
 
