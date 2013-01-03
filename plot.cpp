@@ -112,17 +112,6 @@ void Plot::Layout::draw() {
     }
 }
 
-void Plot::Layout::dumpTree(int n) {
-    std::string off( n, ' ');
-    std::cout << off << (void*)this
-              << " [ " << (void*)(parent) << " ] "
-              << (orientation == Plot::Horizontal ? "H" : "V")
-              << std::endl;
-    for( size_t  i = 0; i < row.size(); i++) {
-        row[i].pad->dumpTree(n + 4);
-    }
-}
-
 void Plot::Layout::rebalanseRow() {
     // Total weight
     double sumW = 0;
@@ -151,6 +140,19 @@ void Plot::Layout::assertValid() {
             rootPad != 0            &&
             ( isEmpty() || isPad() || isRow() ) );
 }
+
+void Plot::Layout::dumpTree(int n) {
+    std::string off( n, ' ');
+    std::cout << off << (void*)this
+              << " [ " << (void*)(parent) << " ] "
+              << (orientation == Plot::Horizontal ? "H" : "V")
+              << std::endl;
+    for( size_t  i = 0; i < row.size(); i++) {
+        row[i].pad->dumpTree(n + 4);
+    }
+}
+
+
 
 // ================================================================
 
