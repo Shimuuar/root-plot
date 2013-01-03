@@ -138,6 +138,9 @@ public:
     // Create layout with primary canvas.
     Plot( TCanvas* );
 
+    // Get tooltip for coordinates
+    std::string getTooltip(int x, int y);
+
     // Report error to user.
     void reportError(const std::string& str);  
     // Reset everything

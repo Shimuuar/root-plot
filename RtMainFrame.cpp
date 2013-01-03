@@ -1,10 +1,11 @@
 #include "RtMainFrame.hpp"
 
 #include <string>
-#include <boost/format.hpp>
 
 #include <TRootEmbeddedCanvas.h>
 #include <TGButton.h>
+
+#include "object.hpp"
 
 
 
@@ -59,10 +60,7 @@ void RtMainFrame::eventHandler(Int_t event, Int_t px, Int_t py, TObject*)
         break;
     }
     case kMouseMotion: {
-        double x = m_canvas->AbsPixeltoX( px );
-        double y = m_canvas->AbsPixeltoY( py );
-        m_tip->SetText(
-            ( boost::format( "X=%.3g Y=%.3g" ) % x % y).str().c_str() );
+        m_tip->SetText( m_plot->getTooltip(px, py).c_str() );
         m_tip->SetPosition(px+8, py+8);
         m_tip->Reset();
         break;

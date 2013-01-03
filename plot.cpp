@@ -2,9 +2,11 @@
 #include "object.hpp"
 
 #include <assert.h>
+#include <cmath>
 #include <vector>
 #include <boost/noncopyable.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/format.hpp>
 
 #include <TROOT.h>
 #include <TCanvas.h>
@@ -50,6 +52,8 @@ public:
     void draw();
     // Adjust sizes of pads in the row
     void rebalanseRow();
+    // Get tooltip
+    bool getTooltip(int x, int y, std::string& str);
     // Check state
     bool isEmpty() { return state == EMPTY && plot == 0 && row.size() == 0; }
     bool isRow  () { return state == ROW   && plot == 0;                    }
@@ -135,6 +139,47 @@ void Plot::Layout::rebalanseRow() {
     }
 }
 
+bool Plot::Layout::getTooltip(int px, int py, std::string& res) {
+    assertValid();
+    //
+    if( isEmpty() ) {
+        return false;
+    }
+    if( isPad() ) {
+        int px1 = rootPad->XtoAbsPixel( rootPad->GetX1() );
+        int px2 = rootPad->XtoAbsPixel( rootPad->GetX2() );
+        int py1 = rootPad->YtoAbsPixel( rootPad->GetY1() );
+        int py2 = rootPad->YtoAbsPixel( rootPad->GetY2() );
+
+        bool inside =  (px1 <= px) && (px2 >= px)
+                    && (py1 >= py) && (py2 <= py);
+
+        if( inside ) {
+            double x = rootPad->AbsPixeltoX( px );
+            double y = rootPad->AbsPixeltoY( py );
+            // Check for log scale
+            if( rootPad->GetLogx() )
+                x = exp(x);
+            if( rootPad->GetLogy() )
+                y = exp(y);
+            // Create tooltip
+            res = (boost::format( "X=%.3g Y=%.3g" ) % x % y).str();
+            return true;
+        }
+        return false;
+    }
+    if( isRow() ) {
+        for( size_t  i = 0; i < row.size(); i++) {
+            if( row[i].pad->getTooltip(px,py,res) )
+                return true;
+        }
+        return false;
+    }
+    //
+    assert(false && "Unreachable");
+    return false;
+}
+
 void Plot::Layout::assertValid() {
     assert( "Layout state is valid" &&
             rootPad != 0            &&
@@ -162,6 +207,12 @@ Plot::Plot( TCanvas* cnv ) :
     m_layout ( new Layout( 0, cnv ) ),
     m_current( m_layout )
 {}
+
+std::string Plot::getTooltip(int x, int y) {
+    std::string res;
+    m_layout->getTooltip(x,y,res);
+    return res;
+}
 
 void Plot::fatalError(const std::string& str ) {
     m_current = 0;

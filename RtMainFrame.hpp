@@ -6,6 +6,7 @@
 #include <TGToolTip.h>
 #include <RQ_OBJECT.h>
 
+class Plot;
 
 
 // Just a GUI holding canvas
@@ -18,10 +19,13 @@ public:
 
     // Get canvas
     TCanvas* getCanvas() { return m_canvas; }
+    // Set plot
+    void setPlot(Plot* p) { m_plot = p; }
 
 private:
     TCanvas*   m_canvas;
     TGToolTip* m_tip;
+    Plot*      m_plot;   // Not owned;
 
 public:
     // Handler for saving PDF

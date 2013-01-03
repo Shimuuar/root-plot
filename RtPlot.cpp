@@ -35,6 +35,7 @@ RtPlot::RtPlot(bool verbose, bool batch) :
         // We have X. Let create window
         RtMainFrame* bp = new RtMainFrame( gClient->GetRoot() );
         m_plot = new Plot( bp->getCanvas() );
+        bp->setPlot( m_plot );
     }
 }
 
