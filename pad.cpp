@@ -126,20 +126,6 @@ void Pad::draw() {
         m_legend->Draw();
 }
 
-void Pad::save(const std::string& fname) {
-    // FIXME: saving
-    // draw(true);
-    m_canvas->SaveAs(fname.c_str(), "Landscape");
-}
-
-void Pad::saveObj(const std::string& fname) {
-    if( !m_objStack.empty() ) {
-        TObject* o = m_objStack.back()->getRootObject();
-        if( o )
-            o->SaveAs(fname.c_str(), "Landscape");
-    }
-}
-
 void Pad::pushObject(boost::shared_ptr<PlotObject> plot) {
     m_objStack.push_back( plot );
 }

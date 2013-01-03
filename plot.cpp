@@ -219,8 +219,8 @@ void Plot::fatalError(const std::string& str ) {
     m_errors.push_back( str );
 }
 
-void Plot::draw() {
-    if( !m_silent ) {
+void Plot::draw(bool force) {
+    if( !m_silent || force ) {
         m_layout->draw();
         m_canvas->cd();
         m_canvas->Draw();
@@ -243,6 +243,12 @@ void Plot::draw() {
         m_errorPad->Draw();
         m_errorPad->Update();
     }
+}
+
+void Plot::save(const std::string& fname) {
+    // Force plot update
+    draw( true );
+    m_canvas->SaveAs(fname.c_str(), "Landscape");
 }
 
 void Plot::reportError(const std::string& str) {

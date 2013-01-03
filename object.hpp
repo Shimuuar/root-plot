@@ -146,7 +146,9 @@ public:
     // Reset everything
     void clear();
     // Draw everything
-    void draw();
+    void draw(bool force = false);
+    // Save plot to the file
+    void save(const std::string& str);
     // Set silent mode on/off. In silent mode canvas is not updated.
     void setSilent(bool);
     
@@ -205,10 +207,6 @@ public:
     // Draw everything. This is slow call since it first remove
     // everything from canvas and then redraws every element in stack
     void draw();
-    // Try to save plot into file
-    void save(const std::string& str);
-    // Try to save topmost object into file
-    void saveObj(const std::string& str);
 
     // ======================================== //
     // Object manipulations
