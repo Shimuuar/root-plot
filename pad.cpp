@@ -58,7 +58,10 @@ struct Pad::Legend {
         {}
         Entry(const std::string& s1, const std::string& s2) :
             idx(-1), str1(s1), str2(s2)
-        {}
+        {
+            std::cout << str1 << std::endl;
+            std::cout << str2 << std::endl;
+        }
         Entry(int i, const std::string& s) :
             idx(i), str1(s)
         {}
@@ -109,13 +112,28 @@ boost::shared_ptr<TPave> Pad::Legend::makeLegend(const Pad::Stack& objs) {
         return boost::shared_ptr<TPave>();
     // Allocate TPave
     boost::shared_ptr<TLegend> pave;
-    // For now we use 
+    // Now we want to calculate maximum key length for key-value entries
+    int maxKey = 0;
+    for( size_t i = 0; i < entries.size(); i++) {
+        Entry& e = entries[i];
+        if( e.idx < 0 && !e.str2.empty() )
+            maxKey = std::max( maxKey, (int)e.str1.size() );
+    }
+    // For now we use only TLegend   
     pave = boost::make_shared<TLegend>(x1, y1, x2, y2);
     for( size_t i = 0; i < entries.size(); i++) {
         Entry& e = entries[i];
         if( e.idx < 0 ) {
             // Add entry without plot sample
-            pave->AddEntry( (TObject*)0, e.str1.c_str(), "");
+            if( !e.str2.empty() ) {
+                std::string& key = e.str1;
+                std::string& val = e.str2;
+                pave->AddEntry( (TObject*)0,
+                                (key + std::string(maxKey - key.size() + 2, ' ') + val).c_str(), "");
+
+            } else { 
+                pave->AddEntry( (TObject*)0, e.str1.c_str(), "");
+            }
         } else {
             assert( e.idx < (int)objs.size() && "Index must be in range" );
             pave->AddEntry( objs[e.idx]->getRootObject(),
@@ -398,6 +416,10 @@ void Pad::addLegend(double x1, double y1, double x2, double y2) {
 
 void Pad::addLegendString(const std::string& str) {
     m_legend->addEntry( Legend::Entry( str ) );
+}
+
+void Pad::addLegendString(const std::string& key, const std::string& val) {
+    m_legend->addEntry( Legend::Entry( key, val ) );
 }
 
 void Pad::addPlotToLegend(const std::string& str) {

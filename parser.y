@@ -279,6 +279,8 @@ legend
     { if( par() ) par.pad->addPlotToLegend( get<std::string>( $3 ) ); }
   | KW_ADD TOK_WS KW_LABEL TOK_WS TOK_STR eol
     { if( par() ) par.pad->addLegendString( get<std::string>( $5 ) ); }
+  | KW_ADD TOK_WS KW_LABEL TOK_WS TOK_STR TOK_WS TOK_STR eol
+    { if( par() ) par.pad->addLegendString( get<std::string>( $5 ), get<std::string>( $7 ) ); }
 
 
 set

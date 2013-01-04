@@ -259,6 +259,8 @@ public:
     void addLegend(double x1, double y1, double x2, double y2);
     // Add string to a legend
     void addLegendString(const std::string& str);
+    // Add string to a legend
+    void addLegendString(const std::string& key, const std::string& val);
     // Add string to a legend and link it with last object
     void addPlotToLegend(const std::string& str);
 
