@@ -140,9 +140,11 @@ data Legend =
     -- | Delete legend from the plot
   | DeleteL
     -- | Add label to the last item in the stack
-  | LegendStr   String
+  | LegendStr    String
     -- | Add label to the item
-  | LegendLabel String
+  | LegendLabel  String
+    -- | Add label to the item
+  | LegendLabel2 String String
 
 data ErrorStyle
   = NoError
@@ -292,8 +294,9 @@ renderHistOpt (HistPalette p) = co "palette " <> toggle p
 renderLegend :: Legend -> Builder
 renderLegend (NewL (x1,y1) (x2,y2)) = fromString $ printf "add %g %g %g %g" x1 y1 x2 y2
 renderLegend DeleteL                = co "-"
-renderLegend (LegendStr   s)        = co "add "       <> strLit s
-renderLegend (LegendLabel s)        = co "add label " <> strLit s
+renderLegend (LegendStr    s)       = co "add "       <> strLit s
+renderLegend (LegendLabel  s)       = co "add label " <> strLit s
+renderLegend (LegendLabel2 s1 s2)   = co "add label " <> strLit s1 <> co " " <> strLit s2
 
 toggle :: Toggle -> Builder
 toggle ON  = copyByteString "on"

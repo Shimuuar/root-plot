@@ -66,6 +66,7 @@ module HEP.ROOT.Plot (
   , deleteLegend
   , legendStr
   , legendLabel
+  , legendLabel2
     -- * Sending commands
   , renderCommand
   , sendCommands
@@ -284,6 +285,9 @@ legendStr = cmd . LegendStr
 
 legendLabel :: String -> Cmd Legend
 legendLabel = cmd . LegendLabel
+
+legendLabel2 :: String -> String -> Cmd Legend
+legendLabel2 s1 s2 = cmd $ LegendLabel2 s1 s2
 
 
 ----------------------------------------------------------------
