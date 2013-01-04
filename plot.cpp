@@ -159,9 +159,9 @@ bool Plot::Layout::getTooltip(int px, int py, std::string& res) {
             double y = rootPad->AbsPixeltoY( py );
             // Check for log scale
             if( rootPad->GetLogx() )
-                x = exp(x);
+                x = exp10(x);
             if( rootPad->GetLogy() )
-                y = exp(y);
+                y = exp10(y);
             // Create tooltip
             res = (boost::format( "X=%.3g Y=%.3g" ) % x % y).str();
             return true;
