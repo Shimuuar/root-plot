@@ -91,8 +91,9 @@ Plot::Layout::~Layout() {
 void Plot::Layout::clear() {
     // Clear row/column
     for( size_t i = 0; i < row.size(); i++ ) {
-        delete row[i].pad->rootPad;
-        row[i].pad->rootPad = 0;
+        TPad* pad = row[i].pad->rootPad;
+        delete row[i].pad;
+        delete pad;
     }
     row.resize(0);
     // Delete plot
