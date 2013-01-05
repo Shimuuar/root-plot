@@ -124,9 +124,18 @@ void Pad::draw() {
     for( Stack::iterator o = m_objStack.begin(); o != m_objStack.end(); ++o) {
         (*o)->plotOn( this );
     }
+
     // Draw legend
-    if( m_legend )
+    if( m_legend ) {
+        // Create and draw pad for legend
+        m_legendPad = boost::make_shared<TPad>("LP","", m_legX1, m_legY1,  m_legX2, m_legY2 );        
+        m_legendPad->SetFillColor( 33 );
+        m_legendPad->Draw();
+        // Draw legend
+        m_legendPad->cd();       
         m_legend->Draw();
+        m_canvas->cd();
+    }
 }
 
 void Pad::pushObject(boost::shared_ptr<PlotObject> plot) {
@@ -301,11 +310,15 @@ void Pad::setRange(Plot::Axis axis) {
 
 void Pad::removeLegend() {
     m_legend.reset();
+    m_legendPad.reset();
 }
 
 void Pad::addLegend(double x1, double y1, double x2, double y2) {
-    m_legend = boost::make_shared<RtLegend>(x1,y1,x2,y2);
-    // m_legend->setCoords(x1,y1, x2,y2);
+    m_legX1  = x1;
+    m_legX2  = x2;
+    m_legY1  = y1;
+    m_legY2  = y2;
+    m_legend = boost::make_shared<RtLegend>(0,0, 1,1);
 }
 
 void Pad::addLegendString(const std::string& str) {

@@ -297,9 +297,18 @@ private:
     bool                         m_xLog;      // Log scale for X axis
     bool                         m_yLog;      // Log scale for Y axis
     bool                         m_zLog;      // Log scale for Z axis
-    // Whole plot
+
+    // Legend stuff
+    //
+    // Since RtLegent is not interactive we work around it by placing
+    // it into TPad.
+    double m_legX1, m_legX2;
+    double m_legY1, m_legY2;
+    boost::shared_ptr<TPad>      m_legendPad;  // Pad which holds legend
     boost::shared_ptr<RtLegend>  m_legend;     // Legend for the plot
-    std::string                  m_title;      // Title of plot
+
+    // Title of the plot
+    std::string                  m_title;
 };
 
 
