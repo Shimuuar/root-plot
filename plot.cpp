@@ -344,7 +344,10 @@ void Plot::addPad( double weight ) {
     if( m_current->isRow() ) {
         m_current->rootPad->cd();
         // Add new pad
-        Layout* child = new Layout( m_current, new TPad( "PAD", "", 0, 0, 1, 1) );
+        TPad*   pad   = new TPad( "PAD", "", 0, 0, 1, 1);
+        pad->ResetBit( kCanDelete   );
+        pad->SetBit( kMustCleanup );
+        Layout* child = new Layout( m_current, pad  );
         m_current->row.push_back( Layout::PadData( weight, child) );
         m_current->rebalanseRow();
         m_current = child;
