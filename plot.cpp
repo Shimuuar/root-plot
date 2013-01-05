@@ -221,7 +221,7 @@ void Plot::fatalError(const std::string& str ) {
 }
 
 void Plot::draw(bool force) {
-    if( !m_silent || force ) {
+    if( !m_silent || (m_silent && force) ) {
         m_layout->draw();
         m_canvas->cd();
         m_canvas->Draw();
