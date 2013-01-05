@@ -125,35 +125,38 @@ void RtLegend::Paint(Option_t* opt) {
         
         double x2 = xp1 + dpx * m_X2;
         double y2 = yp1 + dpy * m_Y2;
+
+        SetFillColor( kWhite );
         TPave::PaintPave(x1,y1, x2,y2, GetBorderSize(), opt);
     }
 
-    // First we need to determine font size
+    // Layout constants
+    const double c_rowPadding = 0.1;
+    const double c_colPadding = 0.03;
     //
-    // FIXME:
+    double nRows      = entries.size();    
+    double fontSize = (1 - c_rowPadding) / nRows;
     
     // Then we need to check whether we need to draw plot snippets
     //
     // FIXME:
     
-    
-    double padding = 0.03;
-    double n       = entries.size();
     for( size_t i = 0; i < entries.size(); i++) {
         Entry& e = *entries[i];
         {
-            double x = padding;
-            double y = (n - i - 0.5) / n;
+            double x = c_colPadding;
+            double y = (nRows - i - 0.5) / nRows;
             TLatex latex( drawX(x), drawY(y), e.str1.c_str() );
             latex.SetTextAlign( 12 ); // left-centered
-            latex.SetTextSize( 0.3 );
+            latex.SetTextSize( fontSize );
             latex.Paint();
         }
         if( !e.str2.empty() ) {
-            double x = 1 - padding;
-            double y = (n - i - 0.5) / n;
+            double x = 1 - c_colPadding;
+            double y = (nRows - i - 0.5) / nRows;
             TLatex latex( drawX(x), drawY(y), e.str2.c_str() );
             latex.SetTextAlign( 32 ); // right-centered
+            latex.SetTextSize( fontSize );
             latex.Paint();
         }
     }
