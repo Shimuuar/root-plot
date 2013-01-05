@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <cmath>
 #include <vector>
+#include <fstream>
 #include <boost/noncopyable.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/format.hpp>
@@ -12,6 +13,18 @@
 #include <TCanvas.h>
 #include <TPaveText.h>
 
+
+
+static bool endsWith(const std::string& str, const std::string& suf) {
+    int n   = str.size();
+    int len = suf.size();
+    for( int i = 0; i < len; i++) {
+        int off = n - i - 1;
+        if( off < 0 || str[i] != suf[len - i - 1] )
+            return false;
+    }
+    return true;
+}
 
 
 // ================================================================
@@ -220,6 +233,10 @@ void Plot::fatalError(const std::string& str ) {
     m_errors.push_back( str );
 }
 
+void Plot::pushCommand(const std::string& str ) {
+    m_commands.push_back( str );
+}
+
 void Plot::draw(bool force) {
     if( !m_silent || (m_silent && force) ) {
         m_layout->draw();
@@ -247,6 +264,15 @@ void Plot::draw(bool force) {
 }
 
 void Plot::save(const std::string& fname) {
+    if( endsWith( fname, ".rootpl" ) ) {
+        std::cout << "ROOTPL";
+        std::ofstream f( fname.c_str() );
+        for( std::list<std::string>::iterator i = m_commands.begin(); i != m_commands.end(); ++i ) {
+            f << *i << std::endl;
+        }
+        return;
+    }
+    return;
     // Force plot update
     draw( true );
     m_canvas->SaveAs(fname.c_str(), "Landscape");

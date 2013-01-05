@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -151,6 +152,8 @@ public:
     void draw(bool force = false);
     // Save plot to the file
     void save(const std::string& str);
+    // Add raw command to log
+    void pushCommand(const std::string& str);
     // Set silent mode on/off. In silent mode canvas is not updated.
     void setSilent(bool);
     
@@ -176,7 +179,8 @@ private:
     // Free data from layout
     void destroyLayout();
     class Layout;
-    
+
+    std::list<std::string>       m_commands;  // List of commands after last 'CLEAR'
     bool                         m_silent;    // Flag for silent mode
     std::vector<std::string>     m_errors;    // List of errors
     boost::shared_ptr<TPad>      m_errorPad;  // TPad for reporting errors
