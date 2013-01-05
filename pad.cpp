@@ -111,15 +111,12 @@ void Pad::draw() {
         ys[1] = rngY->hi;
     }
 
-    // Setting batch mode removes flicker when title is not set
-    // m_canvas->SetBatch( true );
     // Draw frame for the plots.
     TH1* hist = m_canvas->DrawFrame( xs[0], ys[0], xs[1], ys[1] );
     if( !!m_xLabel )
         hist->GetXaxis()->SetTitle( m_xLabel->c_str() );
     if( !!m_yLabel )
         hist->GetYaxis()->SetTitle( m_yLabel->c_str() );
-    // Drawing title introduces flicker for some reason
     if( m_title.size() > 0 )
         hist->SetTitle( m_title.c_str() );
 
