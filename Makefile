@@ -29,10 +29,11 @@ LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 CLDFLAGS = -L. -lrt-plot
 PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp exceptions.hpp \
-	   RtMainFrame.hpp RtPlot.hpp
+	   RtMainFrame.hpp RtPlot.hpp RtLegend.hpp
 OBJS     = \
 	main.o object.o reader.o histogram.o plot.o pad.o\
 	parser.o parser.l.o parser.y.o          \
+	RtLegend.o                              \
 	RtPlot.o      RtPlot-cint.o             \
 	RtMainFrame.o RtMainFrame-cint.o
 EXE      = rt-plot rt-listen rt-cat

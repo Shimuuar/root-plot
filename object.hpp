@@ -10,6 +10,8 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
+#include "RtLegend.hpp"
+
 #define UNUSED(x) do{ (void)(x); }while(0)
 
 
@@ -277,9 +279,6 @@ public:
     // Set palette of and off. Have effect iff color option is on.
     void setHistPalette( bool p );
 private:
-    // Class which contain description of legend
-    class Legend;
-
     // Remove everything from canvas
     void clearCanvas();
 
@@ -299,8 +298,7 @@ private:
     bool                         m_yLog;      // Log scale for Y axis
     bool                         m_zLog;      // Log scale for Z axis
     // Whole plot
-    boost::scoped_ptr<Legend>    m_legend;     // Legend for the plot
-    boost::shared_ptr<TPave>     m_rootLegend; // Legend of the plot
+    boost::shared_ptr<RtLegend>  m_legend;     // Legend for the plot
     std::string                  m_title;      // Title of plot
 };
 
