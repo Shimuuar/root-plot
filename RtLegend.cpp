@@ -38,7 +38,7 @@ RtLegend::RtLegend(double x1, double y1, double x2, double y2) :
     TPave(x1,y1,x2,y2),
     // We store coordinates for later use
     m_X1( x1 ), m_X2( x2 ),
-    m_Y1( y1 ), m_Y2( y2 )    
+    m_Y1( y1 ), m_Y2( y2 )
 {}
 
 RtLegend::~RtLegend()
@@ -100,10 +100,10 @@ void RtLegend::Paint(Option_t* opt) {
         Double_t dpx  = gPad->GetX2() - xp1;
         Double_t yp1  = gPad->GetY1();
         Double_t dpy  = gPad->GetY2() - yp1;
-        
+
         double x1 = xp1 + dpx * m_X1;
         double y1 = yp1 + dpy * m_Y1;
-        
+
         double x2 = xp1 + dpx * m_X2;
         double y2 = yp1 + dpy * m_Y2;
 
@@ -114,14 +114,40 @@ void RtLegend::Paint(Option_t* opt) {
     // Layout constants
     const double c_rowPadding = 0.1;
     const double c_colPadding = 0.03;
-    //
-    double nRows      = entries.size();    
+
+    // At first we need to determine font size for drawing
+    double nRows    = entries.size();
     double fontSize = (1 - c_rowPadding) / nRows;
-    
+    // Find out maximum width of text
+    double maxX1 = 0;
+    double maxX2 = 0;
+    for( size_t i = 0; i < entries.size(); i++) {
+        Entry& e = *entries[i];
+        {
+            TLatex latex(0,0, e.str1.c_str() );
+            latex.SetTextSize( fontSize );
+            maxX1 = std::max( latex.GetXsize(), maxX1 );
+        }
+        {
+            TLatex latex(0,0, e.str2.c_str() );
+            latex.SetTextSize( fontSize );
+            maxX2 = std::max( latex.GetXsize(), maxX2 );
+        }
+
+    }
+    // We may have one or two columns. Space requirements are
+    // different for both cases
+    if( maxX2 > 0 ) {
+        if( (maxX1 + maxX2) > (1 - 3*c_colPadding) )
+            fontSize *= (1- 3*c_colPadding) / (maxX1 + maxX2);
+    } else {
+        if( maxX1 > (1 - 2*c_colPadding) )
+            fontSize *= (1- 2*c_colPadding) / maxX1;
+    }
     // Then we need to check whether we need to draw plot snippets
     //
     // FIXME:
-    
+
     for( size_t i = 0; i < entries.size(); i++) {
         Entry& e = *entries[i];
         {
