@@ -132,7 +132,6 @@ void Pad::draw() {
     if( m_legend ) {
         // Create and draw pad for legend
         m_legendPad = makeROOT<TPad>("LP","", m_legX1, m_legY1,  m_legX2, m_legY2 );
-        m_legendPad->SetFillColor( 33 );
         m_legendPad->Draw();
         // Draw legend
         m_legendPad->cd();       
