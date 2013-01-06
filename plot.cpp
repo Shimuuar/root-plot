@@ -22,7 +22,7 @@ static bool endsWith(const std::string& str, const std::string& suf) {
     int len = suf.size();
     for( int i = 0; i < len; i++) {
         int off = n - i - 1;
-        if( off < 0 || str[i] != suf[len - i - 1] )
+        if( off < 0 || str[off] != suf[len - i - 1] )
             return false;
     }
     return true;
@@ -266,15 +266,14 @@ void Plot::draw(bool force) {
 }
 
 void Plot::save(const std::string& fname) {
+    // We are saving script
     if( endsWith( fname, ".rootpl" ) ) {
-        std::cout << "ROOTPL";
         std::ofstream f( fname.c_str() );
         for( std::list<std::string>::iterator i = m_commands.begin(); i != m_commands.end(); ++i ) {
             f << *i << std::endl;
         }
         return;
     }
-    return;
     // Force plot update
     draw( true );
     m_canvas->SaveAs(fname.c_str(), "Landscape");
@@ -285,6 +284,10 @@ void Plot::reportError(const std::string& str) {
 }
 
 void Plot::clear() {
+    // Clear commands list
+    m_commands.clear();
+    m_commands.push_back( "clear" );
+    // Reset silent mode
     m_silent = false;
     // Remove errors
     m_errors.resize( 0 );

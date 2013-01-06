@@ -414,11 +414,15 @@ bool LineAccum::readFromFile(const std::string& fname, Plot* plot) {
     return flush( plot );
 }
 
+// ================================================================
+// Parser
+
 Parser::Parser()
 {
 }
 
 void Parser::feedLine(Plot* plot, const std::string& str) {
+    plot->pushCommand( str );
     if( m_accum ) {
         // Did we hit end of data marker?
         bool endOfData = str.size() >= 3
