@@ -21,8 +21,8 @@ public:
     virtual void Paint(Option_t* option = "");
 private:
     // Convert to coordinates used for drawing
-    double drawX(double x);
-    double drawY(double y);
+    double drawX(double x, bool forceLinear = false);
+    double drawY(double y, bool forceLinear = false);
     class Entry;
 
     // Coordinates

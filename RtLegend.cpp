@@ -56,26 +56,27 @@ void RtLegend::addEntry(const std::string& key, const std::string& val) {
     entries.push_back( boost::make_shared<Entry>( key, val ) );
 }
 
-double RtLegend::drawX(double x) {
+double RtLegend::drawX(double x, bool forceLinear) {
     double xp1  = gPad->GetX1();
     double dpx  = gPad->GetX2() - xp1;
 
     x = xp1 + dpx * (m_X1 + (m_X2 - m_X1)*x);
-    if( gPad->GetLogx() )
-        return exp10( x );
-    else
+    if( forceLinear || !gPad->GetLogx() )
         return x;
+    else
+        return exp10( x );
+        
 }
 
-double RtLegend::drawY(double y) {
+double RtLegend::drawY(double y, bool forceLinear) {
     double yp1  = gPad->GetY1();
     double dpy  = gPad->GetY2() - yp1;
 
     y = yp1 + dpy * (m_Y1 + (m_Y2 - m_Y1)*y);
-    if( gPad->GetLogy() )
-        return exp10( y );
-    else
+    if( forceLinear || !gPad->GetLogy() )
         return y;
+    else
+        return exp10( y );
 }
 
 // ================================================================
@@ -93,23 +94,11 @@ void RtLegend::Draw(Option_t* opt) {
 }
 
 void RtLegend::Paint(Option_t* opt) {
-    // For some reason coordinate conversion provide by ROOT doesn't
-    // work. I had to perform conversion manually.
-    {
-        Double_t xp1  = gPad->GetX1();
-        Double_t dpx  = gPad->GetX2() - xp1;
-        Double_t yp1  = gPad->GetY1();
-        Double_t dpy  = gPad->GetY2() - yp1;
-
-        double x1 = xp1 + dpx * m_X1;
-        double y1 = yp1 + dpy * m_Y1;
-
-        double x2 = xp1 + dpx * m_X2;
-        double y2 = yp1 + dpy * m_Y2;
-
-        SetFillColor( kWhite );
-        TPave::PaintPave(x1,y1, x2,y2, GetBorderSize(), opt);
-    }
+    // Draw pad
+    SetFillColor( kWhite );
+    TPave::PaintPave( drawX(0,true), drawY(0,true),
+                      drawX(1,true), drawY(1,true),
+                      GetBorderSize(), opt);
 
     // Layout constants
     const double c_rowPadding = 0.1;
