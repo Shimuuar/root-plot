@@ -422,7 +422,6 @@ Parser::Parser()
 }
 
 void Parser::feedLine(Plot* plot, const std::string& str) {
-    plot->pushCommand( str );
     if( m_accum ) {
         // Did we hit end of data marker?
         bool endOfData = str.size() >= 3
@@ -444,25 +443,24 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
             }
         }
     } else { // We are parsing DSL.
-        // Abort on comments
-        if( str.size() > 0 && str[0] == '#' )
-            return;
-        // Abort on empty lines
-        bool empty = true;
+        // Check for comments and empty strings
+        bool comment = str.size() > 0 && str[0] == '#';
+        bool empty   = true;
         for( int i = 0; empty && i < str.size(); i++)
             empty = isspace( str[i] );
-        if( empty )
-            return;
-        // Now we can lex.
-        YY_BUFFER_STATE state;
-        state = yy_scan_string( str.c_str() );
-        if( 0 != yyparse( ParseParam(this, plot) ) ) {
-            std::cerr << "  in string: '" << str << "'\n";
-            plot->reportError( "Syntax error: " + str );
+        // Now we can lex and parse command.
+        if( !empty && !comment) {
+            YY_BUFFER_STATE state;
+            state = yy_scan_string( str.c_str() );
+            if( 0 != yyparse( ParseParam(this, plot) ) ) {
+                std::cerr << "  in string: '" << str << "'\n";
+                plot->reportError( "Syntax error: " + str );
+            }
+            // Parse completed
+            yy_delete_buffer( state );
         }
-        // Parse completed
-        yy_delete_buffer( state );
     }
+    plot->pushCommand( str );
 
     // Redraw everything
     if( !m_accum )

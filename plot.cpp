@@ -286,7 +286,6 @@ void Plot::reportError(const std::string& str) {
 void Plot::clear() {
     // Clear commands list
     m_commands.clear();
-    m_commands.push_back( "clear" );
     // Reset silent mode
     m_silent = false;
     // Remove errors
