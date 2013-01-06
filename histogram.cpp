@@ -9,6 +9,9 @@
 #include <TH1.h>
 #include <TH2.h>
 
+#include "memory.hpp"
+
+
 
 namespace {
 
@@ -102,30 +105,30 @@ int BinInfo::getN() const {
 
 TH1* allocHist1D( PBinInfo bin ) {
     if( bin->haveBins() ) {
-        return new TH1D("FOO","", bin->getN(), bin->getBins());
+        return newROOT<TH1D>("FOO","", bin->getN(), bin->getBins());
     } else {
-        return new TH1D("FOO","", bin->getN(), bin->getMin(), bin->getMax());
+        return newROOT<TH1D>("FOO","", bin->getN(), bin->getMin(), bin->getMax());
     }
 }
 
 TH2* allocHist2D( PBinInfo bX, PBinInfo bY) {
     //
     if( bX->haveBins() && bY->haveBins() )
-        return new TH2D("FOO","",
+        return newROOT<TH2D>("FOO","",
                         bX->getN(), bX->getBins(),
                         bY->getN(), bY->getBins());
     //
     if( bX->haveBins() )
-        return new TH2D("FOO","",
+        return newROOT<TH2D>("FOO","",
                         bX->getN(), bX->getBins(),
                         bY->getN(), bY->getMin(), bY->getMax() );
     //
     if( bY->haveBins() )
-        return new TH2D("FOO","",
+        return newROOT<TH2D>("FOO","",
                         bX->getN(), bX->getMin(), bX->getMax(),
                         bY->getN(), bY->getBins());
     //
-    return new TH2D("FOO","",
+    return newROOT<TH2D>("FOO","",
                     bX->getN(), bX->getMin(), bX->getMax(),
                     bY->getN(), bY->getMin(), bY->getMax() );
 }

@@ -28,7 +28,7 @@ CFLAGS   = -g -O2 -Wall -Wextra -std=c99
 LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
 CLDFLAGS = -L. -lrt-plot
 PREFIX   = ${HOME}/opt
-HEADERS  = object.hpp reader.hpp parser.hpp exceptions.hpp \
+HEADERS  = object.hpp reader.hpp parser.hpp exceptions.hpp memory.hpp \
 	   RtMainFrame.hpp RtPlot.hpp RtLegend.hpp
 OBJS     = \
 	main.o object.o reader.o histogram.o plot.o pad.o\

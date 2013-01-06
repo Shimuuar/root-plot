@@ -13,6 +13,8 @@
 #include <TCanvas.h>
 #include <TPaveText.h>
 
+#include "memory.hpp"
+
 
 
 static bool endsWith(const std::string& str, const std::string& suf) {
@@ -247,7 +249,7 @@ void Plot::draw(bool force) {
     if( m_errors.size() > 0 ) {
         // [re]create pad for reporting errors
         m_canvas->cd();
-        m_errorPad  = boost::make_shared<TPad>( "Error PAD", "Errors", 0.1, 0.5, 0.9, 0.9 );
+        m_errorPad  = makeROOT<TPad>( "Error PAD", "Errors", 0.1, 0.5, 0.9, 0.9 );
         m_errorPad->SetFillColor( 4 );
         m_errorPad->cd();
         // Draw list of errors
@@ -344,9 +346,7 @@ void Plot::addPad( double weight ) {
     if( m_current->isRow() ) {
         m_current->rootPad->cd();
         // Add new pad
-        TPad*   pad   = new TPad( "PAD", "", 0, 0, 1, 1);
-        pad->ResetBit( kCanDelete   );
-        pad->SetBit( kMustCleanup );
+        TPad*   pad   = newROOT<TPad>( "PAD", "", 0, 0, 1, 1);
         Layout* child = new Layout( m_current, pad  );
         m_current->row.push_back( Layout::PadData( weight, child) );
         m_current->rebalanseRow();

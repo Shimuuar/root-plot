@@ -14,6 +14,10 @@
 #include <TGraphErrors.h>
 #include <TPolyLine.h>
 
+#include "memory.hpp"
+
+
+
 bool ParseParam::operator()(){
     return (pad = plot->getCurrentPlot()) != 0;
 }
@@ -252,13 +256,13 @@ bool AccumGraph::flush(Plot* plot) {
     if( dx || dy ) {
         plot->pushObject(
             boost::make_shared<PlotGraph>(
-                new TGraphErrors( colSize(), x, y, dx, dy ) ) );
+                newROOT<TGraphErrors>( colSize(), x, y, dx, dy ) ) );
         return true;
     }
     // Plain old graphs
     plot->pushObject(
         boost::make_shared<PlotGraph>(
-            new TGraph( colSize(), x, y ) ) );
+            newROOT<TGraph>( colSize(), x, y ) ) );
     return true;
 }
 
@@ -295,7 +299,7 @@ bool AccumGraph2D::flush(Plot* plot) {
     if( x && y && z ) {
         plot->pushObject(
             boost::make_shared<PlotGraph2D>(
-                new TGraph2D( colSize(), x, y, z ) ) );
+                newROOT<TGraph2D>( colSize(), x, y, z ) ) );
         return true;
     } else {
         return false;
@@ -336,7 +340,7 @@ bool AccumBarchart::flush(Plot* plot) {
     if( x && y ) {
         plot->pushObject(
             boost::make_shared<PlotBarChart>(
-                new TGraph( colSize(), x, y ) ) );
+                newROOT<TGraph>( colSize(), x, y ) ) );
         return true;
     } else {
         return false;
@@ -368,7 +372,7 @@ bool AccumPoly::flush(Plot* plot) {
     ys.push_back( ys[0] );
     plot->pushObject(
         boost::make_shared<PlotPoly>(
-            new TPolyLine( xs.size(), &(xs[0]), &(ys[0])) ) );
+            newROOT<TPolyLine>( xs.size(), &(xs[0]), &(ys[0])) ) );
     return true;
 }
 

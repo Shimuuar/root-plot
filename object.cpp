@@ -14,6 +14,8 @@
 #include <TLegend.h>
 #include <TPolyLine.h>
 
+#include "memory.hpp"
+
 
 
 // ================================================================ //
@@ -426,7 +428,7 @@ void PlotLine::plotAB(Pad* cxt) {
     ys[0] = k*xs[0] + b;
     ys[1] = k*xs[1] + b;
     // Draw
-    graph = boost::make_shared<TGraph>(2, xs, ys);
+    graph = makeROOT<TGraph>(2, xs, ys);
     doDraw();
 }
 
@@ -446,9 +448,9 @@ void PlotLine::plotVH(Pad* cxt) {
     vars[1] += delta;
 
     if( orientation == Plot::Vertical ) {
-        graph = boost::make_shared<TGraph>(2, consts, vars);
+        graph = makeROOT<TGraph>(2, consts, vars);
     } else {
-        graph = boost::make_shared<TGraph>(2, vars, consts);
+        graph = makeROOT<TGraph>(2, vars, consts);
     }
     doDraw();
 }
@@ -487,11 +489,11 @@ void PlotBand::plotOn(Pad* cxt) {
     if( orientation == Plot::Vertical ) {
         double xs[4] = {x1,x1,x2,x2};
         double ys[4] = {lo,hi,hi,lo};
-        poly = boost::shared_ptr<TPolyLine>( new TPolyLine(4, xs, ys, "") );
+        poly = makeROOT<TPolyLine>(4, xs, ys, "");
     } else {
         double ys[4] = {x1,x1,x2,x2};
         double xs[4] = {lo,hi,hi,lo};
-        poly = boost::shared_ptr<TPolyLine>( new TPolyLine(4, xs, ys, "") );
+        poly = makeROOT<TPolyLine>(4, xs, ys, "");
     }
     poly->SetFillColor( fill      );
     poly->SetFillStyle( fillStyle );
