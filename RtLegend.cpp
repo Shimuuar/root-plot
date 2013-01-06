@@ -22,9 +22,6 @@ public:
     Entry(const std::string& s1, const std::string& s2) :
         str1(s1), str2(s2)
     {}
-    //     std::cout << str1 << std::endl;
-    //     std::cout << str2 << std::endl;
-    // }
     Entry(boost::shared_ptr<TObject> o, const std::string& s) :
         obj(o), str1(s)
     {}
@@ -42,23 +39,7 @@ RtLegend::RtLegend(double x1, double y1, double x2, double y2) :
     // We store coordinates for later use
     m_X1( x1 ), m_X2( x2 ),
     m_Y1( y1 ), m_Y2( y2 )    
-{
-    std::cout << "CONTSR = "
-        << x1 << '\t' 
-        << x2 << '\t' 
-        << y1 << '\t' 
-        << y2 << '\n' ;
-    std::cout
-        << fX1 << '\t' 
-        << fX2 << '\t' 
-        << fY1 << '\t' 
-        << fY2 << '\n' ;
-    std::cout
-        << fX1NDC << '\t' 
-        << fX2NDC << '\t' 
-        << fY1NDC << '\t' 
-        << fY2NDC << '\n' ;
-}
+{}
 
 RtLegend::~RtLegend()
 {}
