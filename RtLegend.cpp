@@ -1,6 +1,7 @@
 
 #include "RtLegend.hpp"
 
+#include <cmath>
 #include <boost/make_shared.hpp>
 
 #include <TROOT.h>
@@ -57,10 +58,11 @@ void RtLegend::addEntry(const std::string& key, const std::string& val) {
 }
 
 double RtLegend::drawX(double x, bool forceLinear) {
+    double b    = gPad->PixeltoX( GetBorderSize() );
     double xp1  = gPad->GetX1();
-    double dpx  = gPad->GetX2() - xp1;
+    double dpx  = (gPad->GetX2() - xp1) * (1 - b);
 
-    x = xp1 + dpx * (m_X1 + (m_X2 - m_X1)*x);
+    x = xp1 + dpx*(m_X1 + (m_X2 - m_X1)*x);
     if( forceLinear || !gPad->GetLogx() )
         return x;
     else
@@ -69,10 +71,13 @@ double RtLegend::drawX(double x, bool forceLinear) {
 }
 
 double RtLegend::drawY(double y, bool forceLinear) {
+    double b    = fabs( gPad->PixeltoY( GetBorderSize() ) );
     double yp1  = gPad->GetY1();
     double dpy  = gPad->GetY2() - yp1;
-
-    y = yp1 + dpy * (m_Y1 + (m_Y2 - m_Y1)*y);
+    yp1 += b * dpy;
+    dpy *= (1 - b);
+    
+    y = yp1 + dpy*(m_Y1 + (m_Y2 - m_Y1)*y);
     if( forceLinear || !gPad->GetLogy() )
         return y;
     else
