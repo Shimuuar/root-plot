@@ -98,7 +98,7 @@ RangeM PlotHist::xRange() const {
 }
 
 RangeM PlotHist::yRange() const {
-    TH2* h2d = dynamic_cast<TH2*>( &(*hist) );
+    TH2* h2d = dynamic_cast<TH2*>( hist.get() );
     if( h2d ) {
         // 2D histogram
         return Range( hist->GetYaxis()->GetXmin(),
@@ -123,7 +123,7 @@ RangeM PlotHist::yRange() const {
 }
 
 TObject* PlotHist::getRootObject() {
-    return &( *hist );
+    return hist.get();
 }
 
 
@@ -257,7 +257,7 @@ RangeM PlotGraph::yRange() const {
 }
 
 TObject* PlotGraph::getRootObject() {
-    return &( *graph );
+    return graph.get();
 }
 
 
@@ -295,7 +295,7 @@ RangeM PlotGraph2D::yRange() const {
 }
 
 TObject* PlotGraph2D::getRootObject() {
-    return &( *graph );
+    return graph.get();
 }
 
 
@@ -401,7 +401,7 @@ RangeM PlotPoly::yRange() const {
 }
 
 TObject* PlotPoly::getRootObject() {
-    return &( *poly );
+    return poly.get();
 }
 
 
