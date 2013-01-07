@@ -7,11 +7,12 @@
 #include <TROOT.h>
 #include <TLatex.h>
 
-#include "TPave.h"
-#include "TStyle.h"
-#include "TVirtualPad.h"
-#include "TClass.h"
-#include "TMath.h"
+#include <TPave.h>
+#include <TStyle.h>
+#include <TVirtualPad.h>
+#include <TClass.h>
+
+#include "object.hpp"
 
 
 class RtLegend::Entry {
@@ -23,13 +24,13 @@ public:
     Entry(const std::string& s1, const std::string& s2) :
         str1(s1), str2(s2)
     {}
-    Entry(boost::shared_ptr<TObject> o, const std::string& s) :
+    Entry(boost::shared_ptr<PlotObject> o, const std::string& s) :
         obj(o), str1(s)
     {}
 
-    boost::shared_ptr<TObject> obj;  // Object for legend
-    std::string                str1; // String
-    std::string                str2; // Second string (optional)
+    boost::shared_ptr<PlotObject> obj;  // Object for legend
+    std::string                   str1; // String
+    std::string                   str2; // Second string (optional)
 };
 
 // ================================================================
@@ -45,7 +46,7 @@ RtLegend::RtLegend(double x1, double y1, double x2, double y2) :
 RtLegend::~RtLegend()
 {}
 
-void RtLegend::addEntry(boost::shared_ptr<TObject> o, const std::string& str) {
+void RtLegend::addEntry(boost::shared_ptr<PlotObject> o, const std::string& str) {
     entries.push_back( boost::make_shared<Entry>( o, str ) );
 }
 

@@ -4,6 +4,9 @@
 #include <boost/shared_ptr.hpp>
 #include <TPave.h>
 
+class PlotObject;
+
+
 // Custom legend object.
 //
 // Known bugs:
@@ -14,7 +17,7 @@ class RtLegend : public TPave {
 public:
     RtLegend(double x1, double y1, double x2, double y2);
     
-    void addEntry(boost::shared_ptr<TObject> o, const std::string& str);
+    void addEntry(boost::shared_ptr<PlotObject> o, const std::string& str);
     void addEntry(const std::string& str);
     void addEntry(const std::string& key, const std::string& val);
     
