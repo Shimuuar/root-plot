@@ -68,6 +68,8 @@ data Plot where
   VLine     :: Double -> Plot
   -- Horizontal line
   HLine     :: Double -> Plot
+  -- AB line
+  ABLine    :: Double -> Double -> Plot
   -- Vertical band
   VBand     :: Double -> Double -> Plot
   -- Horizontal band
@@ -243,10 +245,11 @@ renderPlot (Hist  h   )
   =  co "hist -\n"
   <> fromString (show h)
   <> co "<<<\n"
-renderPlot (VLine x)   = co "vline " <> real x <> co "\n"
-renderPlot (HLine x)   = co "hline " <> real x <> co "\n"
-renderPlot (VBand a b) = co "vband " <> real a <> co " " <> real b <> co "\n"
-renderPlot (HBand a b) = co "hband " <> real a <> co " " <> real b <> co "\n"
+renderPlot (VLine x)    = co "vline "  <> real x <> co "\n"
+renderPlot (HLine x)    = co "hline "  <> real x <> co "\n"
+renderPlot (ABLine k b) = co "abline " <> real k <> co " " <> real b <> co "\n"
+renderPlot (VBand  a b) = co "vband "  <> real a <> co " " <> real b <> co "\n"
+renderPlot (HBand  a b) = co "hband "  <> real a <> co " " <> real b <> co "\n"
 
 -- Option subcommand
 renderOption :: Option -> Builder
