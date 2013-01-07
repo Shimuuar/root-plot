@@ -16,11 +16,11 @@ class PlotObject;
 class RtLegend : public TPave {
 public:
     RtLegend(double x1, double y1, double x2, double y2);
-    
+
     void addEntry(boost::shared_ptr<PlotObject> o, const std::string& str);
     void addEntry(const std::string& str);
     void addEntry(const std::string& key, const std::string& val);
-    
+
     // ========================================
     // Overloaded method.
     virtual ~RtLegend();
@@ -32,6 +32,9 @@ private:
     // Convert to coordinates used for drawing
     double drawX(double x, bool forceLinear = false);
     double drawY(double y, bool forceLinear = false);
+    // Draw text entry on the canvas
+    void paintText(double x, double y, const std::string& str, double fontSize, int align);
+
     class Entry;
 
     // Coordinates

@@ -148,18 +148,21 @@ void RtLegend::Paint(Option_t* opt) {
         {
             double x = c_colPadding;
             double y = (nRows - i - 0.5) / nRows;
-            TLatex latex( drawX(x), drawY(y), e.str1.c_str() );
-            latex.SetTextAlign( 12 ); // left-centered
-            latex.SetTextSize( fontSize );
-            latex.Paint();
+            paintText( drawX(x), drawY(y), e.str1, fontSize, 12 );
         }
         if( !e.str2.empty() ) {
             double x = 1 - c_colPadding;
             double y = (nRows - i - 0.5) / nRows;
-            TLatex latex( drawX(x), drawY(y), e.str2.c_str() );
-            latex.SetTextAlign( 32 ); // right-centered
-            latex.SetTextSize( fontSize );
-            latex.Paint();
+            paintText( drawX(x), drawY(y), e.str2, fontSize, 32 );
         }
     }
+}
+
+void RtLegend::paintText(double x, double y, const std::string& str,
+                         double fontSize, int align)
+{
+    TLatex latex( drawX(x), drawY(y), str.c_str() );
+    latex.SetTextSize ( fontSize );
+    latex.SetTextAlign( align    );
+    latex.Paint();
 }
