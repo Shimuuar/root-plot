@@ -335,7 +335,6 @@ void Pad::addLegendString(const std::string& key, const std::string& val) {
 
 void Pad::addPlotToLegend(const std::string& str) {
     if( !m_objStack.empty() && m_legend ) {
-        // FIXME:!!!
-        // m_legend->addEntry( m_objStack.back(), str ) );
+        m_legend->addEntry( m_objStack.back(), str );
     }
 }
