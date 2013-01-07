@@ -187,20 +187,24 @@ void RtLegend::Paint(Option_t* opt) {
             double y1 = drawY( y - 0.4*height );
             double y2 = drawY( y + 0.4*height );
 
+            TAttFill*   fill   = dynamic_cast<TAttFill*>  ( o );
+            TAttLine*   line   = dynamic_cast<TAttLine*>  ( o );
+            TAttMarker* mStyle = dynamic_cast<TAttMarker*>( o );
+
             // Draw fill area if needed
-            if( TAttFill* fill = dynamic_cast<TAttFill*>( o ) ) {
+            if( fill && e.obj->haveFill() ) {
                 double xs[] = {x1,x1,x2,x2};
                 double ys[] = {y1,y2,y2,y1};
                 fill->TAttFill::Modify();
                 gPad->PaintFillArea(4, xs, ys);
             }
             // Draw line
-            if( TAttLine* line = dynamic_cast<TAttLine*>( o ) ) {
+            if( line ) {
                 line->TAttLine::Modify();
                 gPad->PaintLineNDC( x1, y0, x2, y0 );
             }
             // Draw marker
-            if( TAttMarker* mStyle = dynamic_cast<TAttMarker*>( o ) ) {
+            if( mStyle ) {
                 TMarker marker(x0,y0, 0);
                 marker.SetNDC();
                 mStyle->TAttMarker::Copy( marker );

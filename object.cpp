@@ -34,6 +34,9 @@ RangeM PlotObject::zRange() const {
     return boost::optional<Range>();
 }
 
+bool PlotObject::haveFill() const {
+    return false;
+}
 
 
 // ================================================================ //
@@ -124,6 +127,10 @@ RangeM PlotHist::yRange() const {
 
 TObject* PlotHist::getRootObject() {
     return hist.get();
+}
+
+bool PlotHist::haveFill() const {
+    return true;
 }
 
 
@@ -260,6 +267,9 @@ TObject* PlotGraph::getRootObject() {
     return graph.get();
 }
 
+bool PlotGraph::haveFill() const {
+    return false;
+}
 
 
 // ================================================================ //
@@ -296,6 +306,10 @@ RangeM PlotGraph2D::yRange() const {
 
 TObject* PlotGraph2D::getRootObject() {
     return graph.get();
+}
+
+bool PlotGraph2D::haveFill() const {
+    return false;
 }
 
 
@@ -340,6 +354,11 @@ void PlotBarChart::setFillColor(int c) {
 void PlotBarChart::setFillStyle(int c) {
     graph->SetFillStyle( c );
 }
+
+bool PlotBarChart::haveFill() const {
+    return true;
+}
+
 
 // ================================================================ //
 // ==== Poly
@@ -402,6 +421,10 @@ RangeM PlotPoly::yRange() const {
 
 TObject* PlotPoly::getRootObject() {
     return poly.get();
+}
+
+bool PlotPoly::haveFill() const {
+    return true;
 }
 
 
@@ -473,6 +496,9 @@ TObject* PlotLine::getRootObject() {
     return graph.get();
 }
 
+bool PlotLine::haveFill() const {
+    return false;
+}
 
 
 // ================================================================ //
@@ -540,4 +566,8 @@ RangeM PlotBand::yRange() const {
     default:
         return Range(x1,x2);
     }
+}
+
+bool PlotBand::haveFill() const {
+    return true;
 }

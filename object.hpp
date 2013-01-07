@@ -145,7 +145,7 @@ public:
     std::string getTooltip(int x, int y);
 
     // Report error to user.
-    void reportError(const std::string& str);  
+    void reportError(const std::string& str);
     // Reset everything
     void clear();
     // Draw everything
@@ -156,7 +156,7 @@ public:
     void pushCommand(const std::string& str);
     // Set silent mode on/off. In silent mode canvas is not updated.
     void setSilent(bool);
-    
+
     // Make current pad into the row/column
     void addRow( Plot::Orientation, double weight = 1);
     // Complete current row
@@ -165,7 +165,7 @@ public:
     void addPad( double weight = 1 );
     // Complete current pad
     void completePad();
-   
+
     // Get current plot. Semantic of this function if fairly
     // subtle. It's interpreted as attempt to draw so it performs
     // transition Empty→Pad
@@ -185,7 +185,7 @@ private:
     std::vector<std::string>     m_errors;    // List of errors
     boost::shared_ptr<TPad>      m_errorPad;  // TPad for reporting errors
     TCanvas*                     m_canvas;    // Main canvas. Not owned
-    
+
     Layout*  m_layout;  // Pads layout
     Layout*  m_current; // Current pad. NULL indicates invalid state
 };
@@ -366,6 +366,9 @@ public:
     // Set palette of and off. Have effect iff color option is on
     virtual void setHistPalette( bool p )    {UNUSED(p);}
 
+    // Check whether object have fill property. Used in the legend.
+    virtual bool haveFill() const;
+
     // Get pointer to ROOT object. May return NULL
     virtual TObject* getRootObject() { return 0; }
 };
@@ -395,6 +398,7 @@ public:
     virtual void setHistBox  ( bool b )      { m_box     = b;    }
     virtual void setHistPalette( bool p )    { m_palette = p;    }
 
+    virtual bool haveFill() const;
 private:
     boost::scoped_ptr<TH1> hist; // Histogram
     // Common flags
@@ -426,6 +430,7 @@ public:
     virtual void     setFillColor(int);
     virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
+    virtual bool     haveFill() const;
 protected:
     int               color;
     Plot::LineStyle   line;
@@ -445,6 +450,7 @@ public:
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
     virtual TObject* getRootObject();
+    virtual bool     haveFill() const;
 protected:
     boost::scoped_ptr<TGraph2D> graph;
 };
@@ -459,6 +465,7 @@ public:
     virtual RangeM   yRange() const;
     virtual void     setFillColor(int);
     virtual void     setFillStyle(int);
+    virtual bool     haveFill() const;
 };
 
 // Wrapper around ROOT polygons
@@ -475,6 +482,7 @@ public:
     virtual void     setLineColor(int);
     virtual void     setFillColor(int);
     virtual void     setFillStyle(int);
+    virtual bool     haveFill() const;
     virtual TObject* getRootObject();
 private:
     int width;
@@ -506,6 +514,7 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual void     setLineWidth(int width);
     virtual void     setLineColor(int);
+    virtual bool     haveFill() const;
     virtual TObject* getRootObject();
 private:
     void plotVH(Pad* cxt);
@@ -547,6 +556,7 @@ public:
     virtual void   setFillStyle(int);
     virtual void   setLineWidth(int width);
     virtual void   setLineColor(int);
+    virtual bool   haveFill() const;
 private:
     Plot::Orientation orientation;
     double            x1,x2;
