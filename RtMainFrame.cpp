@@ -60,9 +60,14 @@ void RtMainFrame::eventHandler(Int_t event, Int_t px, Int_t py, TObject*)
         break;
     }
     case kMouseMotion: {
-        m_tip->SetText( m_plot->getTooltip(px, py).c_str() );
-        m_tip->SetPosition(px+8, py+8);
-        m_tip->Reset();
+        std::string tooltip = m_plot->getTooltip(px, py);
+        if( !tooltip.empty() ) {
+            m_tip->SetText( tooltip.c_str() );
+            m_tip->SetPosition(px+8, py+8);
+            m_tip->Reset();
+        } else {
+            m_tip->Hide();
+        }
         break;
     }
     default: ;

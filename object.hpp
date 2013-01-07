@@ -503,9 +503,10 @@ public:
         width(1)
     {}
     virtual ~PlotLine() {}
-    virtual void   plotOn(Pad* cxt);
-    virtual void   setLineWidth(int width);
-    virtual void   setLineColor(int);
+    virtual void     plotOn(Pad* cxt);
+    virtual void     setLineWidth(int width);
+    virtual void     setLineColor(int);
+    virtual TObject* getRootObject();
 private:
     void plotVH(Pad* cxt);
     void plotAB(Pad* cxt);

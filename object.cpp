@@ -469,6 +469,10 @@ void PlotLine::setLineColor(int col) {
     color = col;
 }
 
+TObject* PlotLine::getRootObject() {
+    return graph.get();
+}
+
 
 
 // ================================================================ //
