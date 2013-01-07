@@ -61,7 +61,7 @@ static Plot::MarkerStyle strToMarker( std::string str ) {
     Plot::MarkerStyle m = Plot::NoMarker;
     if( str == "NO" ) {
         m = Plot::NoMarker;
-    } else if( str == "DOT" ) {
+    } else if( str == "DOT"  || str == "." ) {
         m = Plot::MarkerDot;
     } else if( str == "PLUS" || str == "+" ) {
         m = Plot::MarkerPlus;
@@ -70,7 +70,7 @@ static Plot::MarkerStyle strToMarker( std::string str ) {
     } else if( str == "O" ) {
         m = Plot::MarkerO;
     } else if( str == "X" ) {
-        m = Plot::MarkerPlus;
+        m = Plot::MarkerX;
     }
     return m;
 }
