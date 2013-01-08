@@ -270,7 +270,6 @@ RangeM PlotGraph::yRange() const {
         for( int i = 1; i < n; i++ ) {
             if( logLo < 0 || (ys[i] < logLo && ys[i] > 0) ) {
                 logLo = ys[i];
-                std::cout << logLo << std::endl ;
             }
         }
     }
@@ -282,9 +281,6 @@ RangeM PlotGraph::yRange() const {
     else
         r.logLow = r.low;
     r.padRange( 0.03 );
-    std::cout << r.low << '\t'
-              << r.hi << '\t'
-              << r.logLow << '\n';
     return boost::optional<Range>( r );
 }
 
