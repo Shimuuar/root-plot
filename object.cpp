@@ -226,7 +226,7 @@ static void range_with_errors(int n, double* xs, double* dx, double& lo, double&
 }
 
 RangeM PlotGraph::xRange() const {
-    double hi, lo;
+    double hi, lo, logLo = -1;
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
@@ -237,15 +237,25 @@ RangeM PlotGraph::xRange() const {
         double* xs = graph->GetX();
         hi         = *std::max_element(xs, xs+n);
         lo         = *std::min_element(xs, xs+n);
+        // Find minimum for log scale
+        for( int i = 1; i < n; i++ ) {
+            if( logLo < 0 || (xs[i] < logLo && xs[i] > 0) )
+                logLo = xs[i];
+        }
     }
     Range r( lo, hi );
-    r.logLow = r.low;
+    // Minimum point for log scale is set as minimum coordinate or if
+    // it's negative as half if minimal positive coordinate
+    if( logLo > 0 && lo <= 0 )
+        r.logLow = logLo / 2;
+    else
+        r.logLow = r.low;
     r.padRange( 0.03 );
     return boost::optional<Range>( r );
 }
 
 RangeM PlotGraph::yRange() const {
-    double hi, lo;
+    double hi, lo, logLo = -1;
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
@@ -256,10 +266,25 @@ RangeM PlotGraph::yRange() const {
         double* ys = graph->GetY();
         hi         = *std::max_element(ys, ys+n);
         lo         = *std::min_element(ys, ys+n);
+        // Find minimum for log scale
+        for( int i = 1; i < n; i++ ) {
+            if( logLo < 0 || (ys[i] < logLo && ys[i] > 0) ) {
+                logLo = ys[i];
+                std::cout << logLo << std::endl ;
+            }
+        }
     }
     Range r( lo, hi );
-    r.logLow = r.low;
+    // Minimum point for log scale is set as minimum coordinate or if
+    // it's negative as half if minimal positive coordinate
+    if( logLo > 0 && lo <= 0 )
+        r.logLow = logLo / 2;
+    else
+        r.logLow = r.low;
     r.padRange( 0.03 );
+    std::cout << r.low << '\t'
+              << r.hi << '\t'
+              << r.logLow << '\n';
     return boost::optional<Range>( r );
 }
 
