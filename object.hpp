@@ -166,6 +166,9 @@ public:
     // Complete current pad
     void completePad();
 
+    // Set canvas size
+    void setCanvasSize(int x, int y);
+
     // Get current plot. Semantic of this function if fairly
     // subtle. It's interpreted as attempt to draw so it performs
     // transition Empty→Pad

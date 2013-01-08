@@ -137,6 +137,8 @@ static void setGrid(ParseParam& par, bool x, bool y) {
 %token KW_PAD
 %token KW_ROW
 %token KW_COLUMN
+%token KW_CANVAS
+%token KW_SIZE
 
  // SET
 %token KW_SET
@@ -309,6 +311,9 @@ set
   | KW_XAXIS  { par.axis = Plot::X; } TOK_WS setAxis
   | KW_YAXIS  { par.axis = Plot::Y; } TOK_WS setAxis
   | KW_ZAXIS  { par.axis = Plot::Z; } TOK_WS setAxis
+  // Canvas
+  | KW_CANVAS TOK_WS KW_SIZE TOK_WS TOK_INT TOK_WS TOK_INT eol
+    { par.plot->setCanvasSize( get<int>($5), get<int>( $7) ); }
 
 setAxis
   : KW_LABEL TOK_WS TOK_DASH eol

@@ -31,6 +31,8 @@ legend      { return KW_LEGEND; }
 pad         { return KW_PAD;    }
 row         { return KW_ROW;    }
 column      { return KW_COLUMN; }
+canvas      { return KW_CANVAS; }
+size        { return KW_SIZE;   }
 
 plot        { return KW_PLOT;     }
 add         { return KW_ADD;      }

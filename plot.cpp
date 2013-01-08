@@ -230,6 +230,10 @@ std::string Plot::getTooltip(int x, int y) {
     return res;
 }
 
+void Plot::setCanvasSize(int x, int y) {
+    m_canvas->SetCanvasSize(x,y);
+}
+
 void Plot::fatalError(const std::string& str ) {
     m_current = 0;
     m_errors.push_back( str );
