@@ -292,8 +292,8 @@ bool AccumHist::feedLine(const std::string& str) {
                     }
                 }
             } else {
-                double x,y,z;
-                ok = 3 == sscanf(str.c_str(), "(%lf,%lf) %lf", &x, &y, &z);
+                double x,y,w;
+                ok = 3 == sscanf(str.c_str(), "(%lf,%lf) %lf", &x, &y, &w);
                 // EVIL. Kludgely reinterpret pointer type.
                 TH2* h = dynamic_cast<TH2*>( hist.get() );
                 if( h == 0 ) {
@@ -301,8 +301,16 @@ bool AccumHist::feedLine(const std::string& str) {
                     return false;
                 }
                 if( ok ) {
-                    // FIXME: normalization
-                    h->Fill(x,y,z);
+                    if( norm ) {
+                        TAxis* aX = h->GetXaxis();
+                        TAxis* aY = h->GetYaxis();
+                        int nX = aX->FindBin( x );
+                        int nY = aY->FindBin( y );
+                        int n  = h->FindBin( x, y );
+                        h->SetBinContent( n, w / (aX->GetBinWidth(nX) * aY->GetBinWidth(nY) ) );
+                    } else {
+                        h->Fill(x,y,w);
+                    }
                 }
             }
         }
