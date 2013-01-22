@@ -5,6 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
+#include <iostream>
 #include <boost/noncopyable.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/format.hpp>

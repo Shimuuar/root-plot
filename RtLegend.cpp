@@ -1,6 +1,7 @@
 
 #include "RtLegend.hpp"
 
+#include <assert.h>
 #include <cmath>
 #include <boost/make_shared.hpp>
 
@@ -89,7 +90,7 @@ double RtLegend::drawY(double y, bool forceLinear) {
 // ================================================================
 
 void RtLegend::Copy(TObject& o) {
-    std::cout << "RtLegend::Copy\n";
+    assert(false && "Unimplemented");
 }
 
 void RtLegend::Clear(Option_t* opt) {

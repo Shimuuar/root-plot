@@ -2,6 +2,7 @@
 #include "object.hpp"
 #include "exceptions.hpp"
 
+#include <cmath>
 #include <list>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
