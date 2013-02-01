@@ -336,7 +336,10 @@ real :: Double -> Builder
 real = fromShow
 
 strLit :: String -> Builder
-strLit = fromShow
+strLit s = fromChar '"' <> mconcat (map go s) <> fromChar '"'
+  where
+    go '"' = error "Cannot escape \""
+    go  c  = fromChar c
 
 
 ----------------------------------------------------------------
