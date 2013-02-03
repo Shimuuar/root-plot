@@ -79,13 +79,10 @@ public:
     // Dump tree
     void dumpTree(int i = 0);
 
-    // Pointer to the parent structure. Null for root node
-    Plot::Layout*     parent;
-    // ROOT's pad we operate on
-    TPad*             rootPad;
 
-    // Payload. Very
-    State                state;       // State of
+    Plot::Layout*        parent;      // Pointer to the parent structure. Null for root node
+    TPad*                rootPad;     // ROOT's pad we operate on
+    State                state;       // State of the layout
     Pad*                 plot;        // Pointer to the plot
     std::vector<PadData> row;         // Row data
     Plot::Orientation    orientation; // Orientation of row
@@ -102,14 +99,13 @@ Plot::Layout::Layout( Layout* p, TPad* rp ) :
 
 Plot::Layout::~Layout() {
     clear();
+    delete rootPad;
 }
 
 void Plot::Layout::clear() {
     // Clear row/column
     for( size_t i = 0; i < row.size(); i++ ) {
-        TPad* pad = row[i].pad->rootPad;
         delete row[i].pad;
-        delete pad;
     }
     row.resize(0);
     // Delete plot
@@ -221,9 +217,10 @@ void Plot::Layout::dumpTree(int n) {
 Plot::Plot( TCanvas* cnv ) :
     m_silent ( false ),
     m_canvas ( cnv   ),
-    m_layout ( new Layout( 0, cnv ) ),
     m_current( m_layout )
-{}
+{
+    clear();
+}
 
 std::string Plot::getTooltip(int x, int y) {
     std::string res;
@@ -246,9 +243,9 @@ void Plot::pushCommand(const std::string& str ) {
 
 void Plot::draw(bool force) {
     if( !m_silent || (m_silent && force) ) {
-        m_layout->draw();
         m_canvas->cd();
-        m_canvas->Draw();
+        m_layout->rootPad->Draw();
+        m_layout->draw();
         m_canvas->Update();
     }
     if( m_errors.size() > 0 ) {
@@ -297,7 +294,9 @@ void Plot::clear() {
     m_errors.resize( 0 );
     m_errorPad.reset();
     // Delete all plots
-    m_layout->clear();
+    delete m_layout;
+    m_canvas->cd();
+    m_layout  = new Layout( 0, newROOT<TPad>("PAD","", 0,0, 1,1) );
     m_current = m_layout;
     // Delete extra canvases. They could appear when one creates slice
     TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
