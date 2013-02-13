@@ -56,6 +56,7 @@ module HEP.ROOT.Plot (
   , rangeAuto
     -- ** Histogram options
   , histText
+  , histTextFmt
   , histBox
   , histColor
   , histScatter
@@ -253,6 +254,9 @@ rangeAuto = cmd RangeAuto
 
 histText :: Toggle -> Cmd HistOpt
 histText = cmd . HistText
+
+histTextFmt :: Maybe Int -> Cmd HistOpt
+histTextFmt = cmd . HistTextFmt
 
 histBox :: Toggle -> Cmd HistOpt
 histBox = cmd . HistBox

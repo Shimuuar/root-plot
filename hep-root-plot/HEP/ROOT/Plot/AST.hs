@@ -125,6 +125,8 @@ data Axis
 data HistOpt
     -- | Draw text
   = HistText Toggle
+    -- | Number of decimal places
+  | HistTextFmt (Maybe Int)
     -- | Draw colored
   | HistBox Toggle
     -- | Draw colored
@@ -182,9 +184,9 @@ renderCommand (Save nm)  = do
   cwd <- getCurrentDirectory
   rel <- makeRelativeToCurrentDirectory nm
   return $ co "save " <> (strLit $ cwd ++ "/" ++ rel) <> co "\n"
-renderCommand (Set opt)  = return $ co "set  "   <> renderOption opt <> co "\n"
+renderCommand (Set opt)  = return $ co "set "    <> renderOption opt <> co "\n"
 renderCommand (Plot pl)  = return $ co "plot "   <> renderPlot pl    <> co "\n"
-renderCommand (Add  pl)  = return $ co "add  "   <> renderPlot pl    <> co "\n"
+renderCommand (Add  pl)  = return $ co "add "    <> renderPlot pl    <> co "\n"
 renderCommand (Legend l) = return $ co "legend " <> renderLegend l   <> co "\n"
 renderCommand (AddRow rows) = do
   bld <- mconcat <$> mapM renderRowCmd rows
@@ -287,6 +289,8 @@ renderError ErrorBand  = co "band"
 -- Histogram options
 renderHistOpt :: HistOpt -> Builder
 renderHistOpt (HistText    o) = co "text "    <> toggle o
+renderHistOpt (HistTextFmt Nothing ) = co "text format -"
+renderHistOpt (HistTextFmt (Just n)) = co "text format " <> int n
 renderHistOpt (HistBox     o) = co "box "     <> toggle o
 renderHistOpt (HistColor   o) = co "color "   <> toggle o
 renderHistOpt (HistScatter o) = co "scattter" <> toggle o
