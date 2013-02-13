@@ -4,6 +4,7 @@
 #include <cmath>
 #include <algorithm>
 #include <boost/make_shared.hpp>
+#include <boost/format.hpp>
 
 #include <TH1.h>
 #include <TH2.h>
@@ -13,6 +14,7 @@
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TPolyLine.h>
+#include <TExec.h>
 
 #include "memory.hpp"
 
@@ -45,6 +47,7 @@ bool PlotObject::haveFill() const {
 
 PlotHist::PlotHist(TH1* h) :
     hist(h),
+    m_cmd( makeROOT<TExec>("CMD", "gStyle->SetPaintTextFormat(\"g\");") ),
     m_lineWidth( 1     ),
     m_text     ( false ),
     m_scatter  ( false ),
@@ -76,7 +79,17 @@ void PlotHist::plotOn(Pad*) {
         hist->SetLineWidth( 1 );
         opt = "B " + opt;
     }
+    m_cmd->Draw();
     hist->Draw( opt.c_str() );
+}
+
+void PlotHist::setHistTextFmt(int n) {
+    if( n < 0 )
+        m_cmd = makeROOT<TExec>("CMD", "gStyle->SetPaintTextFormat(\"g\");");
+    else {
+        std::string cmd = (boost::format("gStyle->SetPaintTextFormat(\".%df\");") % n).str();
+        m_cmd = makeROOT<TExec>("CMD", cmd.c_str() );
+    }
 }
 
 void PlotHist::setLineWidth(int width) {

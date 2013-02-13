@@ -69,6 +69,7 @@ marker      { return KW_MARKER;  }
 color       { return KW_COLOR;   }
 fill        { return KW_FILL;    }
 text        { return KW_TEXT;    }
+format      { return KW_FORMAT;  }
 box         { return KW_BOX;     }
 contour     { return KW_CONTOUR; }
 palette     { return KW_PALETTE; }

@@ -217,6 +217,11 @@ void Pad::setHistText( bool txt ) {
         m_objStack.back()->setHistText( txt );
 }
 
+void Pad::setHistTextFmt( int n ) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setHistTextFmt( n );
+}
+
 void Pad::setHistScatter( bool scat ) {
     if( !m_objStack.empty() )
         m_objStack.back()->setHistScatter( scat );

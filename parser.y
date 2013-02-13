@@ -155,6 +155,7 @@ static void setGrid(ParseParam& par, bool x, bool y) {
 %token KW_MARKER
 %token KW_FILL
 %token KW_TEXT
+%token KW_FORMAT
 %token KW_BOX
 %token KW_SCATTER
 %token KW_CONTOUR
@@ -388,6 +389,10 @@ setFill
 setHist
   : KW_TEXT    onOff
     { if( par() ) par.pad->setHistText( par.onOff ); }
+  | KW_TEXT TOK_WS KW_FORMAT TOK_WS TOK_DASH eol
+    { if( par() ) par.pad->setHistTextFmt( -1 ); }
+  | KW_TEXT TOK_WS KW_FORMAT TOK_WS TOK_INT eol
+    { if( par() ) par.pad->setHistTextFmt( get<int>( $5 ) ); }
   | KW_COLOR   onOff
     { if( par() ) par.pad->setHistColor( par.onOff ); }
   | KW_BOX     onOff

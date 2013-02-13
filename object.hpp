@@ -56,6 +56,7 @@ class TGraph2D;
 class TPolyLine;
 class TH1;
 class TPaveText;
+class TExec;
 
 
 // Description of plot in general. It may contain several pads. Every
@@ -275,6 +276,8 @@ public:
 
     // Set text drawing histograms
     void setHistText( bool txt );
+    // Set text format
+    void setHistTextFmt( int n );
     // Set scatter plot for 2D histogram
     void setHistScatter( bool scat );
     // Set contour plot for 2D histograms (negative to disable)
@@ -358,6 +361,9 @@ public:
 
     // Set text drawing histograms
     virtual void setHistText   ( bool txt )  {UNUSED(txt);}
+    // Set number of decimal places in text. Negative number reverts
+    // to default.
+    virtual void setHistTextFmt( int n)      {UNUSED(n);}
     // Set scatter plot for 2D histogram
     virtual void setHistScatter( bool scat ) {UNUSED(scat);}
     // Set contour plot for 2D histograms (negative to disable)
@@ -395,6 +401,7 @@ public:
     virtual TObject* getRootObject();
 
     virtual void setHistText( bool txt )     { m_text    = txt;  }
+    virtual void setHistTextFmt( int n );
     virtual void setHistScatter( bool scat ) { m_scatter = scat; }
     virtual void setHistContour( int n )     { m_nCont   = n;    }
     virtual void setHistColor( bool c )      { m_color   = c;    }
@@ -403,7 +410,8 @@ public:
 
     virtual bool haveFill() const;
 private:
-    boost::scoped_ptr<TH1> hist; // Histogram
+    boost::scoped_ptr<TH1>   hist; // Histogram
+    boost::shared_ptr<TExec> m_cmd;  // Command to execute before drawing histograms
     // Common flags
     int  m_lineWidth;            // Line width
     bool m_text;                 // Draw text at nodes?
