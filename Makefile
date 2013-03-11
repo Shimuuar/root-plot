@@ -23,9 +23,9 @@ INCLDIR   =${INSTALLDIR}/include
 
 C        = gcc
 CXX      = g++
-CXXFLAGS = -g -O2 -fno-strict-aliasing  -Wall -Wextra `${ROOTCFG} --cflags`
+CXXFLAGS = -g -O2 -fno-strict-aliasing  -Wall -Wextra $(shell ${ROOTCFG} --cflags)
 CFLAGS   = -g -O2 -Wall -Wextra -std=c99
-LDFLAGS  = `${ROOTCFG} --libs` -lGui -lfl
+LDFLAGS  = $(shell ${ROOTCFG} --libs) -lGui -lfl
 CLDFLAGS = -L. -lrt-plot
 PREFIX   = ${HOME}/opt
 HEADERS  = object.hpp reader.hpp parser.hpp exceptions.hpp memory.hpp \
