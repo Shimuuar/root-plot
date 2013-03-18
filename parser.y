@@ -75,6 +75,21 @@ static Plot::MarkerStyle strToMarker( std::string str ) {
     return m;
 }
 
+static void setPalette( Plot* p, std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), toupper );
+    if( str == "DEEP SEA" ) {
+        p->setPalette( Plot::DeepSea );
+    } else if( str == "GREY SCALE" || str == "GRAY SCALE" ) {
+        p->setPalette( Plot::GreyScale );
+    } else if( str == "DARK BODY" || str == "BLACK BODY" ) {
+        p->setPalette( Plot::BlackBody );
+    } else if( str == "BLUE YELLOW" ) {
+        p->setPalette( Plot::BlueYellow );
+    } else {
+        p->setPalette( Plot::DeepSea );
+    }
+}
+
 // Pattern match over Token to retrieve double value
 struct GetDoubleVisitor : public boost::static_visitor<double> {
     double operator()(int i)              const { return i; }
@@ -287,15 +302,16 @@ legend
 
 
 set
-  : KW_LINE   TOK_WS setLine
-  | KW_FILL   TOK_WS setFill
-  | KW_HIST   TOK_WS setHist
-  | KW_SILENT TOK_WS KW_ON    eol { par.plot->setSilent( true  ); }
-  | KW_SILENT TOK_WS KW_OFF   eol { par.plot->setSilent( false ); }
-  | KW_TITLE  TOK_WS TOK_STR  eol { if( par() ) par.pad->setTitle( get<std::string>( $3 ) ); }
-  | KW_ERROR  TOK_WS TOK_DASH eol { if( par() ) par.pad->setErrorStyle( Plot::NoErrors   ); }
-  | KW_ERROR  TOK_WS KW_CROSS eol { if( par() ) par.pad->setErrorStyle( Plot::Crosshairs ); }
-  | KW_ERROR  TOK_WS KW_BAND  eol { if( par() ) par.pad->setErrorStyle( Plot::ErrorBand  ); }
+  : KW_LINE    TOK_WS setLine
+  | KW_FILL    TOK_WS setFill
+  | KW_HIST    TOK_WS setHist
+  | KW_SILENT  TOK_WS KW_ON    eol { par.plot->setSilent( true  ); }
+  | KW_SILENT  TOK_WS KW_OFF   eol { par.plot->setSilent( false ); }
+  | KW_TITLE   TOK_WS TOK_STR  eol { if( par() ) par.pad->setTitle( get<std::string>( $3 ) ); }
+  | KW_ERROR   TOK_WS TOK_DASH eol { if( par() ) par.pad->setErrorStyle( Plot::NoErrors   ); }
+  | KW_ERROR   TOK_WS KW_CROSS eol { if( par() ) par.pad->setErrorStyle( Plot::Crosshairs ); }
+  | KW_ERROR   TOK_WS KW_BAND  eol { if( par() ) par.pad->setErrorStyle( Plot::ErrorBand  ); }
+  | KW_PALETTE TOK_WS TOK_STR  eol { setPalette( par.plot, get<std::string>( $3 ) ); }
   // Grid
   | KW_GRID                 eol { setGrid(par, true,  true ); }
   | KW_GRID   TOK_WS KW_ON  eol { setGrid(par, true,  true ); }

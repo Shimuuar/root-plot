@@ -13,6 +13,7 @@
 #include <TROOT.h>
 #include <TCanvas.h>
 #include <TPaveText.h>
+#include <TColor.h>
 
 #include "memory.hpp"
 
@@ -219,6 +220,7 @@ Plot::Plot( TCanvas* cnv ) :
     m_canvas ( cnv   ),
     m_current( m_layout )
 {
+    doSetPalette( DeepSea );
     clear();
 }
 
@@ -398,4 +400,59 @@ void Plot::pushObject( boost::shared_ptr<PlotObject> o ) {
     Pad* pad = getCurrentPlot();
     if( pad )
         pad->pushObject(o);
+}
+
+void Plot::setPalette(Palette palette) {
+    if( palette != m_palette )
+        doSetPalette( palette );
+}
+
+void Plot::doSetPalette(Palette palette) {
+    m_palette = palette;
+    switch( m_palette ) {
+    case DeepSea:
+    {
+        TColor::InitializeColors();
+        const UInt_t nRGBs = 5;
+        Double_t stops[nRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
+        Double_t red[nRGBs]   = { 0.00, 0.09, 0.18, 0.09, 0.00 };
+        Double_t green[nRGBs] = { 0.01, 0.02, 0.39, 0.68, 0.97 };
+        Double_t blue[nRGBs]  = { 0.17, 0.39, 0.62, 0.79, 0.97 };
+        TColor::CreateGradientColorTable(nRGBs, stops, red, green, blue, 255);
+        break;
+    }
+    case GreyScale:
+    {
+        TColor::InitializeColors();
+        const Int_t nRGBs = 3;
+        Double_t stops[nRGBs] = { 0.00, 0.50, 1.00};
+        Double_t red[nRGBs]   = { 0.00, 0.50, 1.00};
+        Double_t green[nRGBs] = { 0.00, 0.50, 1.00};
+        Double_t blue[nRGBs]  = { 0.00, 0.50, 1.00};
+        TColor::CreateGradientColorTable(nRGBs, stops, red, green, blue, 255);
+        break;
+    }
+    case BlackBody:
+    {
+        TColor::InitializeColors();
+        const Int_t nRGBs = 5;
+        Double_t stops[nRGBs] = { 0.00, 0.25, 0.50, 0.75, 1.00};
+        Double_t red[nRGBs]   = { 0.00, 0.50, 1.00, 1.00, 1.00};
+        Double_t green[nRGBs] = { 0.00, 0.00, 0.55, 1.00, 1.00};
+        Double_t blue[nRGBs]  = { 0.00, 0.00, 0.00, 0.00, 1.00};
+        TColor::CreateGradientColorTable(nRGBs, stops, red, green, blue, 255);
+        break;
+    }
+    case BlueYellow:
+    {
+        TColor::InitializeColors();
+        const Int_t nRGBs = 3;
+        Double_t stops[nRGBs] = { 0.00, 0.50, 1.00};
+        Double_t red[nRGBs]   = { 0.00, 0.50, 1.00};
+        Double_t green[nRGBs] = { 0.00, 0.50, 1.00};
+        Double_t blue[nRGBs]  = { 0.50, 0.50, 0.00};
+        TColor::CreateGradientColorTable(nRGBs, stops, red, green, blue, 255);
+        break;
+    }
+    }
 }

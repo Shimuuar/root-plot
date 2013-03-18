@@ -138,6 +138,13 @@ public:
         Crosshairs,
         ErrorBand
     };
+    // Palette variants
+    enum Palette {
+        DeepSea,
+        GreyScale,
+        BlackBody,
+        BlueYellow
+    };
 
     // Create layout with primary canvas.
     Plot( TCanvas* );
@@ -157,6 +164,8 @@ public:
     void pushCommand(const std::string& str);
     // Set silent mode on/off. In silent mode canvas is not updated.
     void setSilent(bool);
+    // Set palette
+    void setPalette(Palette palette);
 
     // Make current pad into the row/column
     void addRow( Plot::Orientation, double weight = 1);
@@ -182,6 +191,8 @@ private:
     void fatalError(const std::string& str);
     // Free data from layout
     void destroyLayout();
+    // Actually set palette
+    void doSetPalette(Palette palette);
     class Layout;
 
     std::list<std::string>       m_commands;  // List of commands after last 'CLEAR'
@@ -189,6 +200,7 @@ private:
     std::vector<std::string>     m_errors;    // List of errors
     boost::shared_ptr<TPad>      m_errorPad;  // TPad for reporting errors
     TCanvas*                     m_canvas;    // Main canvas. Not owned
+    Palette                      m_palette;   // Palette being used
 
     Layout*  m_layout;  // Pads layout
     Layout*  m_current; // Current pad. NULL indicates invalid state
