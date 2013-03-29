@@ -21,7 +21,10 @@
 // == Small types
 // ================================================================ //
 
-// Axix range
+// Axis range. It's more complicated than simple pair of numbers
+// because we need to select different low limit for log scale. For
+// example low range for 1D histograms is set to 0 but this is invalid
+// choice for log-scale.
 struct Range {
     Range(double a, double b) :
         low(a), hi(b)
@@ -32,9 +35,12 @@ struct Range {
     Range(double a, double b, boost::optional<double> loga) :
         low(a), hi(b), logLow(loga)
     {}
-    double low; // Low range
-    double hi;  // Hi range
+
+    double low;                     // Low range
+    double hi;                      // Hi range
     boost::optional<double> logLow; // Optional low range for log scale
+
+    // Add padding to the range.
     void padRange(double eps);
 };
 
@@ -266,7 +272,8 @@ public:
     // Set line width for top object. Noop if stack is empty
     void setLineWidth(int width);
 
-    // X range for plot
+    // X range for plot. If object need padding it should add it by
+    // itself. Same applies to the yRange and zRange
     RangeM xRange() const;
     // Y range for plot
     RangeM yRange() const;
@@ -348,7 +355,7 @@ public:
     // bool  first - Whether object is first on the plot or not.
     virtual void plotOn(Pad* cxt) = 0;
 
-    // X range for object. Object should add any padding by itself.
+    // X range for object.
     virtual RangeM xRange() const;
     // Y range for object.
     virtual RangeM yRange() const;
