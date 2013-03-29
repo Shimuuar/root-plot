@@ -21,27 +21,50 @@
 // == Small types
 // ================================================================ //
 
-// Axis range. It's more complicated than simple pair of numbers
-// because we need to select different low limit for log scale. For
-// example low range for 1D histograms is set to 0 but this is invalid
-// choice for log-scale.
+// Axis range. This is quite complicated object because we need
+// simultaneously to take into account range itself, padding and
+// log-scale. For example:
+//
+//  * Low range for 1D histograms is set to 0 but it's obviously
+//    invalid choice for log-scale and we need to choose it
+//    differently.
+//
+//  * Padding. We may want to add padding on to one of the ranges.
+//    For 1D histograms we need add padding on top range and for
+//    Graphs on both sides.
+//
+//    Tricky parts is that we need to add padding at the last step.
+//    Since we want to pad with fraction of full range rather that with
+//    fraction of single plot range.
 struct Range {
+    // By default constructors set padding to false. 
+    Range() :
+        low(0), wantPadLow(false),
+        hi (1), wantPadHi (false)
+    {}
     Range(double a, double b) :
-        low(a), hi(b)
+        low(a), wantPadLow(false),
+        hi (b), wantPadHi (false)
     {}
     Range(double a, double b, double loga) :
-        low(a), hi(b), logLow(loga)
+        low(a), wantPadLow(false),
+        hi (b), wantPadHi (false),
+        logLow(loga)
     {}
     Range(double a, double b, boost::optional<double> loga) :
-        low(a), hi(b), logLow(loga)
+        low(a), wantPadLow(false),
+        hi (b), wantPadHi (false),
+        logLow(loga)
     {}
 
     double low;                     // Low range
+    bool   wantPadLow;              // Need to add padding on low side
     double hi;                      // Hi range
+    bool   wantPadHi;               // Need to add padding on high side
     boost::optional<double> logLow; // Optional low range for log scale
 
-    // Add padding to the range.
-    void padRange(double eps);
+    double lowRange(bool useLog);
+    double hiRange ();
 };
 
 typedef boost::optional<Range> RangeM;
