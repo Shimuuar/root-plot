@@ -36,6 +36,9 @@
 //    Tricky parts is that we need to add padding at the last step.
 //    Since we want to pad with fraction of full range rather that with
 //    fraction of single plot range.
+//
+//    To make thing even more complicated padding should be added
+//    differently if log scale is used.
 struct Range {
     // By default constructors set padding to false. 
     Range() :
@@ -64,7 +67,7 @@ struct Range {
     boost::optional<double> logLow; // Optional low range for log scale
 
     double lowRange(bool useLog);
-    double hiRange ();
+    double hiRange (bool useLog);
 };
 
 typedef boost::optional<Range> RangeM;

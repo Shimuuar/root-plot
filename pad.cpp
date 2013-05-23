@@ -1,4 +1,4 @@
-
+#include <iostream>
 #include "object.hpp"
 
 #include <cmath>
@@ -58,12 +58,23 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
 }
 
 double Range::lowRange(bool useLog) {
+    std::cout << "LOW = " << low << "\n";
+    std::cout << "Hi  = " << hi  << "\n";
+    if( logLow.is_initialized() )
+        std::cout << "LOG = " << logLow.get() << "\n";
+    std::cout << wantPadLow << ' ' << wantPadHi << '\n';
+    //
+
     if( useLog ) {
-        if( logLow.is_initialized() )
-            return logLow.get();
+        // Find out minimum for log scale. logLow is used if it's set.
+        double l = logLow.get_value_or( low );
+        // Otherwise we may need to apply padding manually.
+        if( wantPadLow )
+            return exp( log(l) - 0.03 * log(hi/l));
         else
-            return lowRange(false);
+            return l;
     } else {
+        // In linear scale we simply add padding when appropriate.
         if( wantPadLow )
             return low - 0.03 * (hi - low);
         else
@@ -71,11 +82,20 @@ double Range::lowRange(bool useLog) {
     }
 }
 
-double Range::hiRange() {
-    if( wantPadHi )
-        return hi + 0.03 * (hi - low);
-    else
-        return hi;
+double Range::hiRange(bool useLog) {
+    if( useLog ) {
+        // Apply padding in log scale
+        if( wantPadHi )
+            return exp( log(hi) + 0.03 * log(hi/low));
+        else
+            return hi;
+    } else {
+        // Apply padding in linear scale
+        if( wantPadHi )
+            return hi + 0.03 * (hi - low);
+        else
+            return hi;
+    }
 }
 
 // ================================================================ //
@@ -131,12 +151,12 @@ void Pad::draw() {
     RangeM rngX = xRange();
     if( rngX.is_initialized() ) {
         xs[0] = rngX->lowRange( m_xLog );
-        xs[1] = rngX->hiRange ();
+        xs[1] = rngX->hiRange ( m_xLog );
     }
     RangeM rngY = yRange();
     if( rngY.is_initialized() ) {
         ys[0] = rngY->lowRange( m_yLog );
-        ys[1] = rngY->hiRange ();
+        ys[1] = rngY->hiRange ( m_yLog );
     }
 
     // Draw frame for the plots.
