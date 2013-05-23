@@ -85,8 +85,9 @@ double Range::lowRange(bool useLog) {
 double Range::hiRange(bool useLog) {
     if( useLog ) {
         // Apply padding in log scale
+        double l = logLow.get_value_or( low );
         if( wantPadHi )
-            return exp( log(hi) + 0.03 * log(hi/low));
+            return exp( log(hi) + 0.03 * log(hi/l));
         else
             return hi;
     } else {
