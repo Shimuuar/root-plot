@@ -1,4 +1,3 @@
-#include <iostream>
 #include "object.hpp"
 
 #include <cmath>
@@ -58,13 +57,6 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
 }
 
 double Range::lowRange(bool useLog) {
-    std::cout << "LOW = " << low << "\n";
-    std::cout << "Hi  = " << hi  << "\n";
-    if( logLow.is_initialized() )
-        std::cout << "LOG = " << logLow.get() << "\n";
-    std::cout << wantPadLow << ' ' << wantPadHi << '\n';
-    //
-
     if( useLog ) {
         // Find out minimum for log scale. logLow is used if it's set.
         double l = logLow.get_value_or( low );
