@@ -42,12 +42,12 @@ static bool endsWith(const std::string& str, const std::string& suf) {
 //  * Row/Column: ∀ row     && plot == 0
 //  * Pad:        row == [] && plot /= 0
 //
-// Note on ownership of ROOT objects. Layout do not own TPad. Instead
-// they are owned by the parent. This is because root TCanvas
-// shouldn't be deleted.
 struct Plot::Layout : boost::noncopyable {
 public:
+    // Possible states of layout
     enum State { EMPTY, PAD, ROW };
+
+    // Data for subpads.
     struct PadData {
         PadData() :
             weight(1), pad(0)
