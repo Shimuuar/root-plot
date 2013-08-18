@@ -231,7 +231,8 @@ std::string Plot::getTooltip(int x, int y) {
 }
 
 void Plot::setCanvasSize(int x, int y) {
-    m_canvas->SetCanvasSize(x,y);
+    m_xSize = x;
+    m_ySize = y;
 }
 
 void Plot::fatalError(const std::string& str ) {
@@ -246,6 +247,13 @@ void Plot::pushCommand(const std::string& str ) {
 void Plot::draw(bool force) {
     if( !m_silent || (m_silent && force) ) {
         m_canvas->cd();
+        // Resize canvas if needed
+        if( m_xSize > 0 && m_ySize > 0 ) {
+            m_canvas->SetCanvasSize( m_xSize, m_ySize );
+        } else {
+            m_canvas->Resize();
+        }
+        // Draw
         m_layout->rootPad->Draw();
         m_layout->draw();
         m_canvas->Update();
@@ -295,6 +303,9 @@ void Plot::clear() {
     // Remove errors
     m_errors.resize( 0 );
     m_errorPad.reset();
+    // Reset canvas size
+    m_xSize = -1;
+    m_ySize = -1;
     // Delete all plots
     delete m_layout;
     m_canvas->cd();
