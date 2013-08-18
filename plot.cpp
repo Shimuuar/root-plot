@@ -217,10 +217,10 @@ void Plot::Layout::dumpTree(int n) {
 
 Plot::Plot( TCanvas* cnv ) :
     m_silent ( false ),
-    m_canvas ( cnv   ),
-    m_current( m_layout )
+    m_canvas ( cnv   )
 {
     doSetPalette( DeepSea );
+    // Layouts are initialized here
     clear();
 }
 
