@@ -235,8 +235,8 @@ private:
     Palette                      m_palette;   // Palette being used
     int                          m_xSize,m_ySize; // Size of canvas
 
-    Layout*  m_layout;  // Pads layout
-    Layout*  m_current; // Current pad. NULL indicates invalid state
+    boost::shared_ptr<Layout>  m_layout;  // Pads layout
+    Layout*                    m_current; // Current pad. NULL indicates invalid state
 };
 
 

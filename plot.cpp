@@ -307,10 +307,9 @@ void Plot::clear() {
     m_xSize = -1;
     m_ySize = -1;
     // Delete all plots
-    delete m_layout;
     m_canvas->cd();
-    m_layout  = new Layout( 0, newROOT<TPad>("PAD","", 0,0, 1,1) );
-    m_current = m_layout;
+    m_layout  = boost::make_shared<Layout>( (Layout*)0, newROOT<TPad>("PAD","", 0,0, 1,1) );
+    m_current = &*m_layout;
     // Delete extra canvases. They could appear when one creates slice
     TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
     for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {
