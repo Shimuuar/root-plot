@@ -177,7 +177,7 @@ bool Plot::Layout::getTooltip(int px, int py, std::string& res) {
             if( rootPad->GetLogy() )
                 y = exp10(y);
             // Create tooltip
-            res = (boost::format( "X=%.3g Y=%.3g" ) % x % y).str();
+            res = (boost::format( " X = %.3g\n Y = %.3g" ) % x % y).str();
             return true;
         }
         return false;
