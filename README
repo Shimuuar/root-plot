@@ -178,16 +178,19 @@ Set plot title.
 
 Set option for X, Y or Z axis
 
+
 > set [xaxis|yaxis|zaxis] label -
 > set [xaxis|yaxis|zaxis] label "Label"
 
 Remove or set axis label
+
 
 > set [xaxis|yaxis|zaxis] log
 > set [xaxis|yaxis|zaxis] log on
 > set [xaxis|yaxis|zaxis] log off
 
 Turn log scale for given scale on/off. If no switch is given switches it on.
+
 
 > set [xaxis|yaxis|zaxis] range -
 > set [xaxis|yaxis|zaxis] range -      {real}
@@ -196,6 +199,13 @@ Turn log scale for given scale on/off. If no switch is given switches it on.
 
 Set axis to automatically adjusted range (default) or to custom range. It's
 possible to set manually only upper or lower limit.
+
+
+> set ignore range
+> set ignore range on
+> set ignore range off
+
+Exclude or include last object from automatic range adjustments.
 
 
 > set line ...

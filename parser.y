@@ -182,7 +182,7 @@ static void setGrid(ParseParam& par, bool x, bool y) {
 %token KW_LOG
 %token KW_LABEL
 %token KW_RANGE
-
+%token KW_IGNORE
 %token KW_GRID
 %token KW_X
 %token KW_Y
@@ -331,6 +331,13 @@ set
   // Canvas
   | KW_CANVAS TOK_WS KW_SIZE TOK_WS TOK_INT TOK_WS TOK_INT eol
     { par.plot->setCanvasSize( get<int>($5), get<int>( $7) ); }
+  // Automatic range adjustment
+  | KW_IGNORE TOK_WS KW_RANGE eol
+    { if( par() ) par.pad->setAutoRange( false ); }
+  | KW_IGNORE TOK_WS KW_RANGE TOK_WS KW_ON eol
+    { if( par() ) par.pad->setAutoRange( false ); }
+  | KW_IGNORE TOK_WS KW_RANGE TOK_WS KW_OFF eol
+    { if( par() ) par.pad->setAutoRange( true  ); }
 
 setAxis
   : KW_LABEL TOK_WS TOK_DASH eol

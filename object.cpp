@@ -24,6 +24,10 @@
 // ==== Plot object
 // ================================================================ //
 
+PlotObject::PlotObject() :
+    isAutorange(true)
+{}
+
 RangeM PlotObject::xRange() const {
     return boost::optional<Range>();
 }

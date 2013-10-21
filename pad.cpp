@@ -259,10 +259,12 @@ static RangeM axisRange(boost::optional<double> low,
     // Estimate range
     RangeM rng;
     for(Pad::Stack::const_iterator i = objs.begin(); i != objs.end(); ++i ) {
-        switch( axis ) {
-        case Plot::X: rng = joinRange(rng, (*i)->xRange()); break;
-        case Plot::Y: rng = joinRange(rng, (*i)->yRange()); break;
-        case Plot::Z: rng = joinRange(rng, (*i)->zRange()); break;
+        if( (*i)->isAutorange ) {
+            switch( axis ) {
+            case Plot::X: rng = joinRange(rng, (*i)->xRange()); break;
+            case Plot::Y: rng = joinRange(rng, (*i)->yRange()); break;
+            case Plot::Z: rng = joinRange(rng, (*i)->zRange()); break;
+            }
         }
     }
     // Tweak range if needed
@@ -313,6 +315,11 @@ void Pad::setRange(Plot::Axis axis) {
         // FIXME: treat Z!
         return;
     }
+}
+
+void Pad::setAutoRange(bool flag) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->isAutorange = flag;
 }
 
 void Pad::removeLegend() {

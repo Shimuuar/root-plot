@@ -46,6 +46,7 @@ module HEP.ROOT.Plot (
   , grid
   , gridX
   , gridY
+  , ignoreRange
     -- ** Axis
   , label
   , noLabel
@@ -221,6 +222,10 @@ gridX = cmd . GridX
 
 gridY :: Toggle -> Cmd Option
 gridY = cmd . GridY
+
+ignoreRange :: Toggle -> Cmd Option
+ignoreRange = cmd . IgnoreRange
+
 
 ----------------------------------------------------------------
 -- Axis

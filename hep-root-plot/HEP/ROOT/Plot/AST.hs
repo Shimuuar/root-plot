@@ -107,6 +107,8 @@ data Option =
   | Grid  Toggle
   | GridX Toggle
   | GridY Toggle
+    -- | Ignore automatic range adjustments
+  | IgnoreRange Toggle
 
 -- | Axis parameters
 data Axis
@@ -271,6 +273,7 @@ renderOption (ZAxis   a )    = co "zaxis " <> renderAxis a
 renderOption (Grid    t )    = co "grid "   <> toggle t
 renderOption (GridX   t )    = co "grid x " <> toggle t
 renderOption (GridY   t )    = co "grid y " <> toggle t
+renderOption (IgnoreRange t) = co "ignore range " <> toggle t
 
 -- Axis
 renderAxis :: Axis -> Builder

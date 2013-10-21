@@ -274,7 +274,10 @@ public:
     void setRange(Plot::Axis axis, boost::optional<double> a, boost::optional<double> b);
     // Set range for axis to auto scale
     void setRange(Plot::Axis axis);
-
+    // Set whether topmost object should be ignored in automatic range
+    // calculations
+    void setAutoRange(bool flag);
+    
     // Remove legend from plot. Noop if there is no legend
     void removeLegend();
     // Add legend to the plot
@@ -338,6 +341,7 @@ private:
 // Object which
 class PlotObject {
 public:
+    PlotObject();
     virtual ~PlotObject() {}
 
     // Draw object on the plot. This function depends on correct
@@ -370,7 +374,7 @@ public:
     // Set fill style. It accepts ROOT fill style. Conversions are
     // handled by Plot::setFillStyle.
     virtual void setFillStyle(int) {}
-
+    
     // Set text drawing histograms
     virtual void setHistText   ( bool txt )  {UNUSED(txt);}
     // Set number of decimal places in text. Negative number reverts
@@ -392,6 +396,11 @@ public:
 
     // Get pointer to ROOT object. May return NULL
     virtual TObject* getRootObject() { return 0; }
+
+    // Flag which indicates whether object should be used in automatic
+    // range calculations. There's no point in hiding it behind
+    // accessor. Default value is true
+    bool isAutorange;
 };
 
 

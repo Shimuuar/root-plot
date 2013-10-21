@@ -61,6 +61,7 @@ zaxis       { return KW_ZAXIS;  }
 log         { return KW_LOG;    }
 label       { return KW_LABEL;  }
 range       { return KW_RANGE;  }
+ignore      { return KW_IGNORE; }
 
 line        { return KW_LINE;    }
 width       { return KW_WIDTH;   }
