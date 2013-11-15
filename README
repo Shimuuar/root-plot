@@ -39,7 +39,10 @@ Remove all plots and reset all settings.
 
 > save "file name"
 
-Save current plot to file
+Save current plot to file. PDF, PS, PNG and JPEG file formats are supported and
+selected by file name. Files with extension `.rootpl' will be saved as list of
+commands since last `clear'.
+
 
 
 ### Multiple pads
@@ -48,24 +51,25 @@ It's possible to arrange plot in several pad. Every pad is independent from
 others. They are arranged in rows and columns. Every pad is either row/column of
 more pads or plot.
 
-In order to add row/column use
-
+In order to add row/column use:
 
 > add row 
 > add column
 
-This command introduce row mode in which only pads could be added. It must be
-finished by
-
+After this command interpreter enters row mode in which either new rows/columns
+or new pads could be added. Every row/column must be finished by:
 
 > end row
 > end column
 
-In order to add new pad use. This command only valid in row/column mode.
 
+Individual pads in which one could plot could be used. They're only valid in
+row/column mode. Weight controls size of pad in the row/column. Default weight
+is 1.
 
 > add pad
 > add pad [weight]
+
 
 After that one could use normal drawing commands. Pad is terminated by command
 
@@ -113,7 +117,7 @@ If both symmetric and at least one asymmetric error is specified then asymmetric
 errors are used. If data for X coordinates is not specified then all surrogate
 values are used: 0, 1, etc.
 
-For common case it's possible to omit header. Then columns will have following
+For common cases it's possible to omit header. Then columns will have following
 meaning:
 
   1. List of Y coordinates. X coordinates are [0,1 .. ]
@@ -300,6 +304,9 @@ is disabled. It speed up drawing significantly.
 ### Legend
 
 
+FIXME:::
+
+
 ## Constants
 
 ### Colors
@@ -320,8 +327,23 @@ independent. They are listed below:
   - violet
 
 
+### Line styles
 
-### TODO
+Possible line styles are described by string constant. Following string are
+accepted:
 
-line style
-marker style
+  - no / none - no line drawn
+  - line      - connect points using straight line segments
+  - splines   - connect points using splines
+
+
+### Marker styles
+
+Marker styles are encoded by strings as well.
+
+  - no / none   - no marker [default]
+  - dot / "." 
+  - plus / "+"
+  - star / "*"
+  - "o"
+  - "x"
