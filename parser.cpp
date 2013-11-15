@@ -270,13 +270,26 @@ bool AccumGraph::flush(Plot* plot) {
         return false;
     if( dy && (udy || ldy) )
         return false;
-    // We have error bars
+
+    // We have asymmetric error bars
+    if( udx || udy || ldx || ldy ) {
+        // If asymmetric error are not present use symmetric
+        if( !(udx || ldx) )
+            ldx = udx = dx;
+        if( !(udx || ldx) )
+            ldx = udx = dx;
+        plot->pushObject(
+            boost::make_shared<PlotGraph>(
+                newROOT<TGraphAsymmErrors>(colSize(), x,y, ldx,udx, ldy,udy) ) );
+    }
+    // We have symmetric error bars
     if( dx || dy ) {
         plot->pushObject(
             boost::make_shared<PlotGraph>(
                 newROOT<TGraphErrors>( colSize(), x, y, dx, dy ) ) );
         return true;
     }
+
     // Plain old graphs
     plot->pushObject(
         boost::make_shared<PlotGraph>(
