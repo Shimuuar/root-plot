@@ -281,6 +281,7 @@ bool AccumGraph::flush(Plot* plot) {
         plot->pushObject(
             boost::make_shared<PlotGraph>(
                 newROOT<TGraphAsymmErrors>(colSize(), x,y, ldx,udx, ldy,udy) ) );
+        return true;
     }
     // We have symmetric error bars
     if( dx || dy ) {
