@@ -15,6 +15,7 @@ module HEP.ROOT.Plot.AST (
   , Color(..)
   , Toggle(..)
     -- * Rendering commands
+  , GraphPoint
   , renderCommand
   ) where
 
@@ -51,11 +52,7 @@ data RowCmd
 -- | Plot subcommand
 data Plot where
   -- Simple graph
-  Graph     :: [(Double,Double)] -> Plot
-  -- Graph with errors
-  GraphErr  :: [(Double,(Double,Double))] -> Plot
-  -- Sequence of points
-  Graph1    :: [Double]          -> Plot
+  Graph     :: GraphPoint a => [a] -> Plot
   -- Sequence of points for 2D plot
   Graph2D   :: [(Double,Double,Double)] -> Plot
   -- Barchart
@@ -175,7 +172,6 @@ data Color =
   | Col Int
   deriving (Show,Eq)
 
-
 -- | Convert command to the string
 renderCommand :: Command -> IO Builder
 renderCommand Clear      = return $ co "clear\n"
@@ -223,15 +219,10 @@ renderRowCmd (AddColumnW w columns) = do
 renderPlot :: Plot -> Builder
 renderPlot (Graph vals)
   =  co "graph -\n"
-  <> linesBS (map pair vals)
-  <> co "<<<\n"
-renderPlot (GraphErr vals)
-  =  co "graph -\n"
-  <> linesBS (map pairE vals)
-  <> co "<<<\n"
-renderPlot (Graph1 ys )
-  =  co "graph -\n"
-  <> linesBS (map real ys)
+  <> case renderGraphHeader (head vals) of
+       Nothing -> mempty
+       Just bs -> co "# " <> bs <> co "\n"
+  <> linesBS (map renderGraphPoint vals)
   <> co "<<<\n"
 renderPlot (Graph2D ys )
   =  co "graph2D -\n"
@@ -329,6 +320,28 @@ renderColor c =
     Col i   -> fromShow i
 
 
+class GraphPoint a where
+  renderGraphHeader :: a -> Maybe Builder
+  renderGraphPoint  :: a -> Builder
+
+instance GraphPoint Double where
+  renderGraphHeader _ = Nothing
+  renderGraphPoint    = serialize
+
+instance GraphPoint Int where
+  renderGraphHeader _ = Nothing
+  renderGraphPoint    = serialize
+
+instance (ShowBS a, ShowBS b) => GraphPoint (a,b) where
+  renderGraphHeader _ = Nothing
+  renderGraphPoint    = pair
+
+instance (ShowBS a, ShowBS b, ShowBS c) => GraphPoint (a,b,c) where
+  renderGraphHeader _ = Nothing
+  renderGraphPoint    = triple
+
+
+
 ----------------------------------------------------------------
 -- Helpers
 ----------------------------------------------------------------
@@ -385,7 +398,3 @@ pair (a,b) = serialize a <> co "\t" <> serialize b
 triple :: (ShowBS a, ShowBS b, ShowBS c) => (a,b,c) -> Builder
 triple (a,b,c) = serialize a <> co "\t" <> serialize b <> co "\t" <> serialize c
 {-# INLINE triple #-}
-
-pairE :: (ShowBS a, ShowBS b, ShowBS c) => (a,(b,c)) -> Builder
-pairE (a,(b,c)) = serialize a <> co "\t" <> serialize b <> co "\t" <> serialize c
-{-# INLINE pairE #-}
