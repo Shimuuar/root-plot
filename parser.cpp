@@ -239,6 +239,12 @@ bool AccumGraph::flush(Plot* plot) {
             i_y  = 1;
             i_dy = 2;
             break;
+        case 4:
+            i_x  = 0;
+            i_y  = 1;
+            i_dx = 2;
+            i_dy = 3;
+            break;
         }
     }
     // Check that indices are OK
