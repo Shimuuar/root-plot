@@ -12,6 +12,7 @@
 #include <TGraph.h>
 #include <TGraph2D.h>
 #include <TGraphErrors.h>
+#include <TGraphAsymmErrors.h>
 #include <TPolyLine.h>
 
 #include "memory.hpp"
@@ -251,12 +252,23 @@ bool AccumGraph::flush(Plot* plot) {
     if( unusableData() )
         return false;
     // Get columns
-    double *x  = getX();
-    double *y  = getY();
-    double *dx = getDX();
-    double *dy = getDY();
-    // Check mandatory columns
+    double *x   = getX();
+    double *y   = getY();
+    double *dx  = getDX();
+    double *udx = getUDX();
+    double *ldx = getLDX();
+    double *dy  = getDY();
+    double *udy = getUDY();
+    double *ldy = getLDY();
+
+    // We must have X and Y. If X is not present it should use
+    // surrogate one.
     if( !x || !y )
+        return false;
+    // We cannot have both symmetric and asymmetric errors.
+    if( dx && (udx || ldx) )
+        return false;
+    if( dy && (udy || ldy) )
         return false;
     // We have error bars
     if( dx || dy ) {
