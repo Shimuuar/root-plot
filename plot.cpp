@@ -42,12 +42,12 @@ static bool endsWith(const std::string& str, const std::string& suf) {
 //  * Row/Column: ∀ row     && plot == 0
 //  * Pad:        row == [] && plot /= 0
 //
-// Note on ownership of ROOT objects. Layout do not own TPad. Instead
-// they are owned by the parent. This is because root TCanvas
-// shouldn't be deleted.
 struct Plot::Layout : boost::noncopyable {
 public:
+    // Possible states of layout
     enum State { EMPTY, PAD, ROW };
+
+    // Data for subpads.
     struct PadData {
         PadData() :
             weight(1), pad(0)
@@ -217,10 +217,10 @@ void Plot::Layout::dumpTree(int n) {
 
 Plot::Plot( TCanvas* cnv ) :
     m_silent ( false ),
-    m_canvas ( cnv   ),
-    m_current( m_layout )
+    m_canvas ( cnv   )
 {
     doSetPalette( DeepSea );
+    // Layouts are initialized here
     clear();
 }
 
@@ -231,7 +231,8 @@ std::string Plot::getTooltip(int x, int y) {
 }
 
 void Plot::setCanvasSize(int x, int y) {
-    m_canvas->SetCanvasSize(x,y);
+    m_xSize = x;
+    m_ySize = y;
 }
 
 void Plot::fatalError(const std::string& str ) {
@@ -246,6 +247,13 @@ void Plot::pushCommand(const std::string& str ) {
 void Plot::draw(bool force) {
     if( !m_silent || (m_silent && force) ) {
         m_canvas->cd();
+        // Resize canvas if needed
+        if( m_xSize > 0 && m_ySize > 0 ) {
+            m_canvas->SetCanvasSize( m_xSize, m_ySize );
+        } else {
+            m_canvas->Resize();
+        }
+        // Draw
         m_layout->rootPad->Draw();
         m_layout->draw();
         m_canvas->Update();
@@ -295,11 +303,13 @@ void Plot::clear() {
     // Remove errors
     m_errors.resize( 0 );
     m_errorPad.reset();
+    // Reset canvas size
+    m_xSize = -1;
+    m_ySize = -1;
     // Delete all plots
-    delete m_layout;
     m_canvas->cd();
-    m_layout  = new Layout( 0, newROOT<TPad>("PAD","", 0,0, 1,1) );
-    m_current = m_layout;
+    m_layout  = boost::make_shared<Layout>( (Layout*)0, newROOT<TPad>("PAD","", 0,0, 1,1) );
+    m_current = &*m_layout;
     // Delete extra canvases. They could appear when one creates slice
     TIter next( dynamic_cast<TList*>( gROOT->GetListOfCanvases() ) );
     for(TCanvas *cnv; (cnv = dynamic_cast<TCanvas*>(next())); ) {

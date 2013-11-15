@@ -1,4 +1,3 @@
-
 #include "object.hpp"
 
 #include <cmath>
@@ -34,18 +33,63 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
         return r2;
     if( ! r2.is_initialized() )
         return r1;
-    return Range( std::min(r1->low, r2->low) ,
-                  std::max(r1->hi,  r2->hi ) ,
-                  joinLogLow( r1->logLow, r2->logLow ) );
+    // Select ranges and padding
+    Range rng;
+    // Low range
+    if( r1->low < r2->low ) {
+        rng.low        = r1->low;
+        rng.wantPadLow = r1->wantPadLow;
+    } else {
+        rng.low        = r2->low;
+        rng.wantPadLow = r2->wantPadLow;
+    }
+    // High range
+    if( r1->hi > r2->hi ) {
+        rng.hi        = r1->hi;
+        rng.wantPadHi = r1->wantPadHi;
+    } else {
+        rng.hi        = r2->hi;
+        rng.wantPadHi = r2->wantPadHi;
+    }
+    // Log
+    rng.logLow = joinLogLow( r1->logLow, r2->logLow );
+    return rng;
 }
 
-void Range::padRange(double eps) {
-    double d = eps * (hi - low);
-    low -= d;
-    hi  += d;
+double Range::lowRange(bool useLog) {
+    if( useLog ) {
+        // Find out minimum for log scale. logLow is used if it's set.
+        double l = logLow.get_value_or( low );
+        // Otherwise we may need to apply padding manually.
+        if( wantPadLow )
+            return exp( log(l) - 0.03 * log(hi/l));
+        else
+            return l;
+    } else {
+        // In linear scale we simply add padding when appropriate.
+        if( wantPadLow )
+            return low - 0.03 * (hi - low);
+        else
+            return low;
+    }
 }
 
-
+double Range::hiRange(bool useLog) {
+    if( useLog ) {
+        // Apply padding in log scale
+        double l = logLow.get_value_or( low );
+        if( wantPadHi )
+            return exp( log(hi) + 0.03 * log(hi/l));
+        else
+            return hi;
+    } else {
+        // Apply padding in linear scale
+        if( wantPadHi )
+            return hi + 0.03 * (hi - low);
+        else
+            return hi;
+    }
+}
 
 // ================================================================ //
 // ==== Pad
@@ -99,19 +143,13 @@ void Pad::draw() {
 
     RangeM rngX = xRange();
     if( rngX.is_initialized() ) {
-        if( m_xLog && rngX->logLow.is_initialized() )
-            xs[0] = rngX->logLow.get();
-        else
-            xs[0] = rngX->low;
-        xs[1] = rngX->hi;
+        xs[0] = rngX->lowRange( m_xLog );
+        xs[1] = rngX->hiRange ( m_xLog );
     }
     RangeM rngY = yRange();
     if( rngY.is_initialized() ) {
-        if( m_yLog && rngY->logLow.is_initialized() )
-            ys[0] = rngY->logLow.get();
-        else
-            ys[0] = rngY->low;
-        ys[1] = rngY->hi;
+        ys[0] = rngY->lowRange( m_yLog );
+        ys[1] = rngY->hiRange ( m_yLog );
     }
 
     // Draw frame for the plots.

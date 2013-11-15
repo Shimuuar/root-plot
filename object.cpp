@@ -134,11 +134,11 @@ RangeM PlotHist::yRange() const {
             if( bin > 0 )
                 yLLow = std::min( yLLow, bin );
         }
-        yMax *= 1.05;
+        Range rng(0, yMax);
         if( yLLow < 1e308 )
-            return Range( 0, yMax, yLLow / 3);
-        else
-            return Range( 0, yMax );
+            rng.logLow = yLLow;
+        rng.wantPadHi = true;
+        return rng;
     }
 }
 
@@ -267,7 +267,8 @@ RangeM PlotGraph::xRange() const {
         r.logLow = logLo / 2;
     else
         r.logLow = r.low;
-    r.padRange( 0.03 );
+    r.wantPadLow = true;
+    r.wantPadHi  = true;
     return boost::optional<Range>( r );
 }
 
@@ -297,7 +298,8 @@ RangeM PlotGraph::yRange() const {
         r.logLow = logLo / 2;
     else
         r.logLow = r.low;
-    r.padRange( 0.03 );
+    r.wantPadLow = true;
+    r.wantPadHi  = true;
     return boost::optional<Range>( r );
 }
 
@@ -441,7 +443,8 @@ RangeM PlotPoly::xRange() const {
     double* xs    = poly->GetX();
     Range r( *std::min_element(xs, xs+n),
              *std::max_element(xs, xs+n) );
-    r.padRange( 0.03 );
+    r.wantPadLow = true;
+    r.wantPadHi  = true;
     return boost::optional<Range>( r );
 }
 
@@ -453,7 +456,8 @@ RangeM PlotPoly::yRange() const {
     double* ys   = poly->GetY();
     Range r( *std::min_element(ys, ys+n),
              *std::max_element(ys, ys+n) );
-    r.padRange( 0.03 );
+    r.wantPadLow = true;
+    r.wantPadHi  = true;
     return boost::optional<Range>( r );
 }
 
