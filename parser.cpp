@@ -446,7 +446,7 @@ void Parser::feedLine(Plot* plot, const std::string& str) {
         // Check for comments and empty strings
         bool comment = str.size() > 0 && str[0] == '#';
         bool empty   = true;
-        for( int i = 0; empty && i < str.size(); i++)
+        for( unsigned i = 0; empty && i < str.size(); i++)
             empty = isspace( str[i] );
         // Now we can lex and parse command.
         if( !empty && !comment) {
