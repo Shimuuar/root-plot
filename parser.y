@@ -46,7 +46,7 @@ static Plot::Color strToColor( std::string str) {
 static Plot::LineStyle strToLine( std::string str ) {
     std::transform(str.begin(), str.end(), str.begin(), toupper );
     Plot::LineStyle l = Plot::SolidLine;
-    if( str == "NO" ) {
+    if( str == "NO" || str == "NONE" ) {
         l = Plot::NoLine;
     } else if( str == "LINE" ) {
         l = Plot::SolidLine;
@@ -59,7 +59,7 @@ static Plot::LineStyle strToLine( std::string str ) {
 static Plot::MarkerStyle strToMarker( std::string str ) {
     std::transform(str.begin(), str.end(), str.begin(), toupper );
     Plot::MarkerStyle m = Plot::NoMarker;
-    if( str == "NO" ) {
+    if( str == "NO" || str == "NONE" ) {
         m = Plot::NoMarker;
     } else if( str == "DOT"  || str == "." ) {
         m = Plot::MarkerDot;
