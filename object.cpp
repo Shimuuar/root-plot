@@ -12,6 +12,7 @@
 #include <TGraph.h>
 #include <TGraph2D.h>
 #include <TGraphErrors.h>
+#include <TGraphAsymmErrors.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TPolyLine.h>
@@ -277,26 +278,30 @@ RangeM PlotGraph::xRange() const {
     if( n == 0 )
         return boost::optional<Range>();
 
-    TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
-    if( graphE ) {
+    if( TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph ) ) {
         return range_with_errors(
             n, graphE->GetX(), graphE->GetEX(), graphE->GetEX());
-    } else {
-        return range_with_errors(n, graph->GetX(), 0, 0);
     }
+    if( TGraphAsymmErrors *graphE = dynamic_cast<TGraphAsymmErrors*>( &*graph ) ) {
+        return range_with_errors(
+            n, graphE->GetX(), graphE->GetEXlow(), graphE->GetEXhigh());
+    }
+    return range_with_errors(n, graph->GetX(), 0, 0);
 }
 
 RangeM PlotGraph::yRange() const {
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
-    TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
-    if( graphE ) {
+    if( TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph ) ) {
         return range_with_errors(
             n, graphE->GetY(), graphE->GetEY(), graphE->GetEY());
-    } else {
-        return range_with_errors(n, graph->GetY(), 0, 0);
     }
+    if( TGraphAsymmErrors *graphE = dynamic_cast<TGraphAsymmErrors*>( &*graph ) ) {
+        return range_with_errors(
+            n, graphE->GetY(), graphE->GetEYlow(), graphE->GetEYhigh());
+    }
+    return range_with_errors(n, graph->GetY(), 0, 0);
 }
 
 TObject* PlotGraph::getRootObject() {
