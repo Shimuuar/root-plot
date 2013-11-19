@@ -411,7 +411,6 @@ PlotPoly::PlotPoly(TPolyLine* g) :
 }
 
 void PlotPoly::plotOn(Pad*) {
-    // std::string opts = "SAME";
     poly->Draw( "F" );
     if( width > 0 ) {
         poly->SetLineWidth(width);
