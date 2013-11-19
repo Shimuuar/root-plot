@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <limits>
 #include <boost/make_shared.hpp>
 #include <boost/format.hpp>
 
@@ -233,74 +234,69 @@ void PlotGraph::setFillStyle(int col) {
     graph->SetFillStyle(col);
 }
 
-static void range_with_errors(int n, double* xs, double* dx, double& lo, double& hi) {
-    lo = xs[0] - dx[0];
-    hi = xs[0] + dx[0];
-    for(int i = 1; i < n; i++) {
-        lo = std::min( lo, xs[i] - dx[i] );
-        hi = std::max( hi, xs[i] + dx[i] );
+// Helpers for calculations of automatic ranges
+static double err(double* xs, int n) {
+    return xs ? xs[n] : 0;
+}
+static boost::optional<Range>
+range_with_errors(int n, double* xs, double* ldx, double* udx)
+{
+    assert(n > 0 && "Expecting positive number");
+    double lo    =  std::numeric_limits<double>::infinity();
+    double hi    = -std::numeric_limits<double>::infinity();
+    double logLo = -1;
+
+    for(int i = 0; i < n; i++) {
+        double loX = xs[i] - err(ldx,i);
+        double hiX = xs[i] + err(udx,i);
+        
+        lo    = std::min( lo, loX );
+        hi    = std::max( hi, hiX );
+        // For minimum at log scale we first try value with error and
+        // then value without error.
+        if( loX > 0 && loX < logLo ) {
+            logLo = loX;
+        } else if( xs[i] > 0 && xs[i] < logLo ) {
+            logLo = xs[i];
+        }
     }
+    Range r( lo, hi );
+    // Minimum point for log scale is set as minimum coordinate or if
+    // it's negative as half if minimal positive coordinate
+    if( logLo > 0 && lo <= 0 )
+        r.logLow = logLo / 2;
+    else
+        r.logLow = r.low;
+    r.wantPadLow = true;
+    r.wantPadHi  = true;
+    return boost::optional<Range>( r );
 }
 
 RangeM PlotGraph::xRange() const {
-    double hi, lo, logLo = -1;
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
+
     TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
     if( graphE ) {
-        range_with_errors( n, graphE->GetX(), graphE->GetEX(), lo, hi);
+        return range_with_errors(
+            n, graphE->GetX(), graphE->GetEX(), graphE->GetEX());
     } else {
-        double* xs = graph->GetX();
-        hi         = *std::max_element(xs, xs+n);
-        lo         = *std::min_element(xs, xs+n);
-        // Find minimum for log scale
-        for( int i = 1; i < n; i++ ) {
-            if( logLo < 0 || (xs[i] < logLo && xs[i] > 0) )
-                logLo = xs[i];
-        }
+        return range_with_errors(n, graph->GetX(), 0, 0);
     }
-    Range r( lo, hi );
-    // Minimum point for log scale is set as minimum coordinate or if
-    // it's negative as half if minimal positive coordinate
-    if( logLo > 0 && lo <= 0 )
-        r.logLow = logLo / 2;
-    else
-        r.logLow = r.low;
-    r.wantPadLow = true;
-    r.wantPadHi  = true;
-    return boost::optional<Range>( r );
 }
 
 RangeM PlotGraph::yRange() const {
-    double hi, lo, logLo = -1;
     int n = graph->GetN();
     if( n == 0 )
         return boost::optional<Range>();
     TGraphErrors *graphE = dynamic_cast<TGraphErrors*>( &*graph );
     if( graphE ) {
-        range_with_errors( n, graphE->GetY(), graphE->GetEY(), lo, hi);
+        return range_with_errors(
+            n, graphE->GetY(), graphE->GetEY(), graphE->GetEY());
     } else {
-        double* ys = graph->GetY();
-        hi         = *std::max_element(ys, ys+n);
-        lo         = *std::min_element(ys, ys+n);
-        // Find minimum for log scale
-        for( int i = 1; i < n; i++ ) {
-            if( logLo < 0 || (ys[i] < logLo && ys[i] > 0) ) {
-                logLo = ys[i];
-            }
-        }
+        return range_with_errors(n, graph->GetY(), 0, 0);
     }
-    Range r( lo, hi );
-    // Minimum point for log scale is set as minimum coordinate or if
-    // it's negative as half if minimal positive coordinate
-    if( logLo > 0 && lo <= 0 )
-        r.logLow = logLo / 2;
-    else
-        r.logLow = r.low;
-    r.wantPadLow = true;
-    r.wantPadHi  = true;
-    return boost::optional<Range>( r );
 }
 
 TObject* PlotGraph::getRootObject() {
