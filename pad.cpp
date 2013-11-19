@@ -100,7 +100,8 @@ Pad::Pad(TPad* cnv) :
     m_gridY( false ),
     m_xLog( false ),
     m_yLog( false ),
-    m_zLog( false )
+    m_zLog( false ),
+    m_rangeDirty( false )
 {
     m_canvas->cd();
 }
@@ -137,23 +138,15 @@ void Pad::draw() {
     clearCanvas();
     m_canvas->SetGrid( m_gridX, m_gridY );
 
-    // Set ranges for graph
-    double xs[2] = {m_xLog ? 0.01 : 0, 1};
-    double ys[2] = {m_yLog ? 0.01 : 0, 1};
-
-    RangeM rngX = xRange();
-    if( rngX.is_initialized() ) {
-        xs[0] = rngX->lowRange( m_xLog );
-        xs[1] = rngX->hiRange ( m_xLog );
-    }
-    RangeM rngY = yRange();
-    if( rngY.is_initialized() ) {
-        ys[0] = rngY->lowRange( m_yLog );
-        ys[1] = rngY->hiRange ( m_yLog );
-    }
+    // Set ranges for graph and clean dirty flag. It will reset at the
+    // end of function
+    recalculateRange();
+    m_rangeDirty = false;
 
     // Draw frame for the plots.
-    TH1* hist = m_canvas->DrawFrame( xs[0], ys[0], xs[1], ys[1] );
+    TH1* hist = m_canvas->DrawFrame(
+        m_xRange[0], m_yRange[0],
+        m_xRange[1], m_yRange[1]);
     if( !!m_xLabel )
         hist->GetXaxis()->SetTitle( m_xLabel->c_str() );
     if( !!m_yLabel )
@@ -172,7 +165,7 @@ void Pad::draw() {
         m_legendPad = makeROOT<TPad>("LP","", m_legX1, m_legY1,  m_legX2, m_legY2 );
         m_legendPad->Draw();
         // Draw legend
-        m_legendPad->cd();       
+        m_legendPad->cd();
         m_legend->Draw();
         m_canvas->cd();
     }
@@ -285,6 +278,8 @@ void Pad::setHistPalette( bool p ) {
         m_objStack.back()->setHistPalette( p );
 }
 
+
+// Function which determines range for given axis
 static RangeM axisRange(boost::optional<double> low,
                         boost::optional<double> hi,
                         const Pad::Stack objs,
@@ -315,12 +310,34 @@ static RangeM axisRange(boost::optional<double> low,
     return rng;
 }
 
-RangeM Pad::xRange() const {
-    return axisRange( m_xLow, m_xHi, m_objStack, Plot::X );
+void Pad::recalculateRange() {
+    m_xRange[0] = m_xLog ? 0.01 : 0;
+    m_xRange[1] = 1;
+    m_yRange[0] = m_yLog ? 0.01 : 0;
+    m_yRange[1] = 1;
+
+    RangeM rngX = axisRange( m_xLow, m_xHi, m_objStack, Plot::X );
+    if( rngX.is_initialized() ) {
+        m_xRange[0] = rngX->lowRange( m_xLog );
+        m_xRange[1] = rngX->hiRange ( m_xLog );
+    }
+    RangeM rngY = axisRange( m_yLow, m_yHi, m_objStack, Plot::Y );
+    if( rngY.is_initialized() ) {
+        m_yRange[0] = rngY->lowRange( m_yLog );
+        m_yRange[1] = rngY->hiRange ( m_yLog );
+    }
 }
 
-RangeM Pad::yRange() const {
-    return axisRange( m_yLow, m_yHi, m_objStack, Plot::Y );
+std::pair<double,double> Pad::xRange() {
+    if( m_rangeDirty )
+        recalculateRange();
+    return std::make_pair( m_xRange[0], m_xRange[1] );
+}
+
+std::pair<double,double> Pad::yRange() {
+    if( m_rangeDirty )
+        recalculateRange();
+    return std::make_pair( m_yRange[0], m_yRange[1] );
 }
 
 void Pad::setRange(Plot::Axis axis, boost::optional<double> a, boost::optional<double> b) {

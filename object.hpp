@@ -299,11 +299,11 @@ public:
     // Set line width for top object. Noop if stack is empty
     void setLineWidth(int width);
 
-    // X range for plot. If object need padding it should add it by
-    // itself. Same applies to the yRange and zRange
-    RangeM xRange() const;
-    // Y range for plot
-    RangeM yRange() const;
+    // X range of plot.
+    std::pair<double,double> xRange();
+    // Y range of plot
+    std::pair<double,double> yRange();
+
     // Set range for axis
     void setRange(Plot::Axis axis, boost::optional<double> a, boost::optional<double> b);
     // Set range for axis to auto scale
@@ -340,6 +340,10 @@ public:
 private:
     // Remove everything from canvas
     void clearCanvas();
+    // Recalculate range.
+    //
+    // NOTE: this function does not reset m_rangeDirty flag.
+    void recalculateRange();
 
     // Data
     TPad*                        m_canvas;    // Canvas to draw on
@@ -356,6 +360,12 @@ private:
     bool                         m_xLog;      // Log scale for X axis
     bool                         m_yLog;      // Log scale for Y axis
     bool                         m_zLog;      // Log scale for Z axis
+
+    // Here we caching range of the plot. But to save headache with
+    // cache invalidation cache is only valid during call of the draw
+    bool   m_rangeDirty;
+    double m_xRange[2];
+    double m_yRange[2];
 
     // Legend stuff
     //

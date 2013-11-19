@@ -485,11 +485,9 @@ void PlotLine::plotAB(Pad* cxt) {
     double xs[2];
     double ys[2];
     // Set coordinates
-    RangeM rng = cxt->xRange();
-    if( !rng )
-        return;
-    xs[0] = rng->low;
-    xs[1] = rng->hi;
+    std::pair<double,double> rng = cxt->xRange();
+    xs[0] = rng.first;
+    xs[1] = rng.second;
     ys[0] = k*xs[0] + b;
     ys[1] = k*xs[1] + b;
     // Draw
@@ -499,18 +497,11 @@ void PlotLine::plotAB(Pad* cxt) {
 
 void PlotLine::plotVH(Pad* cxt) {
     // Fill arrays for graph
-    double consts[2] = {x,x};
-    double vars[2]   = {0,1};
-    RangeM rng       =
+    std::pair<double,double> rng =
         orientation == Plot::Vertical ? cxt->yRange() : cxt->xRange();
-    if( rng ) {
-        vars[0] = rng->low;
-        vars[1] = rng->hi;
-    }
-    // Expand
-    double delta = vars[1] - vars[0];
-    vars[0] -= delta;
-    vars[1] += delta;
+    double consts[2] = {x,x};
+    double vars[2]   = {rng.first, rng.second};
+
 
     if( orientation == Plot::Vertical ) {
         graph = makeROOT<TGraph>(2, consts, vars);
@@ -549,14 +540,10 @@ bool PlotLine::haveFill() const {
 
 void PlotBand::plotOn(Pad* cxt) {
     // Determine range
-    double lo = 0;
-    double hi = 1;
-    RangeM rng       =
+    std::pair<double,double> rng =
         orientation == Plot::Vertical ? cxt->yRange() : cxt->xRange();
-    if( rng ) {
-        lo = rng->low;
-        hi = rng->hi;
-    }
+    double lo = rng.first;
+    double hi = rng.second;
 
     if( orientation == Plot::Vertical ) {
         double xs[4] = {x1,x1,x2,x2};
