@@ -138,8 +138,8 @@ void Pad::draw() {
     m_canvas->SetGrid( m_gridX, m_gridY );
 
     // Set ranges for graph
-    double xs[2] = {0, 1};
-    double ys[2] = {0, 1};
+    double xs[2] = {m_xLog ? 0.01 : 0, 1};
+    double ys[2] = {m_yLog ? 0.01 : 0, 1};
 
     RangeM rngX = xRange();
     if( rngX.is_initialized() ) {
