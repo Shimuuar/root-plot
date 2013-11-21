@@ -512,8 +512,10 @@ void PlotLine::plotVH(Pad* cxt) {
 }
 
 void PlotLine::doDraw() {
-    graph->SetLineWidth( width );
-    graph->SetLineColor( color );
+    graph->SetLineWidth( width    );
+    graph->SetLineColor( color    );
+    graph->SetFillColor( m_fill   );
+    graph->SetFillStyle( m_fillSt );
     graph->Draw("SAME L");
 }
 
@@ -523,6 +525,14 @@ void PlotLine::setLineWidth(int w) {
 
 void PlotLine::setLineColor(int col) {
     color = col;
+}
+
+void PlotLine::setFillColor(int col) {
+    m_fill = col;
+}
+
+void PlotLine::setFillStyle(int col) {
+    m_fillSt = col;
 }
 
 TObject* PlotLine::getRootObject() {

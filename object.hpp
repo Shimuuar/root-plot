@@ -576,7 +576,9 @@ public:
         orientation(orientation_),
         x(x_),
         color(Plot::BLACK),
-        width(1)
+        width(1),
+        m_fill(Plot::BLACK),
+        m_fillSt( 0 )
     {}
     // Create AB line with intercept b and slope k
     PlotLine(double slope, double intrcpt) :
@@ -584,12 +586,16 @@ public:
         k     ( slope   ),
         b     ( intrcpt ),
         color(Plot::BLACK),
-        width(1)
+        width(1),
+        m_fill(Plot::BLACK),
+        m_fillSt( 0 )
     {}
     virtual ~PlotLine() {}
     virtual void     plotOn(Pad* cxt);
     virtual void     setLineWidth(int width);
     virtual void     setLineColor(int);
+    virtual void     setFillColor(int);
+    virtual void     setFillStyle(int);
     virtual bool     haveFill() const;
     virtual TObject* getRootObject();
 private:
@@ -605,6 +611,8 @@ private:
     // Drawing parameters
     int        color;
     int        width;
+    int        m_fill;
+    int        m_fillSt;
 
     boost::shared_ptr<TGraph> graph;
 };
