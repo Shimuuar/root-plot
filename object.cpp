@@ -138,7 +138,7 @@ RangeM PlotHist::yRange() const {
         }
         Range rng(0, yMax);
         if( yLLow < 1e308 )
-            rng.logLow = yLLow;
+            rng.logLow = yLLow / 2;
         rng.wantPadHi = true;
         return rng;
     }
