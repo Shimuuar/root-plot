@@ -170,7 +170,7 @@ void Pad::draw() {
         m_canvas->cd();
     }
 
-    // Clear dirty flag.
+    // Set dirty flag after drawing
     m_rangeDirty = true;
 }
 
