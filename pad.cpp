@@ -169,6 +169,9 @@ void Pad::draw() {
         m_legend->Draw();
         m_canvas->cd();
     }
+
+    // Clear dirty flag.
+    m_rangeDirty = true;
 }
 
 void Pad::pushObject(boost::shared_ptr<PlotObject> plot) {
