@@ -278,6 +278,14 @@ void Plot::draw(bool force) {
 }
 
 void Plot::save(const std::string& fname) {
+    // Check that filename is valid
+    for(std::string::const_iterator i = fname.begin(); i != fname.end(); ++i) {
+        char c = *i;
+        if( !( isalnum(c) || c=='-' || c=='.' || c=='_' || c=='=' || c=='+'
+               || c=='(' || c==')' || c==':' || c==',') )
+            return;
+        std::cerr << "Cannot save to file: `" << fname << "'\n";
+    }
     // We are saving script
     if( endsWith( fname, ".rootpl" ) ) {
         std::ofstream f( fname.c_str() );
