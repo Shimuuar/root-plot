@@ -66,8 +66,7 @@ struct Range {
     bool   wantPadHi;               // Need to add padding on high side
     boost::optional<double> logLow; // Optional low range for log scale
 
-    double lowRange(bool useLog);
-    double hiRange (bool useLog);
+    std::pair<double,double> range(bool useLog);
 };
 
 typedef boost::optional<Range> RangeM;

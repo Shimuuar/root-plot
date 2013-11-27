@@ -56,40 +56,32 @@ static RangeM joinRange(const RangeM& r1, const RangeM& r2) {
     return rng;
 }
 
-double Range::lowRange(bool useLog) {
+std::pair<double,double> Range::range(bool useLog) {
     if( useLog ) {
-        // Find out minimum for log scale. logLow is used if it's set.
+        // Find low and high values. If low value is non-positive make
+        // arbitrary choice
         double l = logLow.get_value_or( low );
+        if( l <= 0 )
+            l = 0.01 * hi;
+        double h = hi;
         // Otherwise we may need to apply padding manually.
         if( wantPadLow )
-            return exp( log(l) - 0.03 * log(hi/l));
-        else
-            return l;
+            l = exp( log(l) - 0.03 * log(hi/l));
+        if( wantPadHi )
+            h = hi + 0.03 * (hi - low);
+        return std::make_pair(l,h);
     } else {
-        // In linear scale we simply add padding when appropriate.
+        double l = low;
+        double h = hi;
+        // Add padding if needed
         if( wantPadLow )
-            return low - 0.03 * (hi - low);
-        else
-            return low;
+            l -= 0.03 * (hi - low);
+        if( wantPadHi  )
+            h += 0.03 * (hi - low);
+        return std::make_pair(l,h);
     }
 }
 
-double Range::hiRange(bool useLog) {
-    if( useLog ) {
-        // Apply padding in log scale
-        double l = logLow.get_value_or( low );
-        if( wantPadHi )
-            return exp( log(hi) + 0.03 * log(hi/l));
-        else
-            return hi;
-    } else {
-        // Apply padding in linear scale
-        if( wantPadHi )
-            return hi + 0.03 * (hi - low);
-        else
-            return hi;
-    }
-}
 
 // ================================================================ //
 // ==== Pad
@@ -303,7 +295,7 @@ static RangeM axisRange(boost::optional<double> low,
             }
         }
     }
-    // Tweak range if needed
+    // Set custom range if required
     if( rng.is_initialized() ) {
         if( low.is_initialized() )
             rng->low = low.get();
@@ -321,13 +313,15 @@ void Pad::recalculateRange() {
 
     RangeM rngX = axisRange( m_xLow, m_xHi, m_objStack, Plot::X );
     if( rngX.is_initialized() ) {
-        m_xRange[0] = rngX->lowRange( m_xLog );
-        m_xRange[1] = rngX->hiRange ( m_xLog );
+        std::pair<double,double> r = rngX->range( m_xLog );
+        m_xRange[0] = r.first;
+        m_xRange[1] = r.second;
     }
     RangeM rngY = axisRange( m_yLow, m_yHi, m_objStack, Plot::Y );
     if( rngY.is_initialized() ) {
-        m_yRange[0] = rngY->lowRange( m_yLog );
-        m_yRange[1] = rngY->hiRange ( m_yLog );
+        std::pair<double,double> r = rngY->range( m_yLog );
+        m_yRange[0] = r.first;
+        m_yRange[1] = r.second;
     }
 }
 
