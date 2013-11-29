@@ -33,7 +33,6 @@ int main(int argc, char** argv)
     TH1::AddDirectory(kFALSE);
     // Reasonable color schemes
     gROOT ->SetStyle("Plain");
-    gStyle->SetPalette(1);
 
     // Parse command line parameters
     bool verbose = false;
