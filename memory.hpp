@@ -5,7 +5,7 @@
  * rt-plot manages lifetime of all explicitly created ROOT
  * objects. Because of brain-damaged model of ownership we have to set
  * certain bits for object. It's error prone to add them manually so
- * following methods should be used used
+ * ROOT objects should be allocated using newROOT template function.
  */
 #include <boost/make_shared.hpp>
 #include <TObject.h>
