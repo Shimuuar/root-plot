@@ -168,7 +168,7 @@ functionN n (a,b) f = Graph [ (x,f x)
                             ]
 
 ifunction :: (Int,Int) -> (Int -> Double) -> Plot
-ifunction (a,b) f = Graph [ (fromIntegral x, f x) | x <- [a .. b]]
+ifunction (a,b) f = Graph [ (x, f x) | x <- [a .. b]]
 
 
 ----------------------------------------------------------------
