@@ -27,7 +27,12 @@
 // ================================================================ //
 
 PlotObject::PlotObject() :
-    isAutorange(true)
+    isAutorange(true),
+    // Default values
+    m_lineColor( Plot::BLACK     ),
+    m_lineWidth( 1               ),
+    m_lineStyle( Plot::Solid     ),
+    m_lineType ( Plot::SolidLine )
 {}
 
 RangeM PlotObject::xRange() const {
@@ -54,7 +59,6 @@ bool PlotObject::haveFill() const {
 PlotHist::PlotHist(TH1* h) :
     hist(h),
     m_cmd( makeROOT<TExec>("CMD", "gStyle->SetPaintTextFormat(\"g\");") ),
-    m_lineWidth( 1     ),
     m_text     ( false ),
     m_scatter  ( false ),
     m_box      ( false ),
@@ -79,12 +83,15 @@ void PlotHist::plotOn(Pad*) {
             opt += " Z";
         }
     }
+    // If line width is set to zero draw histogram as bar chart
+    hist->SetLineColor( m_lineColor );
     if( m_lineWidth > 0 ) {
         hist->SetLineWidth( m_lineWidth );
     } else {
         hist->SetLineWidth( 1 );
         opt = "B " + opt;
     }
+    // Draw histogram
     m_cmd->Draw();
     hist->Draw( opt.c_str() );
 }
@@ -96,14 +103,6 @@ void PlotHist::setHistTextFmt(int n) {
         std::string cmd = (boost::format("gStyle->SetPaintTextFormat(\".%df\");") % n).str();
         m_cmd = makeROOT<TExec>("CMD", cmd.c_str() );
     }
-}
-
-void PlotHist::setLineWidth(int width) {
-    m_lineWidth = width;
-}
-
-void PlotHist::setLineColor(int col) {
-    hist->SetLineColor(col);
 }
 
 void PlotHist::setFillColor(int col) {
@@ -158,8 +157,6 @@ bool PlotHist::haveFill() const {
 
 PlotGraph::PlotGraph(TGraph* g) :
     color    ( Plot::BLACK      ),
-    lineStyle( Plot::Solid      ),
-    lineType ( Plot::SolidLine  ),
     marker   ( Plot::NoMarker   ),
     errs     ( Plot::Crosshairs ),
     graph    ( g )
@@ -171,7 +168,7 @@ PlotGraph::PlotGraph(TGraph* g) :
 void PlotGraph::plotOn(Pad*) {
     std::string opts = " SAME";
     // Set line style
-    switch( lineType ) {
+    switch( m_lineType ) {
     case Plot::SolidLine:
         opts = "L" + opts;
         break;
@@ -181,7 +178,7 @@ void PlotGraph::plotOn(Pad*) {
     default: ;
     }
     // FIXME: set line type
-    switch( lineStyle ) {
+    switch( m_lineStyle ) {
     case Plot::Solid:   graph->SetLineStyle( 1 ); break;
     case Plot::Dashed:  graph->SetLineStyle( 2 ); break;
     case Plot::Dotted:  graph->SetLineStyle( 3 ); break;
@@ -213,29 +210,12 @@ void PlotGraph::plotOn(Pad*) {
     }
 }
 
-void PlotGraph::setLineWidth(int width) {
-    graph->SetLineWidth(width);
-}
-
-void PlotGraph::setLineType(Plot::LineType l) {
-    lineType = l;
-}
-
-void PlotGraph::setLineStyle(Plot::LineStyle l) {
-    lineStyle = l;
-}
-
 void PlotGraph::setMarkerStyle(Plot::MarkerStyle m) {
     marker = m;
 }
 
 void PlotGraph::setErrorStyle(Plot::ErrorsStyle e) {
     errs = e;
-}
-
-void PlotGraph::setLineColor(int col) {
-    color = col;
-    graph->SetLineColor(col);
 }
 
 void PlotGraph::setFillColor(int col) {
@@ -419,24 +399,18 @@ bool PlotBarChart::haveFill() const {
 PlotPoly::PlotPoly(TPolyLine* g) :
     poly(g)
 {
-    setLineWidth( 0);
+    m_lineWidth  = 0;
     setFillColor(20);
 }
 
 void PlotPoly::plotOn(Pad*) {
+    // Draw filled polygon
     poly->Draw( "F" );
-    if( width > 0 ) {
-        poly->SetLineWidth(width);
+    // If we want to draw border we need to draw border separately.
+    if( m_lineWidth > 0 ) {
+        poly->SetLineWidth( m_lineWidth );
         poly->Draw(  );
     }
-}
-
-void PlotPoly::setLineWidth(int w) {
-    width = w;
-}
-
-void PlotPoly::setLineColor(int col) {
-    poly->SetLineColor(col);
 }
 
 void PlotPoly::setFillColor(int col) {
@@ -524,19 +498,11 @@ void PlotLine::plotVH(Pad* cxt) {
 }
 
 void PlotLine::doDraw() {
-    graph->SetLineWidth( width    );
-    graph->SetLineColor( color    );
-    graph->SetFillColor( m_fill   );
-    graph->SetFillStyle( m_fillSt );
+    graph->SetLineWidth( m_lineWidth );
+    graph->SetLineColor( m_lineColor );
+    graph->SetFillColor( m_fill      );
+    graph->SetFillStyle( m_fillSt    );
     graph->Draw("SAME L");
-}
-
-void PlotLine::setLineWidth(int w) {
-    width = w;
-}
-
-void PlotLine::setLineColor(int col) {
-    color = col;
 }
 
 void PlotLine::setFillColor(int col) {
@@ -578,10 +544,12 @@ void PlotBand::plotOn(Pad* cxt) {
     }
     poly->SetFillColor( fill      );
     poly->SetFillStyle( fillStyle );
-    poly->SetLineWidth( width     );
-    poly->SetLineColor( color     );
+    poly->SetLineWidth( m_lineWidth );
+    poly->SetLineColor( m_lineColor );
+    // If we want to draw polygon with border we need to draw border
+    // separately
     poly->Draw("F");
-    if( width > 0 )
+    if( m_lineWidth > 0 )
         poly->Draw("");
 }
 
@@ -591,14 +559,6 @@ void PlotBand::setFillColor(int col) {
 
 void PlotBand::setFillStyle(int col) {
     fillStyle = col;
-}
-
-void PlotBand::setLineWidth(int w) {
-    width = w;
-}
-
-void PlotBand::setLineColor(int col) {
-    color = col;
 }
 
 RangeM PlotBand::xRange() const {

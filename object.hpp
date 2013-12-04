@@ -411,18 +411,10 @@ public:
     // Z range for object.
     virtual RangeM zRange() const;
 
-    // Set color of line
-    virtual void setLineColor(int) {}
-    // Set line style. Used for graphs
-    virtual void setLineType(Plot::LineType) {}
-    // Set line style. Used for graphs
-    virtual void setLineStyle(Plot::LineStyle) {}
     // Set marker style
     virtual void setMarkerStyle(Plot::MarkerStyle) {}
     // Set error style
     virtual void setErrorStyle(Plot::ErrorsStyle) {}
-    // Set width of line
-    virtual void setLineWidth(int width)   {UNUSED(width);}
     // Set fill color
     virtual void setFillColor(int) {}
     // Set fill style. It accepts ROOT fill style. Conversions are
@@ -451,10 +443,25 @@ public:
     // Get pointer to ROOT object. May return NULL
     virtual TObject* getRootObject() { return 0; }
 
+    // Set color of line
+    void setLineColor(int c) { m_lineColor = c; }
+    // Set width of line
+    void setLineWidth(int width) { m_lineWidth = width; }
+    // Set line style. Used for graphs
+    void setLineType(Plot::LineType   l) {m_lineType  = l;}
+    // Set line style. Used for graphs
+    void setLineStyle(Plot::LineStyle l) {m_lineStyle = l;}
+
     // Flag which indicates whether object should be used in automatic
     // range calculations. There's no point in hiding it behind
     // accessor. Default value is true
     bool isAutorange;
+protected:
+    // Style parameters for the object.
+    int             m_lineColor;
+    int             m_lineWidth;
+    Plot::LineStyle m_lineStyle;
+    Plot::LineType  m_lineType;
 };
 
 
@@ -469,8 +476,6 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
-    virtual void     setLineWidth(int width);
-    virtual void     setLineColor(int);
     virtual void     setFillColor(int);
     virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
@@ -488,7 +493,6 @@ private:
     boost::scoped_ptr<TH1>   hist; // Histogram
     boost::shared_ptr<TExec> m_cmd;  // Command to execute before drawing histograms
     // Common flags
-    int  m_lineWidth;            // Line width
     bool m_text;                 // Draw text at nodes?
     // 2D histogram
     bool m_scatter;              // Draw as scatter plot
@@ -508,20 +512,14 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
-    virtual void     setLineWidth(int width);
-    virtual void     setLineStyle(Plot::LineStyle);
-    virtual void     setLineType (Plot::LineType);
     virtual void     setMarkerStyle(Plot::MarkerStyle);
     virtual void     setErrorStyle(Plot::ErrorsStyle);
-    virtual void     setLineColor(int);
     virtual void     setFillColor(int);
     virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
     virtual bool     haveFill() const;
 protected:
     int               color;
-    Plot::LineStyle   lineStyle;
-    Plot::LineType    lineType;
     Plot::MarkerStyle marker;
     Plot::ErrorsStyle errs;
     boost::scoped_ptr<TGraph>  graph;
@@ -566,14 +564,11 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
-    virtual void     setLineWidth(int width);
-    virtual void     setLineColor(int);
     virtual void     setFillColor(int);
     virtual void     setFillStyle(int);
     virtual bool     haveFill() const;
     virtual TObject* getRootObject();
 private:
-    int width;
     boost::scoped_ptr<TPolyLine> poly;
 };
 
@@ -587,8 +582,6 @@ public:
         abline( false ),
         orientation(orientation_),
         x(x_),
-        color(Plot::BLACK),
-        width(1),
         m_fill(Plot::BLACK),
         m_fillSt( 0 )
     {}
@@ -597,15 +590,11 @@ public:
         abline( true    ),
         k     ( slope   ),
         b     ( intrcpt ),
-        color(Plot::BLACK),
-        width(1),
         m_fill(Plot::BLACK),
         m_fillSt( 0 )
     {}
     virtual ~PlotLine() {}
     virtual void     plotOn(Pad* cxt);
-    virtual void     setLineWidth(int width);
-    virtual void     setLineColor(int);
     virtual void     setFillColor(int);
     virtual void     setFillStyle(int);
     virtual bool     haveFill() const;
@@ -621,8 +610,6 @@ private:
     Plot::Orientation orientation;
     double            x;
     // Drawing parameters
-    int        color;
-    int        width;
     int        m_fill;
     int        m_fillSt;
 
@@ -638,11 +625,11 @@ public:
         orientation(orientation_),
         x1   (x1_ < x2 ? x1_ : x2_),
         x2   (x1_ < x2 ? x2_ : x1_),
-        width( 0     ),
-        color( Plot::BLACK ),
         fill ( 20    ),
         fillStyle( 1001 )
-    {}
+    {
+        m_lineWidth = 0;
+    }
 
     virtual ~PlotBand() {}
     virtual void   plotOn(Pad* cxt);
@@ -650,13 +637,11 @@ public:
     virtual RangeM yRange() const;
     virtual void   setFillColor(int);
     virtual void   setFillStyle(int);
-    virtual void   setLineWidth(int width);
-    virtual void   setLineColor(int);
     virtual bool   haveFill() const;
 private:
     Plot::Orientation orientation;
     double            x1,x2;
-    int               width, color, fill, fillStyle;
+    int               fill, fillStyle;
 
     boost::shared_ptr<TPolyLine> poly;
 };
