@@ -433,6 +433,7 @@ public:
     // Get pointer to ROOT object. May return NULL
     virtual TObject* getRootObject() { return 0; }
 
+
     // Set color of line
     void setLineColor(int c) { m_lineColor = c; }
     // Set width of line
