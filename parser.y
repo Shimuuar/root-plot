@@ -11,49 +11,47 @@
 
 
 using boost::get;
-    
+
 void yyerror(ParseParam, const char* err) {
     std::cerr << "rt-plot: " << err << std::endl;
 }
 
 static Plot::Color strToColor( std::string str) {
     std::transform(str.begin(), str.end(), str.begin(), toupper );
-    Plot::Color c = Plot::BLACK;
-    if( str == "WHITE" ) {
-        c = Plot::WHITE;
-    } else if( str == "BLACK"   ) {
-        c = Plot::BLACK;
-    } else if( str == "RED"     ) {
-        c = Plot::RED;
-    } else if( str == "GREEN"   ) {
-        c = Plot::GREEN;
-    } else if( str == "BLUE"    ) {
-        c = Plot::BLUE;
-    } else if( str == "YELLOW"  ) {
-        c = Plot::YELLOW;
-    } else if( str == "MAGENTA" ) {
-        c = Plot::MAGENTA;
-    } else if( str == "CYAN"    ) {
-        c = Plot::CYAN;
-    } else if( str == "FOREST"  ) {
-        c = Plot::FOREST;
-    } else if( str == "VIOLET"  ) {
-        c = Plot::VIOLET;
-    }
-    return c;
+    if( str == "WHITE" )
+        return Plot::WHITE;
+    if( str == "BLACK"   )
+        return Plot::BLACK;
+    if( str == "RED"     )
+        return Plot::RED;
+    if( str == "GREEN"   )
+        return Plot::GREEN;
+    if( str == "BLUE"    )
+        return Plot::BLUE;
+    if( str == "YELLOW"  )
+        return Plot::YELLOW;
+    if( str == "MAGENTA" )
+        return Plot::MAGENTA;
+    if( str == "CYAN"    )
+        return Plot::CYAN;
+    if( str == "FOREST"  )
+        return Plot::FOREST;
+    if( str == "VIOLET"  )
+        return Plot::VIOLET;
+
+    return Plot::BLACK;
 }
 
 static Plot::LineType strToLineType( std::string str ) {
     std::transform(str.begin(), str.end(), str.begin(), toupper );
-    Plot::LineType l = Plot::SolidLine;
-    if( str == "NO" || str == "NONE" ) {
-        l = Plot::NoLine;
-    } else if( str == "LINE" ) {
-        l = Plot::SolidLine;
-    } else if( str == "SPLINES" ) {
-        l = Plot::Splines;
-    }
-    return l;
+    if( str == "NO" || str == "NONE" )
+        return Plot::NoLine;
+    if( str == "LINE" )
+        return Plot::SolidLine;
+    if( str == "SPLINES" )
+        return Plot::Splines;
+
+    return Plot::SolidLine;
 }
 
 static Plot::LineStyle strToLineStyle( std::string str ) {
@@ -71,21 +69,19 @@ static Plot::LineStyle strToLineStyle( std::string str ) {
 
 static Plot::MarkerStyle strToMarker( std::string str ) {
     std::transform(str.begin(), str.end(), str.begin(), toupper );
-    Plot::MarkerStyle m = Plot::NoMarker;
-    if( str == "NO" || str == "NONE" ) {
-        m = Plot::NoMarker;
-    } else if( str == "DOT"  || str == "." ) {
-        m = Plot::MarkerDot;
-    } else if( str == "PLUS" || str == "+" ) {
-        m = Plot::MarkerPlus;
-    } else if( str == "STAR" || str == "*" ) {
-        m = Plot::MarkerStar;
-    } else if( str == "O" ) {
-        m = Plot::MarkerO;
-    } else if( str == "X" ) {
-        m = Plot::MarkerX;
-    }
-    return m;
+    if( str == "NO" || str == "NONE" )
+        return Plot::NoMarker;
+    if( str == "DOT"  || str == "." )
+        return Plot::MarkerDot;
+    if( str == "PLUS" || str == "+" )
+        return Plot::MarkerPlus;
+    if( str == "STAR" || str == "*" )
+        return Plot::MarkerStar;
+    if( str == "O" )
+        return Plot::MarkerO;
+    if( str == "X" )
+        return Plot::MarkerX;
+    return Plot::NoMarker;
 }
 
 static void setPalette( Plot* p, std::string str) {
@@ -123,7 +119,7 @@ static void setParserStdin(PLineAccum acc, ParseParam& par) {
 // Set parser for data
 static void setParserFile(PLineAccum acc, ParseParam& par, const Token& tok) {
     if( par.clearPlot )
-        par.plot->clear();   
+        par.plot->clear();
     acc->readFromFile(get<std::string>(tok), par.plot);
 }
 
