@@ -84,6 +84,8 @@ data Option =
   | LineColor  Color
     -- | Line style
   | LineStyle   String
+    -- | Line type 
+  | LineType    String
     -- | Marker style
   | MarkerStyle String
     -- | Fill color (with enum)
@@ -253,6 +255,7 @@ renderOption (Title  t)      = co "title "       <> strLit t
 renderOption (LineWidth   i) = co "line width "  <> int i
 renderOption (LineColor   c) = co "line color "  <> renderColor c
 renderOption (LineStyle   s) = co "line style "  <> strLit s
+renderOption (LineType    s) = co "line type "   <> strLit s
 renderOption (MarkerStyle s) = co "line marker " <> strLit s
 renderOption (FillColor   c) = co "fill color "  <> renderColor c
 renderOption (FillStyle   c) = co "fill style "  <> int c

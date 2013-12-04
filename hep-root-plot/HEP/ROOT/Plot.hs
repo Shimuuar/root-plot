@@ -35,6 +35,7 @@ module HEP.ROOT.Plot (
   , lineWidth
   , lineColor
   , lineStyle
+  , lineType
   , markerStyle
   , errorStyle
   , fillColor
@@ -189,6 +190,9 @@ lineColor = cmd . LineColor
 
 lineStyle :: String -> Cmd Option
 lineStyle = cmd . LineStyle
+
+lineType :: String -> Cmd Option
+lineType = cmd . LineStyle
 
 markerStyle :: String -> Cmd Option
 markerStyle = cmd . MarkerStyle
