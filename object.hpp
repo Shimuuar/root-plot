@@ -40,7 +40,7 @@
 //    To make thing even more complicated padding should be added
 //    differently if log scale is used.
 struct Range {
-    // By default constructors set padding to false. 
+    // By default constructors set padding to false.
     Range() :
         low(0), wantPadLow(false),
         hi (1), wantPadHi (false)
@@ -319,7 +319,7 @@ public:
     // Set whether topmost object should be ignored in automatic range
     // calculations
     void setAutoRange(bool flag);
-    
+
     // Remove legend from plot. Noop if there is no legend
     void removeLegend();
     // Add legend to the plot
@@ -411,11 +411,6 @@ public:
     // Z range for object.
     virtual RangeM zRange() const;
 
-    // Set marker style
-    virtual void setMarkerStyle(Plot::MarkerStyle) {}
-    // Set error style
-    virtual void setErrorStyle(Plot::ErrorsStyle) {}
-    
     // Set text drawing histograms
     virtual void setHistText   ( bool txt )  {UNUSED(txt);}
     // Set number of decimal places in text. Negative number reverts
@@ -451,6 +446,10 @@ public:
     // Set fill style. It accepts ROOT fill style. Conversions are
     // handled by Plot::setFillStyle.
     void setFillStyle(int c) { m_fillStyle = c; }
+    // Set marker style
+    void setMarkerStyle(Plot::MarkerStyle m) { m_markerStyle = m; }
+    // Set error style
+    void setErrorStyle(Plot::ErrorsStyle e) { m_errorStyle = e; }
 
     // Flag which indicates whether object should be used in automatic
     // range calculations. There's no point in hiding it behind
@@ -465,6 +464,9 @@ protected:
     // Style parameters for fill
     int             m_fillColor;
     int             m_fillStyle;
+    // Errors and markers
+    Plot::MarkerStyle m_markerStyle;
+    Plot::ErrorsStyle m_errorStyle;
 };
 
 
@@ -513,13 +515,9 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
-    virtual void     setMarkerStyle(Plot::MarkerStyle);
-    virtual void     setErrorStyle(Plot::ErrorsStyle);
     virtual TObject* getRootObject();
     virtual bool     haveFill() const;
 protected:
-    Plot::MarkerStyle marker;
-    Plot::ErrorsStyle errs;
     boost::scoped_ptr<TGraph>  graph;
     boost::shared_ptr<TObject> clone;
 };

@@ -35,7 +35,10 @@ PlotObject::PlotObject() :
     m_lineType ( Plot::SolidLine ),
     // fill styles
     m_fillColor( 20   ),
-    m_fillStyle( 1001 )
+    m_fillStyle( 1001 ),
+    // errors & markers
+    m_markerStyle( Plot::NoMarker ),
+    m_errorStyle ( Plot::Crosshairs )
 {}
 
 RangeM PlotObject::xRange() const {
@@ -156,8 +159,6 @@ bool PlotHist::haveFill() const {
 // ==== Graph
 
 PlotGraph::PlotGraph(TGraph* g) :
-    marker   ( Plot::NoMarker   ),
-    errs     ( Plot::Crosshairs ),
     graph    ( g )
 {
     // We set fill color to invalid value
@@ -184,13 +185,13 @@ void PlotGraph::plotOn(Pad*) {
     graph->SetFillColor( m_fillColor >= 0 ? m_fillColor : m_lineColor );
     graph->SetFillStyle( m_fillStyle );
     // Set marker style
-    if( marker != Plot::NoMarker ) {
+    if( m_markerStyle != Plot::NoMarker ) {
         opts = "P" + opts;
-        graph->SetMarkerStyle( marker );
+        graph->SetMarkerStyle( m_markerStyle );
         graph->SetMarkerColor( m_lineColor );
     }
     // Draw errors differently
-    switch( errs ) {
+    switch( m_errorStyle ) {
     case Plot::NoErrors:
         // If we don't want to draw any errors
         graph->Draw( ("X"+opts).c_str() );
@@ -207,14 +208,6 @@ void PlotGraph::plotOn(Pad*) {
             graph->Draw( ("X"+opts).c_str() );
         break;
     }
-}
-
-void PlotGraph::setMarkerStyle(Plot::MarkerStyle m) {
-    marker = m;
-}
-
-void PlotGraph::setErrorStyle(Plot::ErrorsStyle e) {
-    errs = e;
 }
 
 // Helpers for calculations of automatic ranges
