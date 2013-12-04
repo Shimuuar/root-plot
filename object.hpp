@@ -156,10 +156,10 @@ public:
     };
     // Style of the line for graphs
     enum LineStyle {
-        Solid,
-        Dashed,
-        Dotted,
-        Dashdot
+        Solid   = 1,
+        Dashed  = 2,
+        Dotted  = 3,
+        Dashdot = 4
     };
     // Marker style for graphs
     enum MarkerStyle {
@@ -415,11 +415,6 @@ public:
     virtual void setMarkerStyle(Plot::MarkerStyle) {}
     // Set error style
     virtual void setErrorStyle(Plot::ErrorsStyle) {}
-    // Set fill color
-    virtual void setFillColor(int) {}
-    // Set fill style. It accepts ROOT fill style. Conversions are
-    // handled by Plot::setFillStyle.
-    virtual void setFillStyle(int) {}
     
     // Set text drawing histograms
     virtual void setHistText   ( bool txt )  {UNUSED(txt);}
@@ -451,17 +446,25 @@ public:
     void setLineType(Plot::LineType   l) {m_lineType  = l;}
     // Set line style. Used for graphs
     void setLineStyle(Plot::LineStyle l) {m_lineStyle = l;}
+    // Set fill color
+    void setFillColor(int c) { m_fillColor = c; }
+    // Set fill style. It accepts ROOT fill style. Conversions are
+    // handled by Plot::setFillStyle.
+    void setFillStyle(int c) { m_fillStyle = c; }
 
     // Flag which indicates whether object should be used in automatic
     // range calculations. There's no point in hiding it behind
     // accessor. Default value is true
     bool isAutorange;
 protected:
-    // Style parameters for the object.
+    // Style parameters for lines
     int             m_lineColor;
     int             m_lineWidth;
     Plot::LineStyle m_lineStyle;
     Plot::LineType  m_lineType;
+    // Style parameters for fill
+    int             m_fillColor;
+    int             m_fillStyle;
 };
 
 
@@ -476,8 +479,6 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
-    virtual void     setFillColor(int);
-    virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
 
     virtual void setHistText( bool txt )     { m_text    = txt;  }
@@ -514,12 +515,9 @@ public:
     virtual RangeM   yRange() const;
     virtual void     setMarkerStyle(Plot::MarkerStyle);
     virtual void     setErrorStyle(Plot::ErrorsStyle);
-    virtual void     setFillColor(int);
-    virtual void     setFillStyle(int);
     virtual TObject* getRootObject();
     virtual bool     haveFill() const;
 protected:
-    int               color;
     Plot::MarkerStyle marker;
     Plot::ErrorsStyle errs;
     boost::scoped_ptr<TGraph>  graph;
@@ -549,8 +547,6 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
-    virtual void     setFillColor(int);
-    virtual void     setFillStyle(int);
     virtual bool     haveFill() const;
 };
 
@@ -564,8 +560,6 @@ public:
     virtual void     plotOn(Pad* cxt);
     virtual RangeM   xRange() const;
     virtual RangeM   yRange() const;
-    virtual void     setFillColor(int);
-    virtual void     setFillStyle(int);
     virtual bool     haveFill() const;
     virtual TObject* getRootObject();
 private:
@@ -578,25 +572,11 @@ private:
 class PlotLine : public PlotObject {
 public:
     // Create vertical/horizontal line at position x
-    PlotLine(Plot::Orientation orientation_, double x_) :
-        abline( false ),
-        orientation(orientation_),
-        x(x_),
-        m_fill(Plot::BLACK),
-        m_fillSt( 0 )
-    {}
+    PlotLine(Plot::Orientation orientation_, double x_);
     // Create AB line with intercept b and slope k
-    PlotLine(double slope, double intrcpt) :
-        abline( true    ),
-        k     ( slope   ),
-        b     ( intrcpt ),
-        m_fill(Plot::BLACK),
-        m_fillSt( 0 )
-    {}
+    PlotLine(double slope, double intrcpt);
     virtual ~PlotLine() {}
     virtual void     plotOn(Pad* cxt);
-    virtual void     setFillColor(int);
-    virtual void     setFillStyle(int);
     virtual bool     haveFill() const;
     virtual TObject* getRootObject();
 private:
@@ -609,10 +589,7 @@ private:
     // Vertical/horizontal lines
     Plot::Orientation orientation;
     double            x;
-    // Drawing parameters
-    int        m_fill;
-    int        m_fillSt;
-
+    // ROOT object
     boost::shared_ptr<TGraph> graph;
 };
 
@@ -624,9 +601,7 @@ public:
     PlotBand(Plot::Orientation orientation_, double x1_, double x2_) :
         orientation(orientation_),
         x1   (x1_ < x2 ? x1_ : x2_),
-        x2   (x1_ < x2 ? x2_ : x1_),
-        fill ( 20    ),
-        fillStyle( 1001 )
+        x2   (x1_ < x2 ? x2_ : x1_)
     {
         m_lineWidth = 0;
     }
@@ -635,14 +610,11 @@ public:
     virtual void   plotOn(Pad* cxt);
     virtual RangeM xRange() const;
     virtual RangeM yRange() const;
-    virtual void   setFillColor(int);
-    virtual void   setFillStyle(int);
     virtual bool   haveFill() const;
 private:
     Plot::Orientation orientation;
     double            x1,x2;
-    int               fill, fillStyle;
-
+    // ROOT object
     boost::shared_ptr<TPolyLine> poly;
 };
 
