@@ -500,6 +500,7 @@ void PlotLine::plotVH(Pad* cxt) {
 void PlotLine::doDraw() {
     graph->SetLineWidth( m_lineWidth );
     graph->SetLineColor( m_lineColor );
+    graph->SetLineStyle( m_lineStyle );
     graph->SetFillColor( m_fill      );
     graph->SetFillStyle( m_fillSt    );
     graph->Draw("SAME L");
