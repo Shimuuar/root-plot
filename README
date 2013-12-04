@@ -337,7 +337,7 @@ independent. They are listed below:
 Possible line styles are described by string constant. Following string are
 accepted:
 
-  - solid       - solid line
+  - solid       - solid line [default]
   - dash/dashed - dashed line
   - dotted      - dotted line
   - dash/dot    - dash-dot line
@@ -345,9 +345,9 @@ accepted:
 Also lines could be drawn either by connecting dots by straight
 segmentas or using slines to get smooth curve
 
-  - no/none - no line drawn
-  - line    - connect points using straight line segments
-  - splinessssssssss - connect points using splines
+  - no/none        - no line drawn
+  - line           - connect points using straight line segments [default]
+  - spline/splines - connect points using splines
 
 
 ### Marker styles
