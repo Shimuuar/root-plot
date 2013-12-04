@@ -229,7 +229,12 @@ Set color of the line
 
 > set line style "Style name"
 
-Set style of the line
+Set style of the line (solid/dashed/dotted/etc.)
+
+
+> set line type "Style name"
+
+Set type of the line: straight line segments/splines/no line at all
 
 
 > set line marker "Marker style"
@@ -327,14 +332,22 @@ independent. They are listed below:
   - violet
 
 
-### Line styles
+### Line styles and types
 
 Possible line styles are described by string constant. Following string are
 accepted:
 
-  - no / none - no line drawn
-  - line      - connect points using straight line segments
-  - splines   - connect points using splines
+  - solid       - solid line
+  - dash/dashed - dashed line
+  - dotted      - dotted line
+  - dash/dot    - dash-dot line
+
+Also lines could be drawn either by connecting dots by straight
+segmentas or using slines to get smooth curve
+
+  - no/none - no line drawn
+  - line    - connect points using straight line segments
+  - splinessssssssss - connect points using splines
 
 
 ### Marker styles
