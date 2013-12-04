@@ -43,9 +43,9 @@ static Plot::Color strToColor( std::string str) {
     return c;
 }
 
-static Plot::LineStyle strToLine( std::string str ) {
+static Plot::LineType strToLineType( std::string str ) {
     std::transform(str.begin(), str.end(), str.begin(), toupper );
-    Plot::LineStyle l = Plot::SolidLine;
+    Plot::LineType l = Plot::SolidLine;
     if( str == "NO" || str == "NONE" ) {
         l = Plot::NoLine;
     } else if( str == "LINE" ) {
@@ -54,6 +54,19 @@ static Plot::LineStyle strToLine( std::string str ) {
         l = Plot::Splines;
     }
     return l;
+}
+
+static Plot::LineStyle strToLineStyle( std::string str ) {
+    std::transform(str.begin(), str.end(), str.begin(), toupper );
+    if( str == "SOLID" )
+        return Plot::Solid;
+    if( str == "DASHED" || str == "DASH" )
+        return Plot::Dashed;
+    if( str == "DOT" || str == "DOTTED" )
+        return Plot::Dotted;
+    if( str == "DASHDOT" )
+        return Plot::Dashdot;
+    return Plot::Solid;
 }
 
 static Plot::MarkerStyle strToMarker( std::string str ) {
@@ -167,6 +180,7 @@ static void setGrid(ParseParam& par, bool x, bool y) {
 %token KW_COLOR
 %token KW_WIDTH
 %token KW_STYLE
+%token KW_TYPE
 %token KW_MARKER
 %token KW_FILL
 %token KW_TEXT
@@ -395,7 +409,15 @@ setLine
   | KW_COLOR  TOK_WS TOK_STR eol
     { if( par() ) par.pad->setLineColor( strToColor( get<std::string>( $3 ) ) ); }
   | KW_STYLE  TOK_WS TOK_STR eol
-    { if( par() ) par.pad->setLineStyle( strToLine( get<std::string>( $3 ) ) ); }
+    {
+        if( par() )
+            par.pad->setLineStyle( strToLineStyle( get<std::string>($3) ) );
+    }
+  | KW_TYPE   TOK_WS TOK_STR eol
+    {
+        if( par() )
+            par.pad->setLineType( strToLineType( get<std::string>($3) ) );
+    }
   | KW_MARKER TOK_WS TOK_STR eol
     { if( par() ) par.pad->setMarkerStyle( strToMarker( get<std::string>( $3 ) ) ); }
 

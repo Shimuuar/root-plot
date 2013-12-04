@@ -157,11 +157,12 @@ bool PlotHist::haveFill() const {
 // ==== Graph
 
 PlotGraph::PlotGraph(TGraph* g) :
-    color ( Plot::BLACK      ),
-    line  ( Plot::SolidLine  ),
-    marker( Plot::NoMarker   ),
-    errs  ( Plot::Crosshairs ),
-    graph ( g )
+    color    ( Plot::BLACK      ),
+    lineStyle( Plot::Solid      ),
+    lineType ( Plot::SolidLine  ),
+    marker   ( Plot::NoMarker   ),
+    errs     ( Plot::Crosshairs ),
+    graph    ( g )
 {
     // Set sane default color
     graph->SetFillColor( 20 );
@@ -170,7 +171,7 @@ PlotGraph::PlotGraph(TGraph* g) :
 void PlotGraph::plotOn(Pad*) {
     std::string opts = " SAME";
     // Set line style
-    switch( line ) {
+    switch( lineType ) {
     case Plot::SolidLine:
         opts = "L" + opts;
         break;
@@ -178,6 +179,13 @@ void PlotGraph::plotOn(Pad*) {
         opts = "C" + opts;
         break;
     default: ;
+    }
+    // FIXME: set line type
+    switch( lineStyle ) {
+    case Plot::Solid:   graph->SetLineStyle( 1 ); break;
+    case Plot::Dashed:  graph->SetLineStyle( 2 ); break;
+    case Plot::Dotted:  graph->SetLineStyle( 3 ); break;
+    case Plot::Dashdot: graph->SetLineStyle( 4 ); break;
     }
     // Set marker style
     if( marker != Plot::NoMarker ) {
@@ -209,8 +217,12 @@ void PlotGraph::setLineWidth(int width) {
     graph->SetLineWidth(width);
 }
 
+void PlotGraph::setLineType(Plot::LineType l) {
+    lineType = l;
+}
+
 void PlotGraph::setLineStyle(Plot::LineStyle l) {
-    line = l;
+    lineStyle = l;
 }
 
 void PlotGraph::setMarkerStyle(Plot::MarkerStyle m) {

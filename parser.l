@@ -66,6 +66,7 @@ ignore      { return KW_IGNORE; }
 line        { return KW_LINE;    }
 width       { return KW_WIDTH;   }
 style       { return KW_STYLE;   }
+type        { return KW_TYPE;    }
 marker      { return KW_MARKER;  }
 color       { return KW_COLOR;   }
 fill        { return KW_FILL;    }

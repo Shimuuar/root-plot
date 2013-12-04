@@ -148,11 +148,18 @@ public:
     enum Axis {
         X, Y, Z
     };
-    // Style of line for graphs
-    enum LineStyle {
+    // Type of line for graphs
+    enum LineType {
         NoLine,
         SolidLine,
         Splines
+    };
+    // Style of the line for graphs
+    enum LineStyle {
+        Solid,
+        Dashed,
+        Dotted,
+        Dashdot
     };
     // Marker style for graphs
     enum MarkerStyle {
@@ -282,6 +289,8 @@ public:
     // Set line color for top object. Noop if stack is empty
     void setLineColor(int);
     // Set line style for top object. Noop if stack is empty
+    void setLineType(Plot::LineType);
+    // Set line style for top object. Noop if stack is empty
     void setLineStyle(Plot::LineStyle);
     // Set marker style for top object. Noop if stack is empty
     void setMarkerStyle(Plot::MarkerStyle);
@@ -405,6 +414,8 @@ public:
     // Set color of line
     virtual void setLineColor(int) {}
     // Set line style. Used for graphs
+    virtual void setLineType(Plot::LineType) {}
+    // Set line style. Used for graphs
     virtual void setLineStyle(Plot::LineStyle) {}
     // Set marker style
     virtual void setMarkerStyle(Plot::MarkerStyle) {}
@@ -499,6 +510,7 @@ public:
     virtual RangeM   yRange() const;
     virtual void     setLineWidth(int width);
     virtual void     setLineStyle(Plot::LineStyle);
+    virtual void     setLineType (Plot::LineType);
     virtual void     setMarkerStyle(Plot::MarkerStyle);
     virtual void     setErrorStyle(Plot::ErrorsStyle);
     virtual void     setLineColor(int);
@@ -508,7 +520,8 @@ public:
     virtual bool     haveFill() const;
 protected:
     int               color;
-    Plot::LineStyle   line;
+    Plot::LineStyle   lineStyle;
+    Plot::LineType    lineType;
     Plot::MarkerStyle marker;
     Plot::ErrorsStyle errs;
     boost::scoped_ptr<TGraph>  graph;

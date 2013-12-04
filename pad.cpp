@@ -228,6 +228,11 @@ void Pad::setLineStyle(Plot::LineStyle l) {
         m_objStack.back()->setLineStyle( l );
 }
 
+void Pad::setLineType(Plot::LineType l) {
+    if( !m_objStack.empty() )
+        m_objStack.back()->setLineType( l );
+}
+
 void Pad::setMarkerStyle(Plot::MarkerStyle m) {
     if( !m_objStack.empty() )
         m_objStack.back()->setMarkerStyle( m );
