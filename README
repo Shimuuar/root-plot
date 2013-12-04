@@ -174,9 +174,21 @@ Horizontal band from y1 to y2. Similar to vband.
 Set options for object added last. If object doesn't support particular option
 or there is no object at all it's a noop.
 
+
 > set title "Plot title"
 
 Set plot title.
+
+
+> set grid
+> set grid [on|off]
+> set grid x
+> set grid x [on|off]
+> set grid y
+> set grid y [on|off]
+
+Set grid display on off.
+
 
 > set [xaxis|yaxis|zaxis] ...
 
@@ -210,6 +222,19 @@ possible to set manually only upper or lower limit.
 > set ignore range off
 
 Exclude or include last object from automatic range adjustments.
+
+
+> set palette {string}
+
+Sets global palette for 2D plots.
+
+
+> set error -
+> set error cross
+> set error band
+
+Set style of errors for last object. It's either do not
+display/crosses (default)/band.
 
 
 > set line ...
@@ -257,6 +282,11 @@ Set histogram specific options.
 > set hist text off
 
 Set text display for histograms
+
+> set hist text format -
+> set hist text format {int}
+
+Set number of digits to display in text view of the histogram
 
 
 > set hist color
@@ -308,8 +338,30 @@ is disabled. It speed up drawing significantly.
 
 ### Legend
 
+> legend add {x1} {y1} {x2} {y2}
 
-FIXME:::
+Create new legend. Coordinates are in range [0,1]
+
+
+> legend -
+
+Remove legend
+
+
+> legend add {string}
+
+Add entry about last object to legend.
+
+
+> legend add label {string}
+
+Add string to legend
+
+
+> legend add label {string} {string}
+
+Add key-value pair to legend
+
 
 
 ## Constants
@@ -360,3 +412,13 @@ Marker styles are encoded by strings as well.
   - star / "*"
   - "o"
   - "x"
+
+### Palette
+
+Available palettes
+
+  - "deep sea" [default]
+  - "grey scale"/"gray scale"
+  - "dark body"/"black body"
+  - "blue yellow"
+
